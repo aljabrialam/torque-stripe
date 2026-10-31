@@ -72,6 +72,9 @@ python3 eval/run_eval_faa.py              # gold-set evaluation (deterministic)
 python3 tests/e2e.py http://localhost:8000  # Playwright end-to-end UI test
 ```
 
+### Serverless single-file build
+`python3 web/build.py` produces `web/dist/index.html`: one self-contained page with the UI, the rule engine (`web/engine.js`, a JavaScript port of the Python engine) and the data. No server needed. Parity with the Python engine is checked by `python3 tests/parity_gen.py && node tests/parity.mjs`: 494/495 structured questions identical; the only differences are the order of exactly tied search scores. Claude rewording is off in this mode.
+
 ### Deploy
 Vercel, no build step. `api/index.py` serves the FastAPI app (UI, API, live evaluation); `vercel.json` routes everything to it and bundles the dataset. Set `ANTHROPIC_API_KEY` as a Vercel environment variable to enable rewording.
 

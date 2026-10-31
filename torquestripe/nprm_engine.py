@@ -15,7 +15,7 @@ from .engine import Claim, Result, Status
 from .index import STOP, terms
 from .nprm import AD_NUM, DOCKET, Docket, Version, load_xlsx, norm_model
 
-MODEL_IN_Q = re.compile(r"\b(?:[A-Z]{1,5}[-]?\d[\w]*(?:[-/][\w]+)*|\d{3}-\d{1,3}\w*|[A-Z]+-[IVX]+)\b")
+MODEL_IN_Q = re.compile(r"\b(?:[A-Z]{1,8}[-]?\d[\w]*(?:[-/][\w]+)*|\d{3}-\d{1,3}\w*|[A-Z]+-[IVX]+)\b")
 SERIAL_IN_Q = re.compile(r"\b(MSN|S/N|SN|ESN|serial(?:\s+number)?|line(?:\s+number)?|LN)\s*[:#]?\s*(\d{2,})", re.I)
 
 INTENTS = [
@@ -111,7 +111,8 @@ class NprmEngine:
     @staticmethod
     def match_model(user: str, listed: list[str]) -> tuple[str, list[str]]:
         u = norm_model(user)
-        exact = [m for m in listed if m.rstrip("*") == u]
+        alias = bool(re.search(r"[A-Z]", u) and re.search(r"\d", u) and len(u) >= 3)
+        exact = [m for m in listed if m.rstrip("*") == u or (alias and m.rstrip("*").endswith("-" + u))]  # GVII-G500 ~ G500
         if exact:
             return ("SERIES" if exact[0].endswith("*") else "EXACT"), exact
         series = [m for m in listed if m.endswith("*") and NprmEngine._in_series(u, m[:-1])]
@@ -241,6 +242,9 @@ class NprmEngine:
                 r.trace.append("nothing to search on")
                 return
 
+        if not groups:
+            return self._refuse(r, "NO_MATCH", "No NPRM in this dataset matches"
+                                + (f" model {p['model']}." if p["model"] else " this question."))
         if len(groups) > 1:
             return self._list(r, p, groups)
         return self._single(r, p, self.dockets[groups[0]])
