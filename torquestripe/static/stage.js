@@ -4,7 +4,7 @@
    Decoration only: it shows the engine's verdict and never makes one. */
 (function () {
   const cv = document.getElementById("stagecv"), host = document.getElementById("stage");
-  const api = { setKind() {}, setState() {}, scan() {} };
+  const api = { setKind() {}, setState() {}, scan() {}, setView() {}, setZone() {} };
   window.Stage = api;
   if (!cv || !window.THREE) { if (host) host.insertAdjacentHTML("beforeend", '<div class="fallback">3D view unavailable offline</div>'); return; }
   const T = THREE, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -18,7 +18,7 @@
               dots: new T.PointsMaterial({ size: 0.035, transparent: true, opacity: 0.8 }) };
   function colors() {
     M.wire.color.set(css("--wire")); M.dim.color.set(css("--wire-dim")); M.dots.color.set(css("--wire-dim"));
-    M.scan.color.set(css("--accent")); M.scanFill.color.set(css("--accent")); paintStripe();
+    M.scan.color.set(css("--accent")); M.scanFill.color.set(css("--accent")); zoneFill.color.set(css("--accent")); zoneEdge.color.set(css("--accent")); paintStripe();
   }
   // ---------- geometry helpers ----------
   const seg = (arr, mat) => { const g = new T.BufferGeometry(); g.setAttribute("position", new T.Float32BufferAttribute(arr, 3)); return new T.LineSegments(g, mat || M.wire); };
@@ -101,6 +101,28 @@
     g.userData = { len: 5.4, span: 2.3, scale: 1.3 };
     return g;
   }
+  // ---------- affected-area zones (model space, before scale) ----------
+  const ZONES = {
+    airliner: { wings: [[0.6, 0, 2.85, 2.3, 0.5, 4.6], [0.6, 0, -2.85, 2.3, 0.5, 4.6]], engines: [[0.1, -0.62, 1.95, 1.6, 0.8, 0.8], [0.1, -0.62, -1.95, 1.6, 0.8, 0.8]],
+      fuselage: [[-0.5, 0, 0, 6.5, 1.35, 1.35]], tail: [[4.2, 0.9, 0, 1.9, 2.6, 4.0]], gear: [[0.4, -0.85, 0, 1.6, 0.6, 2.0], [-3.6, -0.75, 0, 0.6, 0.5, 0.5]],
+      avionics: [[-4.3, 0, 0, 1.5, 1.2, 1.2]], fuel: [[0.6, -0.05, 2.0, 1.9, 0.4, 2.6], [0.6, -0.05, -2.0, 1.9, 0.4, 2.6], [0, -0.3, 0, 1.6, 0.6, 1.0]] },
+    helicopter: { rotor: [[0, 1.12, 0, 7.9, 0.35, 7.9]], fuselage: [[-0.1, 0, 0, 3.2, 1.6, 1.6]], tail: [[3.2, 0.3, 0, 3.4, 1.4, 0.9]], gear: [[-0.2, -0.95, 0, 3.3, 0.4, 1.5]],
+      engines: [[0.4, 0.75, 0, 1.4, 0.45, 0.9]], avionics: [[-1.4, 0, 0, 0.8, 1.2, 1.4]], fuel: [[0.3, -0.45, 0, 1.4, 0.6, 1.3]] },
+    turbofan: { fan: [[-1.5, 0, 0, 0.6, 2.25, 2.25]], core: [[1.7, 0, 0, 2.8, 1.3, 1.3]], nacelle: [[-0.3, 0, 0, 4.4, 2.35, 2.35]], engines: [[0.3, 0, 0, 5.4, 2.3, 2.3]] },
+  };
+  const zoneGroup = new T.Group(), zoneFill = new T.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
+        zoneEdge = new T.LineBasicMaterial({ transparent: true, opacity: 0 });
+  let zonePulse = 0, zoneOn = false;
+  function setZone(name) {
+    zoneGroup.clear(); zoneOn = false;
+    const boxes = name && ZONES[kind] && ZONES[kind][name];
+    if (boxes) { for (const [x, y, z, sx, sy, sz] of boxes) { const g = new T.BoxGeometry(sx, sy, sz);
+        const m = new T.Mesh(g, zoneFill), e = new T.LineSegments(new T.EdgesGeometry(g), zoneEdge); m.position.set(x, y, z); e.position.set(x, y, z); zoneGroup.add(m, e); }
+      zoneOn = true; zonePulse = 0; }
+    if (model && zoneGroup.parent !== model) model.add(zoneGroup);
+    kick();
+  }
+
   // ---------- scene ----------
   const floor = (() => { const a = []; for (let i = -12; i <= 12; i++) for (let j = -12; j <= 12; j++) a.push(i * 0.55, 0, j * 0.55);
     const g = new T.BufferGeometry(); g.setAttribute("position", new T.Float32BufferAttribute(a, 3)); return new T.Points(g, M.dots); })();
@@ -116,12 +138,14 @@
     rotor = tailRotor = fan = null; stripe.rotation.set(0, 0, 0);
     model = { airliner, helicopter, turbofan }[k]();
     const s = model.userData.scale; model.scale.setScalar(s); model.position.y = 1.15;
-    floor.position.y = k === "helicopter" ? -0.2 : 0; scene.add(model); paintStripe(); kick();
+    floor.position.y = k === "helicopter" ? -0.2 : 0; scene.add(model); model.add(zoneGroup); setZone(null); paintStripe(); kick();
   }
   // ---------- camera, drag, resize ----------
-  let az = -0.75, el = 0.42, dragging = false, px = 0, py = 0, autoT = 0;
+  let az = -0.75, el = 0.42, dragging = false, px = 0, py = 0, autoT = 0, view = "3d", tAz = null, tEl = null;
+  function setView(v) { view = v; if (v === "top") { tAz = Math.round(az / (Math.PI * 2)) * Math.PI * 2 - Math.PI / 2; tEl = 1.5; }
+    else if (v === "side") { tAz = Math.round(az / (Math.PI * 2)) * Math.PI * 2 + Math.PI / 2; tEl = 0.06; } else { tAz = null; tEl = 0.42; } kick(); }
   cv.addEventListener("pointerdown", e => { dragging = true; px = e.clientX; py = e.clientY; cv.setPointerCapture(e.pointerId); });
-  cv.addEventListener("pointermove", e => { if (!dragging) return; az -= (e.clientX - px) * 0.008; el = Math.max(0.08, Math.min(1.2, el + (e.clientY - py) * 0.006)); px = e.clientX; py = e.clientY; autoT = 2.5; kick(); });
+  cv.addEventListener("pointermove", e => { if (!dragging) return; tAz = null; tEl = null; az -= (e.clientX - px) * 0.008; el = Math.max(0.08, Math.min(1.2, el + (e.clientY - py) * 0.006)); px = e.clientX; py = e.clientY; autoT = 2.5; kick(); });
   cv.addEventListener("pointerup", () => dragging = false);
   function size() { const r = host.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); cam.aspect = r.width / Math.max(1, r.height); cam.updateProjectionMatrix(); kick(); }
   new ResizeObserver(size).observe(host);
@@ -134,7 +158,11 @@
   function kick() { if (!raf && visible && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } }
   function frame(now) {
     raf = 0; const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    if (!reduce) { if (autoT > 0) autoT -= dt; else az += dt * 0.12; }
+    if (!reduce && view === "3d" && tAz === null) { if (autoT > 0) autoT -= dt; else az += dt * 0.12; }
+    let easing = false;
+    if (tAz !== null && !dragging) { az += (tAz - az) * Math.min(1, dt * 4); if (Math.abs(tAz - az) > 0.002) easing = true; }
+    if (tEl !== null && !dragging) { el += (tEl - el) * Math.min(1, dt * 4); if (Math.abs(tEl - el) > 0.002) easing = true; else if (view === "3d") tEl = null; }
+    if (zoneOn) { zonePulse += dt; const f = reduce ? 0.6 : 0.45 + 0.35 * Math.sin(zonePulse * 2.4); zoneFill.opacity = 0.10 * f + 0.04; zoneEdge.opacity = 0.55 + 0.4 * f; }
     if (rotor) rotor.rotation.y += dt * (reduce ? 0 : 1.6);
     if (tailRotor) tailRotor.rotation.x += dt * (reduce ? 0 : 6);
     if (fan) fan.rotation.x += dt * (reduce ? 0 : 0.9);
@@ -146,12 +174,12 @@
       const f = Math.sin(Math.min(1, scanT) * Math.PI); M.scan.opacity = 0.9 * f; M.scanFill.opacity = 0.07 * f;
       if (scanT >= 1) { scanT = -1; M.scan.opacity = 0; M.scanFill.opacity = 0; }
     }
-    const R = 15.5; cam.position.set(R * Math.cos(el) * Math.cos(az), R * Math.sin(el) + 1, R * Math.cos(el) * Math.sin(az));
+    const R = view === "top" ? 17 : 15.5; cam.position.set(R * Math.cos(el) * Math.cos(az), R * Math.sin(el) + 1, R * Math.cos(el) * Math.sin(az));
     cam.lookAt(0, 1.0, 0); renderer.render(scene, cam);
-    const moving = !reduce || scanT >= 0 || Math.abs(brokenTarget - broken) > 0.002 || dragging;
+    const moving = !reduce || scanT >= 0 || Math.abs(brokenTarget - broken) > 0.002 || dragging || easing || zoneOn;
     if (moving && visible && !document.hidden) raf = requestAnimationFrame(frame);
   }
-  api.setKind = setKind;
+  api.setKind = setKind; api.setZone = setZone; api.setView = setView; api.kind = () => kind;
   api.setState = s => { state = s; brokenTarget = s === "broken" ? 1 : 0; paintStripe(); kick(); };
   api.scan = () => { if (reduce) return; scanT = 0; kick(); };
   colors(); setKind("airliner"); size();

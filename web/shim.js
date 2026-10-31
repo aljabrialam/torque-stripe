@@ -40,6 +40,10 @@
     if (u === "/models") return json(E.models());
     if (u === "/ask") return json(E.ask(body.query, { model: body.model, serial: body.serial }));
     if (u === "/fleet") return json(E.fleet((body.models || []).filter(m => m.trim()).slice(0, 25)));
+    if (u === "/dockets") return json(Object.values(E.dockets).map(d => ({ docket: d.group, status: d.status, subject: d.substantive.sub,
+      make: d.substantive.mk, models: d.models, scope: d.substantive.sc, latest: d.latest.pub, first: d.versions[0].pub,
+      pt: d.substantive.pt, pst: d.substantive.pst, comments_due: d.status !== "WITHDRAWN" ? d.latest.due : null,
+      first_sentence: d.substantive.s[0] || "", versions: d.versions.length })));
     if (u.startsWith("/dockets/")) { const d = E.docket(decodeURIComponent(u.slice(9))); return d ? json(d) : json({ detail: "Not in this dataset" }, 404); }
     if (u === "/eval") return json(runEval());
     return real(url, opt);

@@ -19,6 +19,7 @@ b64 = lambda p, mime: f"data:{mime};base64," + base64.b64encode(p.read_bytes()).
 safe = lambda s: s.replace("</", "<\\/")
 html = html.replace('<script src="/static/motion.js"></script>', "<script>" + (S / "motion.js").read_text() + "</script>")
 html = html.replace('<script src="/static/stage.js"></script>', "<script>" + (S / "stage.js").read_text() + "</script>")
+html = html.replace('<script src="/static/insights.js"></script>', "<script>" + (S / "insights.js").read_text() + "</script>")
 html = html.replace('src="/static/logo.svg"', f'src="{b64(S / "logo.svg", "image/svg+xml")}"')
 html = html.replace('src="/static/creator.jpg"', f'src="{b64(S / "creator.jpg", "image/jpeg")}"')
 html = html.replace('href="/static/favicon.svg"', f'href="{b64(S / "favicon.svg", "image/svg+xml")}"')
@@ -45,6 +46,6 @@ art = re.sub(r"<!-- Vercel Web Analytics.*?</script>\s*<script defer src=\"/_ver
 art = re.sub(r'\s*<meta property="og:[^>]*>|\s*<meta name="twitter:[^>]*>|\s*<link rel="apple-touch-icon"[^>]*>', "", art)
 art = re.sub(r"</head>\s*<body>", "", art, count=1)
 art = re.sub(r"</body>\s*</html>\s*$", "", art.rstrip()) + "\n"
-assert "<html" not in art[:500] and "<body" not in art and "insights" not in art
+assert "<html" not in art[:500] and "<body" not in art and "_vercel/insights" not in art
 (out / "artifact.html").write_text(art)
 print(f"web/dist/artifact.html {len(art)/1e6:.2f} MB")

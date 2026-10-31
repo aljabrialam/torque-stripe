@@ -29,7 +29,8 @@ async def main():
         await pg.goto(BASE + "/")
         # tour opens on first visit
         await pg.wait_for_selector("#tour:not([hidden])", timeout=4000)
-        for _ in range(7):
+        for _ in range(12):
+            if await pg.locator("#tour").is_hidden(): break
             await pg.click("#tournext"); await pg.wait_for_timeout(250)
         if not await pg.locator("#tour").is_hidden(): fails.append("tour did not close")
         await pg.reload(); await pg.wait_for_timeout(700)
@@ -59,11 +60,25 @@ async def main():
         v = await pg.inner_text("#evalhead .metric >> nth=0")
         print("PASS" if "42/42" in v else "FAIL", "| eval", v.replace("\n", " "))
         if "42/42" not in v: fails.append("eval")
+        # insights: charts render, maker filter works, table toggle
+        await pg.click('.tab[data-view="insights"]'); await pg.wait_for_selector("#ch-makers .hbar", timeout=5000)
+        before = await pg.inner_text("#ins-count"); await pg.click("#ch-makers .hbar >> nth=0"); await pg.wait_for_timeout(300)
+        after = await pg.inner_text("#ins-count"); ok = before != after and "of 323" in after
+        print("PASS" if ok else "FAIL", "| insights filter", before, "->", after)
+        if not ok: fails.append("insights filter")
+        await pg.click("#if-table"); n = await pg.locator("#land-table tr").count(); print("PASS" if n > 5 else "FAIL", "| insights table rows", n)
+        if n <= 5: fails.append("insights table")
+        cov = await pg.inner_text("#ch-cov"); print("PASS" if "No model list" in cov else "FAIL", "| coverage chart")
+        await pg.click('.tab[data-view="ask"]')
         # mobile: no horizontal scroll
         m = await b.new_page(viewport={"width": 390, "height": 844}); await m.goto(BASE + "/?notour")
         await m.fill("#q", "Is FAA-2013-0541 still active?"); await m.click(".go"); await m.wait_for_timeout(600)
-        sw = await m.evaluate("document.documentElement.scrollWidth"); print("PASS" if sw <= 392 else "FAIL", "| mobile width", sw)
+        sw = await m.evaluate("document.documentElement.scrollWidth"); print("PASS" if sw <= 392 else "FAIL", "| mobile width ask", sw)
         if sw > 392: fails.append("mobile overflow")
+        for view in ("insights", "fleet", "eval"):
+            await m.click(f'.tab[data-view="{view}"]'); await m.wait_for_timeout(900)
+            sw = await m.evaluate("document.documentElement.scrollWidth"); print("PASS" if sw <= 392 else "FAIL", f"| mobile width {view}", sw)
+            if sw > 392: fails.append(f"mobile overflow {view}")
         await b.close()
     print("\nconsole/page errors:", errors or "none")
     print("RESULT:", "ALL PASS" if not fails and not errors else f"FAILED {fails} {errors}")

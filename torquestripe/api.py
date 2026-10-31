@@ -80,6 +80,9 @@ def dockets():
         raise HTTPException(400, "Only available with FAA NPRM data")
     return [{"docket": g, "status": d.status, "subject": d.substantive.subject, "make": d.substantive.make,
              "models": d.models, "scope": d.substantive.scope, "latest": str(d.latest.publish_date),
+             "first": str(d.versions[0].publish_date), "pt": d.substantive.product_type, "pst": d.substantive.product_subtype,
+             "comments_due": str(d.latest.comments_due) if d.latest.comments_due and d.status != "WITHDRAWN" else None,
+             "first_sentence": d.substantive.sentences[0] if d.substantive.sentences else "",
              "versions": len(d.versions)} for g, d in ENGINE.dockets.items()]
 
 

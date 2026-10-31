@@ -40,6 +40,7 @@
   --bad:#b2433a; --bad-bg:rgba(178,67,58,.10);
   --hl:rgba(217,98,43,.13);
   --wire:#3a3a37; --wire-dim:#b9b9b4; --stage:#ecece9;
+  --s1:#2a78d6; --s2:#1baf7a; --c1:#2a5f9e; --c2:#4f86c6; --c3:#9dbbe0; --c4:#c9c9c4;
   --radius:12px; --shadow:0 1px 0 rgba(20,20,18,.04);
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Segoe UI",Roboto,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
@@ -52,7 +53,8 @@
   --ok:#78b98c; --ok-bg:rgba(120,185,140,.11); --info:#8fb0d3; --info-bg:rgba(143,176,211,.11);
   --warn:#d6a85a; --warn-bg:rgba(214,168,90,.12); --mute:#a2a29d; --mute-bg:rgba(235,235,230,.06);
   --bad:#d97a70; --bad-bg:rgba(217,122,112,.12); --hl:rgba(232,118,63,.16);
-  --wire:#cfcfca; --wire-dim:#3b3c3f; --stage:#121315; --shadow:none; color-scheme:dark}}
+  --wire:#cfcfca; --wire-dim:#3b3c3f; --stage:#121315; --shadow:none; color-scheme:dark;
+  --s1:#3987e5; --s2:#199e70; --c1:#6ea6ea; --c2:#3f78bd; --c3:#2a4f7c; --c4:#3b3c3f}}
 :root[data-theme="dark"]{
   --bg:#0f1011; --surface:#151618; --surface-2:#1a1b1e; --sunken:#0b0c0d;
   --line:rgba(235,235,230,.07); --line-2:rgba(235,235,230,.13);
@@ -61,7 +63,8 @@
   --ok:#78b98c; --ok-bg:rgba(120,185,140,.11); --info:#8fb0d3; --info-bg:rgba(143,176,211,.11);
   --warn:#d6a85a; --warn-bg:rgba(214,168,90,.12); --mute:#a2a29d; --mute-bg:rgba(235,235,230,.06);
   --bad:#d97a70; --bad-bg:rgba(217,122,112,.12); --hl:rgba(232,118,63,.16);
-  --wire:#cfcfca; --wire-dim:#3b3c3f; --stage:#121315; --shadow:none; color-scheme:dark}
+  --wire:#cfcfca; --wire-dim:#3b3c3f; --stage:#121315; --shadow:none; color-scheme:dark;
+  --s1:#3987e5; --s2:#199e70; --c1:#6ea6ea; --c2:#3f78bd; --c3:#2a4f7c; --c4:#3b3c3f}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
@@ -224,9 +227,114 @@ th{font-weight:600;color:var(--text-2);font-size:12px}
 .tour-acts{display:flex;gap:8px;align-items:center}
 .kv dd,.ss,.cand .s,.sent p,.lede,.vhead,td{overflow-wrap:anywhere}
 kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--text-2)}
+.strip{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.sitem{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+.sitem b{font-weight:600} .sitem em{font-style:normal;color:var(--text);letter-spacing:0;text-transform:none;font-size:12.5px}
+.sitem .dot{width:7px;height:7px;border-radius:50%} .dot.ok{background:var(--ok)}
+.sitem.spark svg{width:120px;height:22px} .sitem.spark{flex:none}
+.askbar{padding:12px;margin-bottom:12px}
+.askbar .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}
+.askbar .chip{flex:none}
+.console{display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:12px;margin-bottom:12px;perspective:1600px}
+.console > *{min-width:0}
+.panel{padding:14px 14px 12px;display:flex;flex-direction:column;gap:10px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.readybar{height:6px;border-radius:3px;background:var(--sunken);overflow:hidden;display:flex;gap:2px}
+.readybar i{display:block;height:100%;width:0;background:var(--ok);border-radius:3px;transition:width .6s cubic-bezier(.2,.8,.2,1),background .3s}
+.checklist{list-style:none;margin:0;padding:0;display:grid;gap:2px;font-size:12.5px}
+.checklist li{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:8px;align-items:start;padding:6px 2px;border-bottom:1px solid var(--line)}
+.checklist li:last-child{border-bottom:0}
+.checklist li.idle{display:block;color:var(--text-3);border:0}
+.checklist .d{width:7px;height:7px;border-radius:50%;margin-top:6px;background:var(--text-3)}
+.checklist .t b{display:block;font-weight:600;color:var(--text);font-size:12.5px} .checklist .t span{color:var(--text-2);font-size:12px}
+.checklist .st{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.checklist .ok .d{background:var(--ok)} .checklist .ok .st{color:var(--ok)}
+.checklist .warn .d{background:var(--warn)} .checklist .warn .st{color:var(--warn)}
+.checklist .stop .d{background:var(--bad)} .checklist .stop .st{color:var(--bad)}
+.checklist .na .st{color:var(--text-3)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{border:1px solid var(--line);border-radius:9px;padding:9px 10px;background:var(--surface-2);min-width:0}
+.tile .l{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)}
+.tile .v{font-family:var(--mono);font-size:15px;margin-top:2px;overflow-wrap:anywhere}
+.tile .v.ok{color:var(--ok)} .tile .v.warn{color:var(--warn)} .tile .v.mute{color:var(--text-2)}
+.dial{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:10px;background:var(--surface-2)}
+.dial svg{width:96px;height:96px}
+.dial .big{font-family:var(--mono);font-size:22px} .dial .stats{display:block}
+.vtl{display:flex;align-items:center;gap:0;margin:4px 2px 0}
+.vtl .n{width:10px;height:10px;border-radius:50%;border:2px solid var(--text-3);background:var(--surface);flex:none}
+.vtl .n.cur{border-color:var(--accent);background:var(--accent)} .vtl .n.wd{border-color:var(--text-3);background:var(--text-3)}
+.vtl .ln{flex:1;height:2px;background:var(--line-2)}
+.vtl-l{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--text-3);margin-top:4px}
+.views{display:flex;gap:2px;background:color-mix(in srgb,var(--stage) 70%,transparent);border:1px solid var(--line-2);border-radius:8px;padding:2px;pointer-events:auto;height:fit-content}
+.vbtn{border:0;background:none;border-radius:6px;padding:3px 9px;font-size:11px;font-family:var(--mono);letter-spacing:.05em;color:var(--text-2);cursor:pointer}
+.vbtn[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.zone{display:grid;gap:1px;text-align:right;background:color-mix(in srgb,var(--stage) 80%,transparent);border-radius:8px;padding:6px 9px}
+.zone[hidden]{display:none} .zone b{font-size:15px;color:var(--accent);font-weight:600}
+.console .stage{min-height:440px}
+@media (max-width:1180px){.console{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.console .stage{grid-column:1 / -1;order:-1}}
+@media (max-width:760px){.console{grid-template-columns:minmax(0,1fr)}.console .stage{min-height:320px}.sitem.spark{display:none}}
+.ifbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.segs{display:flex;flex-wrap:wrap;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg{border:0;background:none;border-radius:7px;padding:5px 10px;font-size:12.5px;color:var(--text-2);cursor:pointer}
+.seg:hover{color:var(--text)} .seg[aria-pressed="true"]{background:var(--sunken);color:var(--text);font-weight:600}
+.land-card{overflow:hidden}
+.land-hd{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px 0}
+.land-hd h2{margin:2px 0 6px;font-size:18px;letter-spacing:-.01em}
+.land-ctl{display:flex;align-items:center;gap:8px}
+.land-ctl input{accent-color:var(--accent);width:110px}
+.legend2{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--text-2);align-items:center}
+.key{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.lab{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)}
+.key.s1,.track .s1{background:var(--s1)} .key.s2,.track .s2{background:var(--s2)}
+.key.c1,.stack .c1{background:var(--c1)} .key.c2,.stack .c2{background:var(--c2)} .key.c3,.stack .c3{background:var(--c3)} .key.c4,.stack .c4{background:var(--c4)}
+.land{position:relative;height:440px;margin-top:6px;background:var(--stage);border-block:1px solid var(--line)}
+.land canvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+.land .fallback{position:absolute;inset:0;display:grid;place-items:center;color:var(--text-3);font-size:13px}
+.land-hint{position:absolute;right:14px;bottom:10px;pointer-events:none}
+.land-tip{position:absolute;z-index:3;pointer-events:none;display:grid;gap:2px;min-width:170px;padding:9px 11px;border-radius:9px;background:var(--surface);border:1px solid var(--line-2);font-size:12.5px;color:var(--text-2);box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.land-tip[hidden]{display:none}
+.land-tip b{color:var(--text);font-size:13px} .land-tip em{font-style:normal;color:var(--text-3);font-size:11.5px;margin-top:3px}
+.land-table{overflow-x:auto;padding:8px 18px}
+.land-list{padding:12px 18px 16px}
+.land-list .lh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.land-list .cands{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.ins-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}
+.ins-grid > *{min-width:0}
+.ins-grid h3{margin:2px 0 6px;font-size:16px;letter-spacing:-.01em}
+.hbars{display:grid;gap:4px;margin-top:10px}
+.hbar{display:grid;grid-template-columns:118px minmax(0,1fr) 30px;gap:8px;align-items:center;border:0;background:none;padding:5px 6px;border-radius:7px;cursor:pointer;text-align:left}
+.hbar:hover,.hbar.sel{background:var(--sunken)}
+.hbar .hl{font-size:12.5px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar.sel .hl{color:var(--text);font-weight:600}
+.track{display:flex;gap:2px;height:12px}
+.track i{display:block;height:100%;border-radius:0 3px 3px 0;min-width:0}
+.track i.s1{border-radius:3px 0 0 3px}
+.hbar .hv{font-size:12px;text-align:right}
+.tlwrap{margin-top:12px}
+.tlplot{position:relative;height:128px;border-bottom:1px solid var(--line-2);margin:0 8px}
+.tlaxis{position:relative;height:18px;margin:0 8px}
+.tlwrap{display:flex;flex-direction:column-reverse}
+.tlaxis span{position:absolute;transform:translateX(-50%);font-size:11px;color:var(--text-3);font-family:var(--mono);top:4px;white-space:nowrap}
+.tdot{position:absolute;width:12px;height:12px;margin-left:-6px;border-radius:50%;border:2px solid var(--surface);background:var(--s1);padding:0;cursor:pointer}
+.tdot:hover,.tdot:focus-visible{background:var(--accent);z-index:2}
+.ttip{display:none;position:absolute;bottom:18px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:6px 9px;font-size:12px;color:var(--text-2);text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.ttip b{display:block;color:var(--text);font-weight:600} .ttip em{display:block;font-style:normal;color:var(--text-3);font-size:11px}
+.tdot:hover .ttip,.tdot:focus-visible .ttip{display:block}
+.stack{display:flex;gap:2px;height:16px;margin:12px 0 10px}
+.stack i{display:block;height:100%} .stack i:first-child{border-radius:4px 0 0 4px} .stack i:last-child{border-radius:0 4px 4px 0}
+.covl{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:5px;font-size:13px}
+.covl li{display:grid;grid-template-columns:auto 1fr auto 44px;gap:8px;align-items:center;color:var(--text-2)}
+.covl li .mono{text-align:right;color:var(--text)}
+@media (max-width:1180px){.ins-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){.ins-grid{grid-template-columns:1fr}.land{height:340px}.hbar{grid-template-columns:96px minmax(0,1fr) 28px}.land-ctl input{width:80px}}
 @media (max-width:1080px){.row1,.grid{grid-template-columns:1fr}.src{position:static;max-height:none}}
 @media (max-width:760px){
-  .app{grid-template-columns:1fr}
+  .app{grid-template-columns:minmax(0,1fr)}
+  .work,.side{min-width:0}
+  .side .tabs{overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}
+  .side .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none}
+  .engine{display:none}
   .side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px;border-right:0;border-bottom:1px solid var(--line);
     padding-right:max(16px,env(safe-area-inset-right,0px))}
   .side .tabs{flex-direction:row;order:3;width:100%}
@@ -247,6 +355,7 @@ kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line-2);border
     <nav class="tabs" role="tablist" aria-label="Views">
       <button class="tab" role="tab" aria-selected="true" data-view="ask"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="5.5"/><path d="M13 13l4 4" stroke-linecap="round"/></svg>Ask</button>
       <button class="tab" role="tab" aria-selected="false" data-view="fleet"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M10 2.5l1.6 5.1 5.4 1.4-5.4 1.4L10 17.5l-1.6-7.1L3 9l5.4-1.4z"/></svg>Fleet</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="insights"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M10 2.5l7 4v7l-7 4-7-4v-7z"/><path d="M3 6.5l7 4 7-4M10 10.5v7"/></svg>Insights</button>
       <button class="tab" role="tab" aria-selected="false" data-view="eval"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5h14M5.5 13V9M10 13V5M14.5 13v-2.5"/></svg>Evaluation</button>
     </nav>
     <div class="data">
@@ -274,27 +383,41 @@ kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line-2);border
 
     <main>
       <section class="view" id="view-ask">
-        <div class="row1">
+        <div class="strip" id="strip">
+          <span class="sitem"><i class="dot ok"></i><b>Rules engine</b><em>Nominal</em></span>
+          <span class="sitem"><b>Dataset</b><em class="mono" id="st-data">431 notices · 323 dockets · 1,302 pp</em></span>
+          <span class="sitem"><b>Open for comment</b><em class="mono" id="st-open">–</em></span>
+          <span class="sitem"><b>Unsafe answers</b><em class="mono">0 / 16 on test set</em></span>
+          <span class="sitem spark"><b>Notices per year</b><svg id="st-spark" viewBox="0 0 120 22" preserveAspectRatio="none" aria-hidden="true"></svg></span>
+        </div>
+        <div class="card askbar">
+          <form class="qrow" id="f">
+            <input class="q" id="q" placeholder="Ask about a proposed AD, e.g. main rotor servo-control torque inspection" autocomplete="off" aria-label="Question">
+            <button class="go" type="submit">Ask</button>
+          </form>
+          <div class="chips" id="chips"></div>
+        </div>
+        <div class="console">
+          <div class="card panel" id="pl">
+            <div class="ph"><span class="eyebrow">Rule checks</span><span class="mono stats" id="pl-pct"></span></div>
+            <div class="ready"><div class="readybar"><i id="pl-bar"></i></div></div>
+            <ul class="checklist" id="pl-list"><li class="idle">Ask a question to run the checks.</li></ul>
+          </div>
           <div class="card stage" id="stage" aria-label="3D inspection view of the selected aircraft or engine">
             <canvas id="stagecv"></canvas>
             <div class="ov tl">
-              <div><div class="eyebrow">Inspection view</div><div class="model" id="stmodel">No model set</div>
+              <div><div class="eyebrow">Inspection view<span id="stkind2"></span></div><div class="model" id="stmodel">No model set</div>
                 <div class="sum" id="stsum">Set an aircraft or engine model to see which proposals list it.</div></div>
-              <span class="stats" id="sthint">Drag to rotate</span>
+              <div class="views" role="group" aria-label="Camera"><button class="vbtn" data-v="3d" aria-pressed="true">3D</button><button class="vbtn" data-v="top">Top</button><button class="vbtn" data-v="side">Side</button></div>
             </div>
             <div class="ov bl">
               <div class="legend" id="stleg"><span class="sw" id="stsw"></span><span id="stlegt">Stripe not applied · ask a question</span></div>
-              <span class="stats mono" id="stkind"></span>
+              <div class="zone" id="stzone" hidden><span class="eyebrow">Affected area</span><b id="stzonen"></b><span class="stats" id="stzonew"></span></div>
             </div>
           </div>
-          <div class="card ask">
-            <h1>Ask about proposed ADs</h1>
-            <p class="sub">Answers quote the FAA notice word for word, with the docket, Federal Register page and sentence. Model coverage, revisions and withdrawals are checked by rules, not by the AI.</p>
-            <form class="qrow" id="f">
-              <input class="q" id="q" placeholder="e.g. main rotor servo-control torque inspection" autocomplete="off" aria-label="Question">
-              <button class="go" type="submit">Ask</button>
-            </form>
-            <div class="chips" id="chips"></div>
+          <div class="card panel" id="pr">
+            <div class="ph"><span class="eyebrow">Proposal</span><span class="mono stats" id="pr-docket"></span></div>
+            <div id="pr-body"><p class="stats idle">The docket behind the answer shows here: whether it binds, its comment deadline and its versions.</p></div>
           </div>
         </div>
         <div class="grid">
@@ -313,6 +436,35 @@ kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line-2);border
           </form>
         </div>
         <div class="fgrid" id="fleetout"></div>
+      </section>
+
+      <section class="view" id="view-insights" hidden>
+        <div class="ifbar">
+          <div class="segs" id="if-make" role="group" aria-label="Manufacturer"></div>
+          <div class="segs" id="if-status" role="group" aria-label="Status">
+            <button class="seg" data-s="all" aria-pressed="true">All</button><button class="seg" data-s="live">Still proposed</button><button class="seg" data-s="wd">Withdrawn</button>
+          </div>
+          <span class="stats mono" id="ins-count"></span>
+        </div>
+        <div class="card land-card">
+          <div class="land-hd">
+            <div><div class="eyebrow">Proposal landscape</div><h2>Proposals by year and aircraft type</h2>
+              <div class="legend2"><span><i class="key s1"></i>Still proposed</span><span><i class="key s2"></i>Withdrawn</span><span class="stats">Height = number of dockets, by year first proposed</span></div></div>
+            <div class="land-ctl"><label class="stats" for="land-zoom">Zoom</label><input type="range" id="land-zoom" min="4" max="26" value="16"><button class="btn" id="if-table">Show as table</button></div>
+          </div>
+          <div class="land" id="land"><canvas id="landcv" aria-label="3D bar chart of proposals by year and aircraft type. Drag to rotate, click a bar to list its dockets."></canvas>
+            <div class="land-tip" id="land-tip" hidden></div><span class="stats land-hint">Drag to rotate · click a bar</span></div>
+          <div class="land-table" id="land-table" hidden></div>
+          <div class="land-list" id="land-list"></div>
+        </div>
+        <div class="ins-grid">
+          <div class="card pad"><div class="eyebrow">Comment periods</div><h3><span class="mono" id="ch-comments-n">0</span> open for comment now</h3>
+            <p class="stats">Each dot is a docket, placed on its comment deadline. Operators can still respond to these.</p><div id="ch-comments"></div></div>
+          <div class="card pad"><div class="eyebrow">Manufacturers</div><h3>Most proposals</h3>
+            <div class="legend2"><span><i class="key s1"></i>Still proposed</span><span><i class="key s2"></i>Withdrawn</span></div><div id="ch-makers" class="hbars"></div>
+            <p class="stats">Click a maker to filter every chart.</p></div>
+          <div class="card pad"><div class="eyebrow">What the rules can check</div><h3>Model coverage in the notices</h3><div id="ch-cov"></div></div>
+        </div>
       </section>
 
       <section class="view" id="view-eval" hidden>
@@ -342,6 +494,7 @@ kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line-2);border
 </div>
 
 <script src="/static/stage.js"></script>
+<script src="/static/insights.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -401,15 +554,81 @@ async function stageModel() {
   const m = $("#model").value.trim();
   if (!window.Stage) return;
   const k = kindFor(m); Stage.setKind(k);
-  $("#stkind").textContent = m ? KIND_LABEL[k] : "";
-  if (!m) { $("#stmodel").textContent = "No model set"; $("#stsum").textContent = "Set an aircraft or engine model to see which proposals list it."; return; }
-  $("#stmodel").textContent = m.toUpperCase();
+  if (!m) { $("#stkind2").textContent = ""; $("#stmodel").textContent = "No model set"; $("#stsum").textContent = "Set an aircraft or engine model to see which proposals list it."; return; }
+  $("#stmodel").textContent = m.toUpperCase(); $("#stkind2").textContent = " · " + KIND_LABEL[k];
   try {
     const [f] = await (await fetch("/fleet", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ models: [m] }) })).json();
     $("#stsum").textContent = !f.known ? "No proposal in this dataset lists this model."
       : f.dockets.length ? `${f.dockets.length} proposal${f.dockets.length > 1 ? "s list" : " lists"} this model · ${f.open_comments} open for comment` + (f.counts.WITHDRAWN ? ` · ${f.counts.WITHDRAWN} withdrawn` : "")
       : "Listed only as part of a family. Give the exact variant.";
   } catch (e) { $("#stsum").textContent = ""; }
+}
+// ---------- console panels ----------
+function renderPanels(r) {
+  const f = r.fields || {}, app = r.applicability || {}, rev = r.revision || {}, rows = [];
+  const add = (cls, t, sub, st) => rows.push(`<li class="${cls}"><span class="d"></span><span class="t"><b>${esc(t)}</b><span>${esc(sub)}</span></span><span class="st">${st}</span></li>`);
+  if (r.status === "REFUSED") add("stop", "Answer refused", (r.refusal || {}).message || "", "Stop");
+  if (r.ad) add("ok", "Docket identified", r.ad, "Nominal");
+  else if (r.candidates?.length) add(r.status === "ANSWERED" ? "ok" : "warn", "Dockets matched", `${r.candidates.length} proposals`, r.status === "ANSWERED" ? "Nominal" : "Pick one");
+  else if (r.status !== "REFUSED") add("warn", "Docket", "Not identified yet", "Input");
+  if (rev.versions?.length) add("ok", "Latest version used", `${rev.versions.length} version${rev.versions.length > 1 ? "s" : ""}, newest ${rev.versions[rev.versions.length - 1].date}`, "Nominal");
+  if (f.regulatory_status) add(f.regulatory_status === "WITHDRAWN" ? "warn" : "ok", "Regulatory status", f.regulatory_status === "WITHDRAWN" ? "Withdrawn, imposes nothing" : "Proposed, not binding", f.regulatory_status === "WITHDRAWN" ? "Withdrawn" : "Proposed");
+  const V = { MODEL_LISTED_ALL_UNITS: ["ok", "Model listed", "All units covered", "Nominal"], MODEL_LISTED_UNITS_UNCONFIRMED: ["warn", "Model listed", "Only certain units; criteria in full text", "Warn"],
+    NOT_LISTED: ["stop", "Model not listed", "This proposal does not cover it", "Stop"], NEEDS_VARIANT: ["warn", "Model family", "Give the exact variant", "Input"],
+    UNDETERMINED: ["warn", "Model list", "Not machine-readable", "Warn"], NO_MODEL_GIVEN: ["na", "Model", "No model set", "Skipped"] };
+  if (app.verdict && V[app.verdict]) add(...V[app.verdict]);
+  if (r.claims?.length && r.status !== "REFUSED") add("ok", "Evidence quoted", `${r.claims.length} sentence${r.claims.length > 1 ? "s" : ""}, word for word`, "Nominal");
+  $("#pl-list").innerHTML = rows.join("") || `<li class="idle">Ask a question to run the checks.</li>`;
+  const scored = rows.filter(x => !x.includes('class="na"')), okN = rows.filter(x => x.startsWith('<li class="ok"')).length;
+  const pct = scored.length ? Math.round(okN / scored.length * 100) : 0;
+  $("#pl-pct").textContent = `${pct}% ready`; $("#pl-bar").style.width = pct + "%";
+  $("#pl-bar").style.background = r.status === "REFUSED" ? "var(--bad)" : pct < 100 ? "var(--warn)" : "var(--ok)";
+  // proposal panel
+  $("#pr-docket").textContent = r.ad || "";
+  if (!r.ad) { $("#pr-body").innerHTML = r.candidates?.length
+      ? `<div class="tiles"><div class="tile"><div class="l">Proposals</div><div class="v">${r.candidates.length}</div></div><div class="tile"><div class="l">Withdrawn</div><div class="v mute">${r.candidates.filter(c => c.status === "WITHDRAWN").length}</div></div></div><p class="stats">Pick a docket in the answer to see its deadline and versions.</p>`
+      : `<p class="stats idle">No docket behind this answer.</p>`; return; }
+  const due = (f.comments_due || "").slice(0, 10), open = /open/.test(f.comments_due || "");
+  const days = due ? Math.round((Date.parse(due) - Date.parse(new Date().toISOString().slice(0, 10))) / 864e5) : null;
+  const frac = days === null ? 0 : Math.max(0, Math.min(1, days / 60)), C = 2 * Math.PI * 38;
+  const dial = `<div class="dial"><svg viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="38" fill="none" stroke="var(--sunken)" stroke-width="7"/>
+      <circle cx="48" cy="48" r="38" fill="none" stroke="${open ? "var(--accent)" : "var(--text-3)"}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C * frac} ${C}" transform="rotate(-90 48 48)"/>
+      ${[0, 1, 2, 3].map(i => `<line x1="48" y1="4" x2="48" y2="9" stroke="var(--text-3)" stroke-width="1.5" transform="rotate(${i * 90} 48 48)"/>`).join("")}</svg>
+    <div><div class="lab">Comment period</div><div class="big">${f.regulatory_status === "WITHDRAWN" ? "Closed" : !due ? "–" : open ? days + " d" : "Closed"}</div>
+      <span class="stats">${f.regulatory_status === "WITHDRAWN" ? "Proposal withdrawn" : due ? (open ? "left · due " : "ended ") + esc(due) : "No deadline in the notice"}</span></div></div>`;
+  const vs = rev.versions || [];
+  const vtl = vs.length ? `<div><div class="lab">Versions</div><div class="vtl">${vs.map((v, i) => `${i ? '<span class="ln"></span>' : ""}<span class="n ${v.action === "WITHDRAWN" ? "wd" : i === vs.length - 1 ? "cur" : ""}" title="${esc(v.action)} ${esc(v.date)}"></span>`).join("")}</div>
+      <div class="vtl-l"><span>${esc(vs[0].date)}</span>${vs.length > 1 ? `<span>${esc(vs[vs.length - 1].date)}</span>` : ""}</div></div>` : "";
+  $("#pr-body").innerHTML = `<div class="tiles"><div class="tile"><div class="l">Binding</div><div class="v ${f.regulatory_status === "WITHDRAWN" ? "mute" : "warn"}">No</div></div>
+      <div class="tile"><div class="l">Status</div><div class="v">${f.regulatory_status === "WITHDRAWN" ? "Withdrawn" : f.regulatory_status === "REVISED_PROPOSAL" ? "Revised" : "Proposed"}</div></div>
+      <div class="tile"><div class="l">Units</div><div class="v ${f.scope_wording === "ALL" ? "ok" : "warn"}">${f.scope_wording === "ALL" ? "All" : f.scope_wording === "CERTAIN" ? "Certain" : "Unclear"}</div></div>
+      <div class="tile"><div class="l">Supersedes</div><div class="v mute">${(f.supersedes_ads || []).length ? esc(f.supersedes_ads[0]) + (f.supersedes_ads.length > 1 ? " +" + (f.supersedes_ads.length - 1) : "") : "None"}</div></div></div>
+    ${dial}${vtl}`;
+}
+
+// ---------- affected area: keyword rules over the quoted notice text (display only) ----------
+const ZONE_RULES = [
+  ["gear", "Landing gear", /\b(landing gear|MLG|NLG|nose gear|main gear|brake\w*|wheel\w*|tire\w*|skid\w*|shock strut)\b/i],
+  ["rotor", "Rotor system", /\b(main rotor|tail rotor|rotor blade\w*|servo-control\w*|swashplate|rotor hub|MR |TR )\b/i],
+  ["fan", "Fan section", /\b(fan blade\w*|fan disk\w*|fan hub|fan case)\b/i],
+  ["core", "Engine core", /\b(compressor|turbine|HPT|HPC|LPT|combustor|disk\w*|hub\w*|air seal\w*)\b/i],
+  ["engines", "Engines", /\b(engine\w*|nacelle\w*|thrust reverser\w*|pylon\w*|strut\w*|APU)\b/i],
+  ["fuel", "Fuel system", /\b(fuel|tank\w*|boost pump\w*)\b/i],
+  ["wings", "Wings", /\b(wing\w*|spar\w*|flap\w*|slat\w*|aileron\w*|spoiler\w*|winglet\w*)\b/i],
+  ["tail", "Tail", /\b(stabilizer\w*|elevator\w*|rudder\w*|vertical fin|empennage|tail boom|tailcone)\b/i],
+  ["avionics", "Avionics bay", /\b(avionics|radio\w*|altimeter\w*|display\w*|VHF|software|flight control computer|autopilot|antenna\w*|wiring|electrical|panel\w*)\b/i],
+  ["fuselage", "Fuselage", /\b(fuselage|skin|lap splice|frame\w*|stringer\w*|door\w*|bulkhead\w*|floor beam\w*|cabin|seat\w*|window\w*|lavator\w*|galley)\b/i],
+];
+const ZONE_FALLBACK = { turbofan: { gear: null, rotor: null, fuel: "core", wings: null, tail: null, avionics: "core", fuselage: "nacelle", engines: "nacelle" },
+  helicopter: { fan: "engines", core: "engines", wings: "rotor" }, airliner: { rotor: null, fan: "engines", core: "engines" } };
+function zoneFor(r) {
+  const text = (r.claims || []).map(c => c.text).join(" ");
+  if (!text || r.status === "REFUSED") return null;
+  for (const [z, label, rx] of ZONE_RULES) { const m = rx.exec(text); if (m) {
+    const kind = window.Stage?.kind?.() || "airliner", fb = ZONE_FALLBACK[kind] || {};
+    const zz = z in fb ? fb[z] : z; if (!zz) continue;
+    return { zone: zz, label, word: m[0].trim() }; } }
+  return null;
 }
 function stageVerdict(r) {
   if (!window.Stage) return;
@@ -420,6 +639,8 @@ function stageVerdict(r) {
   else if (f.regulatory_status === "WITHDRAWN") { st = "applied"; txt = "Stripe intact · verified withdrawn, imposes nothing"; }
   else if (v === "MODEL_LISTED_ALL_UNITS" || (r.candidates?.length && r.status === "ANSWERED")) { st = "applied"; txt = "Stripe intact · rules confirm the model is listed"; }
   Stage.setState(st);
+  const zn = zoneFor(r); Stage.setZone(zn && zn.zone);
+  $("#stzone").hidden = !zn; if (zn) { $("#stzonen").textContent = zn.label; $("#stzonew").textContent = `matched “${zn.word}” in the quoted notice`; }
   $("#stsw").className = "sw" + (st === "applied" || st === "general" ? " on" : st === "broken" ? " broken" : "");
   $("#stlegt").textContent = txt;
 }
@@ -443,6 +664,7 @@ async function ask() {
     last = await res.json();
     render(last);
     stageVerdict(last);
+    renderPanels(last);
     window.va && va("event", { name: "Ask", data: { status: last.status, verdict: last.applicability?.verdict || "none" } });
   } catch (e) {
     $("#answer").innerHTML = `<div class="card ans"><div class="headline">Couldn't reach the server</div><p class="lede">${esc(e.message)}</p></div>`;
@@ -568,6 +790,7 @@ document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t));
   document.querySelectorAll(".view").forEach(v => v.hidden = v.id !== `view-${t.dataset.view}`);
   $("#crumb").innerHTML = `<b>${t.textContent.trim()}</b> · FAA proposed ADs`;
+  if (t.dataset.view === "insights" && window.Insights) Insights.show();
   if (t.dataset.view === "eval" && !$("#evalhead").innerHTML) runEval();
 });
 $("#runeval").onclick = runEval;
@@ -629,9 +852,12 @@ const TOUR = [
   { sel: "#model", title: "Set the aircraft or engine", text: "Answers are checked against this model by fixed rules: exact model, FAA series (A330-200 covers A330-243), or 'give the exact variant'." },
   { sel: "#f", title: "Ask in plain words", text: "Ask about a docket, an AD it supersedes, or a topic. Press / to jump here from anywhere." },
   { sel: "#chips", title: "Try the demo questions", text: "Each one shows a different behaviour: answered, withdrawn, needs variant, not applicable, refused.", run: 1 },
+  { sel: "#stage", title: "See what the answer touches", text: "The wireframe matches the model type. The orange zone is the affected area, picked from words in the quoted notice. The ring is the torque stripe: intact when the rules confirm coverage, broken when the system stops. Try 3D, Top and Side." },
+  { sel: "#pl", title: "Every rule, checked in the open", text: "Each check shows Nominal, Warn or Stop, like a pre-flight list. The bar is the share of checks that passed." },
   { sel: "#answer .ans", title: "Status first, then evidence", text: "Every sentence is quoted from the FAA notice with its date and sentence number. Proposals are labelled not binding. 'Why this answer' lists every rule that fired; no AI is involved in those decisions." },
   { sel: "#src", title: "Check the source yourself", text: "The exact sentence is highlighted, with the docket's full history and a link to the Federal Register page. Use [ and ] to step through citations." },
   { sel: '.tab[data-view="fleet"]', title: "Fleet check", text: "Enter every model you maintain to see which proposals cover each one and which comment periods are still open." },
+  { sel: '.tab[data-view="insights"]', title: "Explore all 323 dockets", text: "A 3D landscape of every proposal by year and aircraft type, open comment deadlines, top manufacturers and how much the rules can check. Click any mark to filter and drill down." },
   { sel: '.tab[data-view="eval"]', title: "See where it fails", text: "Runs our 42-question test set live against a plain-search baseline, and lists the system's known failures with reasons." },
 ];
 let tourI = 0;
@@ -657,7 +883,7 @@ function placeTour() {
 }
 async function tourGo(i) {
   tourI = i;
-  if (TOUR[i].sel.startsWith("#answer") && !document.querySelector("#answer .ans")) {
+  if (/^#(answer|pl|stage)/.test(TOUR[i].sel) && !document.querySelector("#answer .ans")) {
     $("#model").value = "AS350B3"; $("#q").value = "main rotor servo-control torque inspection"; await ask();
   }
   placeTour();
@@ -675,6 +901,24 @@ $("#tourbtn").onclick = startTour;
 addEventListener("resize", () => { if (!$("#tour").hidden) placeTour(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#tour").hidden) endTour(); });
 
+window.tsAsk = ask;
+document.querySelectorAll(".vbtn").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".vbtn").forEach(x => x.setAttribute("aria-pressed", String(x === b))); window.Stage && Stage.setView(b.dataset.v); });
+async function strip() {
+  try {
+    const ds = await (await fetch("/dockets")).json(), today = new Date().toISOString().slice(0, 10);
+    $("#st-open").textContent = ds.filter(d => d.status !== "WITHDRAWN" && d.comments_due && d.comments_due >= today).length + " dockets";
+    const by = {}; ds.forEach(d => { const y = +(d.first || d.latest || "0").slice(0, 4); if (y) by[y] = (by[y] || 0) + 1; });
+    const ys = Object.keys(by).map(Number), y0 = Math.min(...ys), y1 = Math.max(...ys), mx = Math.max(...Object.values(by)), n = y1 - y0 + 1, bw = 120 / n;
+    $("#st-spark").innerHTML = Array.from({ length: n }, (_, i) => { const v = by[y0 + i] || 0, h = v ? Math.max(2, v / mx * 20) : 0;
+      return `<rect x="${i * bw + 0.5}" y="${22 - h}" width="${Math.max(1, bw - 1.5)}" height="${h}" rx="1" fill="${i === n - 1 ? "var(--accent)" : "var(--text-3)"}"><title>${y0 + i}: ${v}</title></rect>`; }).join("");
+    $("#st-spark").setAttribute("aria-label", `Notices per year, ${y0} to ${y1}`);
+  } catch (e) {}
+}
+strip();
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches && window.Motion)
+  try { Motion.animate("#view-ask .strip, #view-ask .askbar, .console > *, #view-ask .grid", { opacity: [0, 1], transform: ["perspective(1200px) translateY(18px) rotateX(8deg)", "perspective(1200px) translateY(0) rotateX(0)"] },
+    { duration: .7, delay: Motion.stagger(.07), easing: [.2, .8, .2, 1] }); } catch (e) {}
 init();
 let seen = false; try { seen = localStorage.getItem("ts_tour_done") === "1"; } catch (e) {}
 if (!seen && !/[?&]notour\b/.test(location.search)) setTimeout(startTour, 500);
