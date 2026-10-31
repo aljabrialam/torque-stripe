@@ -14,6 +14,7 @@ export interface Version { date: string; action: string; fr: string; pages: stri
 
 export interface AskResult {
   status: Status
+  query?: string
   ad: string | null
   config?: { model?: string | null; serial?: string | null }
   revision: { docket?: string; status?: RegStatus; versions?: Version[]; supersedes_ads?: string[]; withdrawn_by?: string | null }

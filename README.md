@@ -28,6 +28,8 @@ A torque stripe is the paint mark a technician puts across a fastener once it ha
 | **Core rule** | Every answer says the proposal is **not binding**. Withdrawn proposals **impose nothing**. If the data can't support an answer, it refuses and says why |
 | **Results** | 42/42 correct, 0/16 unsafe answers, 6/6 withdrawals flagged. A plain search baseline scores 5/42 with 16/16 unsafe. See [Results](#results) |
 | **Stack** | React 19 + Vite + TypeScript + Tailwind + three.js (app), Python + FastAPI + SQLite FTS5 (reference engine and API), Playwright (tests) |
+| **Signed report** | Every answer exports as a PDF report: verdict, rule checks, quoted evidence with citations, rule trace, limitations, an engineer sign-off block and a SHA-256 fingerprint. [Sample report](docs/sample-report.pdf) |
+| **Path to production** | Today it is a static prototype that runs the rules in the browser. In production: SSO with role-based access, a FastAPI service on managed containers, a daily Federal Register (and EASA) sync, Claude via Anthropic or Amazon Bedrock behind the verifier, signed reports in an append-only audit store, and the gold set as a release gate. See [Production architecture](#production-architecture) |
 
 ## The problem
 
@@ -187,6 +189,7 @@ stateDiagram-v2
 
 - **Ask:** a rendered 3D aircraft whose shape comes from the real model designation (23 parametric archetypes: narrow-body, wide-body, double-deck, T-tail, turboprop, helicopters by rotor type, turbofans with a cutaway nacelle, and more). The area the quoted notice talks about (rotor, gear, engines, avionics...) is painted on the skin as banded contours, like a CAE field plot. The contours are full strength when the rules confirm coverage, capped when units are unconfirmed, and off (hatched in the legend) when the answer is refused or not applicable. Switch between Render and Wire, and between 3D, Top and Side views. The shapes are generic, not CAD, not to scale.
 - **Rule checks** lists every deterministic check with its pass or stop state. **Proposal** shows binding status, revision, units scope, superseded ADs, the comment-period dial and the version timeline. **Comment radar** plots open proposals for the model by days left.
+- **Export PDF:** turns the current answer into a report the engineer can file and sign. It is built only from the structured result (never from chat text), and the SHA-256 fingerprint in the footer ties a printed copy to the exact result. [Sample](docs/sample-report.pdf).
 - **Fleet:** paste the models you maintain to see the live proposals per model, with withdrawn ones hidden.
 - **Insights:** proposals by year and category, makers, upcoming comment deadlines and model-list coverage.
 - **Evaluation:** runs the gold set live in your browser against the baseline, and shows the known failures.
@@ -279,6 +282,46 @@ node scripts/film.mjs demo 24       # ~3 min captioned demo -> film/out/torque-s
 - 26 of 323 dockets have no machine-readable model list.
 - Intent detection is keyword-based. Unfamiliar phrasing ("pulled back") is refused rather than guessed.
 - For supersede notices, the summary's model list can describe the old AD's wider applicability.
+
+## Production architecture
+
+What exists today is a prototype: a static React app that runs the deterministic engine in the browser over a snapshot of the dataset, plus a FastAPI service that adds optional Claude rewording. This is how it becomes a system a CAMO or MRO can rely on. The rule that decides the design stays the same: **rules decide, the model only words, the engineer signs.**
+
+```mermaid
+flowchart LR
+  subgraph Users
+    E([B1 engineer]) & P([CAMO planner]) & A([Admin / auditor])
+  end
+  E & P & A --> IDP["SSO<br/><small>Entra ID / Okta · OIDC/SAML · MFA</small>"]
+  IDP --> WEB["React app<br/><small>CDN · CSP · PWA for hangar tablets</small>"]
+  WEB --> GW["API gateway<br/><small>JWT check · rate limits · WAF</small>"]
+  GW --> API["FastAPI service<br/><small>rule engine · containers, autoscaled</small>"]
+  API --> DB[("Postgres<br/><small>notices, versions, fleets, tenants</small>")]
+  API --> IDX[("Search index<br/><small>Postgres FTS / OpenSearch</small>")]
+  API --> LLM["Claude<br/><small>Anthropic API or Amazon Bedrock<br/>rewording only, then verifier</small>"]
+  API --> AUD[("Audit store<br/><small>append-only, signed reports</small>")]
+  ING["Ingestion jobs<br/><small>Federal Register API daily · EASA AD feed<br/>full-text PDF parsing for serial ranges</small>"] --> DB & IDX
+  CI["CI release gate<br/><small>gold set must stay 42/42, 0 unsafe</small>"] -.-> API
+
+  style API fill:#e8f1fb,stroke:#0085ca,color:#0b1f45
+  style LLM fill:#f3f6fb,stroke:#6d7d98,color:#0b1f45
+  style AUD fill:#e8f1fb,stroke:#00205b,color:#0b1f45
+```
+
+| Area | Production design |
+|---|---|
+| **Identity and access** | Single sign-on through the operator's identity provider (Microsoft Entra ID, Okta or any OIDC/SAML IdP) with MFA. Roles: *engineer* (ask, export, sign), *planner* (manage fleets, see all reports), *admin/auditor* (read-only audit trail, user management). Every API call carries a short-lived JWT checked at the gateway; sessions expire, and access is scoped per operator. |
+| **Multi-tenancy** | Each operator (tenant) has its own fleets, tail numbers, reports and audit log, isolated by tenant ID with row-level security in Postgres. The regulatory corpus is shared and read-only. |
+| **Data ingestion** | Scheduled jobs pull new and revised notices from the Federal Register API every day (and the EASA AD feed for European operators), store each version immutably, rebuild the docket version chains, and re-index. The full-text PDFs are parsed for serial-number and configuration ranges, which lets the system confirm "certain units" applicability instead of declining it. Any parser change runs against the gold set before release. |
+| **Rule engine and API** | The Python engine (`torquestripe/`) runs as a stateless FastAPI service in containers (AWS ECS/Fargate, Azure Container Apps or Cloud Run), autoscaled, behind an API gateway with rate limits and a WAF. The React app calls it through the existing `TorqueApi` contract by setting `VITE_API_URL`; no UI change is needed. |
+| **Claude** | Called only to reword evidence the rules already selected, never to decide status, applicability or refusals. Use the Anthropic API directly, or Claude on Amazon Bedrock when the operator needs data to stay in its cloud account and region. Every sentence still passes the deterministic verifier; on any failure the verbatim source is shown. Prompts and outputs are logged without personal data, and spend is capped per tenant. |
+| **Secrets** | API keys and database credentials live in a secrets manager (AWS Secrets Manager / Azure Key Vault), injected at runtime. They are never in the front end, the repo or the logs. |
+| **Signed reports and audit** | Each exported report is stored with its SHA-256 fingerprint, the dataset version, the user, and the engineer's sign-off decision in an append-only audit store (for example S3 Object Lock or an immutable ledger table). An auditor can verify any printed report by its fingerprint and replay the exact answer. Records follow the operator's retention policy for continuing-airworthiness records. |
+| **Quality gates** | CI runs the gold set (42/42 correct, 0 unsafe), Python vs JS engine parity, and the Playwright UI tests on every change; a regression blocks the release. New failure modes found in use become new gold questions. |
+| **Observability** | Structured logs, traces and metrics (latency, refusal rate, verifier rejection rate, ingestion lag), with alerts when the Federal Register sync falls behind or refusal patterns change suddenly. |
+| **Hangar use** | The app installs as a PWA on tablets. The last synced corpus is cached for read-only offline lookups, clearly labelled with its sync date. |
+
+**Rollout:** pilot with one operator's planning team in shadow mode (Torque Stripe answers next to the current manual process), compare against their own decisions, then widen to line engineers once the miss rate is zero on their fleet.
 
 ## Further reading
 

@@ -5,6 +5,7 @@ import { REG, daysUntil, headline, ruleChecks, stripeState } from '../lib/presen
 import type { StageApi } from '../components/Stage'
 import { IconChecks, IconCube, IconDoc, IconLink, IconQuote } from '../components/Icons'
 import { Radar } from '../components/Radar'
+import { exportReport } from '../lib/report'
 
 interface Props {
   model: string; setModel(m: string): void; query: string; setQuery(q: string): void
@@ -61,7 +62,7 @@ export function AskView(p: Props) {
       </section>
 
       <section className="results" id="answer">
-        {r ? <Answer r={r} ask={p.ask} openDocket={p.openDocket} /> : (
+        {r ? <Answer r={r} ask={p.ask} openDocket={p.openDocket} health={health} fallbackQuery={p.query} /> : (
           <div className="glass strong card empty">
             <h2>Ask about FAA proposed airworthiness directives</h2>
             <p>Set your aircraft model, then ask a question or pick a demo above. Every answer is quoted from the Federal Register notice and checked by rules. If the data can't support an answer, it says so.</p>
@@ -172,7 +173,7 @@ function StripeLegend({ r, zone, stage }: { r: AskResult | null; zone: Props['zo
   )
 }
 
-function Answer({ r, ask, openDocket }: { r: AskResult; ask(q?: string, m?: string): void; openDocket(d: string): void }) {
+function Answer({ r, ask, openDocket, health, fallbackQuery }: { r: AskResult; ask(q?: string, m?: string): void; openDocket(d: string): void; health: Health | null; fallbackQuery: string }) {
   const h = headline(r), f = r.fields || {}, app = r.applicability || {}, rev = r.revision || {}
   const reg = f.regulatory_status ? REG[f.regulatory_status] : null
   const claims = Object.fromEntries((r.claims || []).map((c, i) => [c.id, { c, n: i + 1 }]))
@@ -191,6 +192,8 @@ function Answer({ r, ask, openDocket }: { r: AskResult; ask(q?: string, m?: stri
           {r.ad && <span className="pill mono">{r.ad}</span>}
           {(rev.versions?.length ?? 0) > 1 && <span className="pill">v{rev.versions!.length} of {rev.versions!.length}</span>}
           {(f.supersedes_ads || []).slice(0, 3).map(a => <span key={a} className="pill mono">Supersedes AD {a}</span>)}
+          <span style={{ flex: 1 }} />
+          <button className="glass-btn" onClick={() => exportReport(r, r.query || fallbackQuery, r.config?.model || '', health)} title="Opens the print dialog; choose Save as PDF">Export PDF</button>
         </div>
         <h2 className="headline">{h.head}</h2>
         {h.lede && <p className="lede">{h.lede}</p>}
