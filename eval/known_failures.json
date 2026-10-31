@@ -1,0 +1,34 @@
+[
+ {
+  "q": "Which proposals were pulled back for the 787-9?",
+  "cfg": {},
+  "why": "'Pulled back' isn't in the intent rules, so the words are treated as search terms that match nothing.",
+  "impact": "Safe: it refuses instead of guessing. The user has to rephrase ('withdrawn').",
+  "fix": "Add a small synonym table for status words (pulled back, cancelled, dropped -> withdrawn)."
+ },
+ {
+  "q": "When do I have to finish the inspection?",
+  "cfg": {
+   "model": "AS350B3"
+  },
+  "why": "Three proposals list the AS350B3. The vague question is routed to the top-ranked one (FAA-2026-11814) before the compliance-time rule refuses.",
+  "impact": "The refusal is right, but it names one docket when the user didn't pick one.",
+  "fix": "When a question names no docket and several match the model, ask which one before applying intent rules."
+ },
+ {
+  "q": "What does FAA-2026-11813 propose?",
+  "cfg": {
+   "model": "A330-243"
+  },
+  "why": "For 'supersede' notices the first sentence describes the OLD AD's applicability; this notice also says it 'reduces the applicability'. Here the Model column (A330-941 only) saves us, but for summary-parsed rows the model list can be wider than the new proposal.",
+  "impact": "Could report a model as listed when the new proposal dropped it. The source sentence is always shown next to the verdict.",
+  "fix": "Flag 'reduces the applicability' notices as UNDETERMINED unless the Model column is filled."
+ },
+ {
+  "q": "Is there a proposal about AmSafe seatbelts for my AS350B3?",
+  "cfg": {},
+  "why": "26 of 323 dockets (e.g. AmSafe seatbelts 'installed in various airplanes and rotorcraft') have no machine-readable model list. Found during testing: the model filter used to drop them, so this question returned 'no match'. Now they stay in, marked applicability unknown.",
+  "impact": "The proposal is now found (it was withdrawn in 2019), but for model-less proposals the system can't say whether they cover the user's aircraft. It says 'applicability unknown' instead of guessing.",
+  "fix": "Parse part numbers / appliance names as a second applicability key."
+ }
+]

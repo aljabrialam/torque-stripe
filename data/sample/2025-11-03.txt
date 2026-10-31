@@ -1,0 +1,26 @@
+AD NUMBER: 2025-11-03
+AMENDMENT: 39-23315
+EFFECTIVE DATE: 2025-07-10
+SUBJECT: Engine Fan Blade Inspection
+[SYNTHETIC SAMPLE - NOT A REAL FAA AD]
+
+(a) Effective Date
+This AD is effective July 10, 2025.
+
+(b) Affected ADs
+None.
+
+(c) Applicability
+This AD applies to CFM International S.A. Model CFM56-5B4/3 turbofan engines with engine serial numbers 779001 through 779950 inclusive.
+
+(d) Subject
+Joint Aircraft System Component (JASC) Code 7230, Turbine Engine Compressor Section.
+
+(e) Unsafe Condition
+This AD was prompted by a report of a fan blade liberation. We are issuing this AD to prevent failure of a fan blade, which could result in uncontained debris release and damage to the airplane.
+
+(f) Compliance
+Comply with this AD within the compliance times specified, unless already done.
+
+(g) Ultrasonic Inspection
+Within 1,500 cycles since last shop visit, perform an ultrasonic inspection of each fan blade dovetail, in accordance with CFM Service Bulletin CFM56-5B S/B 72-1033.

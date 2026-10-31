@@ -1,0 +1,29 @@
+AD NUMBER: 2024-05-11
+AMENDMENT: 39-22701
+EFFECTIVE DATE: 2024-04-15
+SUBJECT: Wing Spar Fitting Inspection
+[SYNTHETIC SAMPLE - NOT A REAL FAA AD]
+
+(a) Effective Date
+This AD is effective April 15, 2024.
+
+(b) Affected ADs
+None.
+
+(c) Applicability
+This AD applies to Airbus SAS Model A320-214 and A320-232 airplanes, certificated in any category, manufacturer serial numbers (MSN) 1000 through 1500 inclusive.
+
+(d) Subject
+Air Transport Association (ATA) of America Code 57, Wings.
+
+(e) Unsafe Condition
+This AD was prompted by reports of cracking in the forward wing spar fitting. We are issuing this AD to detect and correct cracking, which could reduce the structural integrity of the wing.
+
+(f) Compliance
+Comply with this AD within the compliance times specified, unless already done.
+
+(g) Inspection
+Within 600 flight cycles after the effective date of this AD, do a detailed visual inspection of the forward wing spar fitting for cracking, in accordance with Airbus Service Bulletin A320-57-1301.
+
+(h) Corrective Action
+If any cracking is found during the inspection required by paragraph (g) of this AD, before further flight, replace the fitting with part number D5727001200000.

@@ -1,0 +1,26 @@
+INFO:     Started server process [849]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8772 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49646 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "GET /static/motion.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "GET /models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "GET /dockets/FAA-2026-1335 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "GET /dockets/FAA-2026-1335 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "POST /fleet HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "GET /dockets/FAA-2026-11814 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "GET /static/motion.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "GET /models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "GET /dockets/FAA-2026-1335 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "GET /dockets/FAA-2026-1335 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "POST /fleet HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39092 - "GET /dockets/FAA-2026-11814 HTTP/1.1" 200 OK

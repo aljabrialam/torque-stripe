@@ -1,0 +1,295 @@
+[
+ {
+  "q": "What does FAA-2026-11813 propose?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-11813",
+  "reg": "PROPOSED"
+ },
+ {
+  "q": "What does FAA-2026-11813 propose?",
+  "cfg": {
+   "model": "A330-941"
+  },
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-11813",
+  "app": "MODEL_LISTED_UNITS_UNCONFIRMED"
+ },
+ {
+  "q": "What does FAA-2026-11813 propose?",
+  "cfg": {
+   "model": "A330-243"
+  },
+  "status": "NOT_APPLICABLE",
+  "docket": "FAA-2026-11813"
+ },
+ {
+  "q": "Does FAA-2026-11813 apply to MSN 1200?",
+  "cfg": {
+   "model": "A330-941",
+   "serial": "1200"
+  },
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-11813",
+  "app": "MODEL_LISTED_UNITS_UNCONFIRMED"
+ },
+ {
+  "q": "What does FAA-2026-11800 require?",
+  "cfg": {
+   "model": "AS350B"
+  },
+  "status": "ANSWERED",
+  "docket": "FAA-2026-11800",
+  "app": "MODEL_LISTED_ALL_UNITS"
+ },
+ {
+  "q": "What does FAA-2026-11800 require?",
+  "cfg": {
+   "model": "AS350B3"
+  },
+  "status": "NOT_APPLICABLE",
+  "docket": "FAA-2026-11800"
+ },
+ {
+  "q": "What would FAA-2026-8816 require?",
+  "cfg": {
+   "model": "PW1524G-3"
+  },
+  "status": "ANSWERED",
+  "docket": "FAA-2026-8816",
+  "app": "MODEL_LISTED_ALL_UNITS"
+ },
+ {
+  "q": "What would FAA-2025-3438 require?",
+  "cfg": {
+   "model": "690B"
+  },
+  "status": "ANSWERED",
+  "docket": "FAA-2025-3438",
+  "app": "MODEL_LISTED_ALL_UNITS"
+ },
+ {
+  "q": "Does FAA-2026-1335 apply to my 787-9?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-1335",
+  "app": "MODEL_LISTED_UNITS_UNCONFIRMED"
+ },
+ {
+  "q": "Does FAA-2026-1335 apply to my 787?",
+  "cfg": {},
+  "status": "NEEDS_INPUT",
+  "docket": "FAA-2026-1335"
+ },
+ {
+  "q": "Does FAA-2026-1335 apply to a 777-300ER?",
+  "cfg": {},
+  "status": "NOT_APPLICABLE",
+  "docket": "FAA-2026-1335"
+ },
+ {
+  "q": "Does FAA-2014-0012 cover the A330-243?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2014-0012",
+  "app": "MODEL_LISTED_UNITS_UNCONFIRMED"
+ },
+ {
+  "q": "Is FAA-2013-0541 still active?",
+  "cfg": {},
+  "status": "ANSWERED",
+  "docket": "FAA-2013-0541",
+  "reg": "WITHDRAWN"
+ },
+ {
+  "q": "What is the status of FAA-2012-0805?",
+  "cfg": {},
+  "status": "ANSWERED",
+  "docket": "FAA-2012-0805",
+  "reg": "WITHDRAWN"
+ },
+ {
+  "q": "Is the NPRM for FAA-2025-0204 still active?",
+  "cfg": {},
+  "status": "ANSWERED",
+  "docket": "FAA-2025-0204",
+  "reg": "WITHDRAWN"
+ },
+ {
+  "q": "What did FAA-2013-0751 require?",
+  "cfg": {},
+  "status": "ANSWERED",
+  "docket": "FAA-2013-0751",
+  "reg": "WITHDRAWN"
+ },
+ {
+  "q": "Status of FAA-2026-1338",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-1338",
+  "reg": "REVISED_PROPOSAL"
+ },
+ {
+  "q": "Which NPRM supersedes AD 2026-09-02?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-11811"
+ },
+ {
+  "q": "Which NPRM supersedes AD 2022-15-01?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-7234"
+ },
+ {
+  "q": "Which NPRM supersedes AD 2023-07-02?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-8799"
+ },
+ {
+  "q": "Which NPRM supersedes AD 2021-04-05?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2022-1308"
+ },
+ {
+  "q": "main rotor servo-control nut tightening torque inspection",
+  "cfg": {
+   "model": "AS350B3"
+  },
+  "status": "ANSWERED",
+  "docket": "FAA-2026-11814"
+ },
+ {
+  "q": "fuselage skin lap splice cracks",
+  "cfg": {
+   "model": "747-8"
+  },
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-4653"
+ },
+ {
+  "q": "VHF radio frequency transfer between active and standby",
+  "cfg": {
+   "model": "787-9"
+  },
+  "status": "NEEDS_INPUT",
+  "list": true,
+  "note": "Two separate withdrawn proposals (FAA-2021-0255, FAA-2025-0204) describe the same issue; asking which one is correct. Gold originally expected one docket (gold-set error found during eval)."
+ },
+ {
+  "q": "Any proposed ADs for A330-941?",
+  "cfg": {},
+  "status": "ANSWERED",
+  "list": true
+ },
+ {
+  "q": "List NPRMs for the AS350B3",
+  "cfg": {},
+  "status": "ANSWERED",
+  "list": true
+ },
+ {
+  "q": "When are comments due for FAA-2026-11814?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-11814",
+  "due": "2026-12-03 (open)"
+ },
+ {
+  "q": "What is the torque for the A380-841 landing gear?",
+  "cfg": {},
+  "status": "REFUSED",
+  "code": "UNKNOWN_MODEL"
+ },
+ {
+  "q": "What does AD 2019-01-01 require?",
+  "cfg": {},
+  "status": "REFUSED",
+  "code": "UNKNOWN_AD"
+ },
+ {
+  "q": "What does FAA-2030-99999 propose?",
+  "cfg": {},
+  "status": "REFUSED",
+  "code": "UNKNOWN_DOCKET"
+ },
+ {
+  "q": "best pizza in singapore",
+  "cfg": {},
+  "status": "REFUSED",
+  "code": "OUT_OF_SCOPE"
+ },
+ {
+  "q": "Tesla Model Y battery recall",
+  "cfg": {},
+  "status": "REFUSED"
+ },
+ {
+  "q": "What inspections are proposed?",
+  "cfg": {},
+  "status": "NEEDS_INPUT"
+ },
+ {
+  "q": "What is the torque for the A350-900 landing gear?",
+  "cfg": {},
+  "status": "NEEDS_INPUT",
+  "docket": "FAA-2026-2729",
+  "note": "Gold originally expected NO_MATCH; source check shows FAA-2026-2729 is an A350-941 main landing gear NPRM, so asking for the exact variant is correct (gold-set error)."
+ },
+ {
+  "q": "Does FAA-2026-2729 apply to my A350-900?",
+  "cfg": {},
+  "status": "NEEDS_INPUT",
+  "docket": "FAA-2026-2729"
+ },
+ {
+  "q": "Does FAA-2025-0004 apply to a 737-900ER?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2025-0004",
+  "app": "MODEL_LISTED_UNITS_UNCONFIRMED"
+ },
+ {
+  "q": "Why was FAA-2026-11814 withdrawn?",
+  "cfg": {},
+  "status": "REFUSED",
+  "code": "CONTRADICTS_SOURCE"
+ },
+ {
+  "q": "Since FAA-2026-11813 supersedes AD 2020-01-01, what changes?",
+  "cfg": {},
+  "status": "REFUSED",
+  "code": "CONTRADICTS_SOURCE"
+ },
+ {
+  "q": "Does FAA-2026-11813 supersede AD 2025-09-07?",
+  "cfg": {},
+  "status": "ANSWERED_GENERAL",
+  "docket": "FAA-2026-11813"
+ },
+ {
+  "q": "Why was FAA-2013-0541 withdrawn?",
+  "cfg": {},
+  "status": "ANSWERED",
+  "docket": "FAA-2013-0541",
+  "reg": "WITHDRAWN"
+ },
+ {
+  "q": "When must the MR servo-control inspection be completed?",
+  "cfg": {
+   "model": "AS350B3"
+  },
+  "status": "REFUSED",
+  "code": "NOT_IN_DATA"
+ },
+ {
+  "q": "Is there a proposal about AmSafe seatbelts for my AS350B3?",
+  "cfg": {},
+  "status": "ANSWERED",
+  "app": "UNDETERMINED",
+  "note": "Added after a failure found in testing (model filter dropped dockets with no model list). Gold first said ANSWERED_GENERAL; the source shows the AmSafe proposal was withdrawn on 2019-07-29, so ANSWERED + WITHDRAWN is correct (gold-set error).",
+  "reg": "WITHDRAWN"
+ }
+]

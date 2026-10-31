@@ -1,0 +1,26 @@
+AD NUMBER: 2025-08-19
+AMENDMENT: 39-23240
+EFFECTIVE DATE: 2025-05-20
+SUBJECT: Fuel Pump Wiring Chafing
+[SYNTHETIC SAMPLE - NOT A REAL FAA AD]
+
+(a) Effective Date
+This AD is effective May 20, 2025.
+
+(b) Affected ADs
+None.
+
+(c) Applicability
+This AD applies to The Boeing Company Model 737-800 airplanes, certificated in any category, line numbers 2000 through 3500 inclusive.
+
+(d) Subject
+Air Transport Association (ATA) of America Code 28, Fuel.
+
+(e) Unsafe Condition
+This AD was prompted by reports of chafed wiring near the center tank fuel pump. We are issuing this AD to prevent wire chafing, which could result in an ignition source inside the fuel tank.
+
+(f) Compliance
+Comply with this AD within the compliance times specified, unless already done.
+
+(g) Inspection and Modification
+Within 18 months after the effective date of this AD, inspect the center tank fuel pump wiring for chafing and install protective sleeving, in accordance with Boeing Alert Service Bulletin 737-28A1402.

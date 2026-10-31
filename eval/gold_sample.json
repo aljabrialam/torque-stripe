@@ -1,0 +1,22 @@
+[
+ {"q":"When must I inspect the wing spar fitting?","cfg":{"model":"A320-214","serial":"1200"},"status":"ANSWERED","ad":"2025-02-07","field":["compliance_time","Within 400 flight cycles after the effective date of this AD"]},
+ {"q":"When must I inspect the wing spar fitting?","cfg":{"model":"A320-232","serial":"1750"},"status":"ANSWERED","ad":"2025-02-07","field":["compliance_time","Within 400 flight cycles after the effective date of this AD"]},
+ {"q":"When must I inspect the wing spar fitting?","cfg":{"model":"A320-214","serial":"1900"},"status":"NOT_APPLICABLE","ad":"2025-02-07"},
+ {"q":"When must I inspect the wing spar fitting?","cfg":{"model":"A320-214"},"status":"NEEDS_INPUT","ad":"2025-02-07"},
+ {"q":"When must I inspect the wing spar fitting?","cfg":{"model":"A320-251N","serial":"1200"},"status":"REFUSED"},
+ {"q":"What does AD 2024-05-11 require for MSN 1200 A320-232?","cfg":{},"status":"ANSWERED","ad":"2025-02-07","field":["part_number","D5727001200100"]},
+ {"q":"What part number replaces a cracked fitting on A320-214 MSN 1300?","cfg":{},"status":"ANSWERED","ad":"2025-02-07","field":["part_number","D5727001200100"]},
+ {"q":"How often is the repetitive inspection on A320-214 MSN 1300?","cfg":{},"status":"ANSWERED","ad":"2025-02-07","field":["repeat_interval","intervals not to exceed 3,000 flight cycles"]},
+ {"q":"Which service bulletin do I use for the spar fitting inspection on A320-214 MSN 1001?","cfg":{},"status":"ANSWERED","ad":"2025-02-07","field":["service_document","Service Bulletin A320-57-1301 Revision 02"]},
+ {"q":"Why was the fan blade AD issued?","cfg":{},"status":"ANSWERED_GENERAL","ad":"2025-11-03"},
+ {"q":"When is the fan blade ultrasonic inspection due?","cfg":{"model":"CFM56-5B4/3","serial":"779500"},"status":"ANSWERED","ad":"2025-11-03","field":["compliance_time","Within 1,500 cycles since last shop visit"]},
+ {"q":"When is the fan blade ultrasonic inspection due?","cfg":{"model":"CFM56-5B4/3","serial":"780100"},"status":"NOT_APPLICABLE","ad":"2025-11-03"},
+ {"q":"Does the fuel pump AD apply to 737-800 line number 4000?","cfg":{},"status":"NOT_APPLICABLE","ad":"2025-08-19"},
+ {"q":"Does the fuel pump wiring AD apply to 737-800 line number 2500?","cfg":{},"status":"ANSWERED","ad":"2025-08-19"},
+ {"q":"When must the fuel pump wiring be inspected on 737-800 line number 2500?","cfg":{},"status":"ANSWERED","ad":"2025-08-19","field":["compliance_time","Within 18 months after the effective date of this AD"]},
+ {"q":"What is the torque for the A350-900 landing gear?","cfg":{},"status":"REFUSED"},
+ {"q":"What is the best pizza in Singapore?","cfg":{},"status":"REFUSED"},
+ {"q":"What does AD 2019-01-01 require?","cfg":{},"status":"REFUSED"},
+ {"q":"Tell me about the hydraulic actuator corrosion AD","cfg":{},"status":"REFUSED"},
+ {"q":"inspection within flight cycles","cfg":{},"status":"NEEDS_INPUT"}
+]

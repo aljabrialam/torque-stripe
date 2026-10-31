@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torque Stripe · Cited answers about FAA proposed ADs</title>
+<meta name="description" content="Ask about FAA proposed airworthiness directives and get answers quoted from the notice, with model coverage, revisions and withdrawals checked by rules. Refuses when the evidence isn't there.">
+<meta name="author" content="Aljabri Alam">
+<meta name="theme-color" content="#1d1d1f">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Torque Stripe · The AI reads. The rules decide. The engineer signs.">
+<meta property="og:description" content="Cited, rule-checked answers about 431 FAA proposed AD notices (1,302 Federal Register pages). 0 unsafe answers on our gold set.">
+<meta property="og:image" content="/static/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<link rel="icon" type="image/png" href="/static/icon-64.png">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<!-- Vercel Web Analytics (plain-HTML setup); harmless when run locally -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js" onerror="this.remove()"></script>
+<script src="/static/motion.js"></script>
+<style>
+:root{
+  --bg:#f5f5f7; --surface:#ffffff; --surface-2:#fbfbfd; --line:rgba(0,0,0,.08); --line-2:rgba(0,0,0,.14);
+  --text:#1d1d1f; --text-2:#6e6e73; --text-3:#86868b;
+  --accent:#d4570f; --accent-soft:rgba(212,87,15,.10);
+  --ok:#1f7a3a; --ok-bg:rgba(31,122,58,.10);
+  --info:#0a63c9; --info-bg:rgba(10,99,201,.09);
+  --warn:#9a5b00; --warn-bg:rgba(191,120,0,.12);
+  --mute:#57575c; --mute-bg:rgba(0,0,0,.06);
+  --bad:#b4232c; --bad-bg:rgba(180,35,44,.09);
+  --hl:rgba(212,87,15,.14);
+  --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.04),0 6px 24px rgba(0,0,0,.05);
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#000; --surface:#1c1c1e; --surface-2:#232326; --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.16);
+  --text:#f5f5f7; --text-2:#a1a1a6; --text-3:#7c7c80;
+  --accent:#ff8a3d; --accent-soft:rgba(255,138,61,.14);
+  --ok:#4cc46b; --ok-bg:rgba(76,196,107,.13); --info:#5aa9ff; --info-bg:rgba(90,169,255,.13);
+  --warn:#f0b54a; --warn-bg:rgba(240,181,74,.14); --mute:#b0b0b5; --mute-bg:rgba(255,255,255,.08);
+  --bad:#ff6b6b; --bad-bg:rgba(255,107,107,.13); --hl:rgba(255,138,61,.18); --shadow:none;}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+.mono{font-family:var(--mono);font-size:.92em}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+.bar{max-width:1280px;margin:0 auto;padding:12px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-.01em}
+.stripe{width:22px;height:22px;border-radius:6px;background:var(--surface);border:1px solid var(--line-2);position:relative;overflow:hidden}
+.stripe:after{content:"";position:absolute;left:-4px;right:-4px;top:9px;height:4px;background:var(--accent);transform:rotate(-28deg)}
+.tabs{display:flex;background:var(--mute-bg);border-radius:9px;padding:2px}
+.tab{border:0;background:none;padding:5px 14px;border-radius:7px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.ctx{margin-left:auto;display:flex;align-items:center;gap:10px}
+.ctx label{font-size:12px;color:var(--text-2)}
+.field{background:var(--surface);border:1px solid var(--line-2);border-radius:9px;padding:6px 10px;min-width:170px;outline:none}
+.field:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.stats{font-size:12px;color:var(--text-3)}
+main{max-width:1280px;margin:0 auto;padding:22px 20px 60px}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}.ctx{margin-left:0}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.ask{padding:16px}
+.ask h1{font-size:22px;letter-spacing:-.02em;margin:0 0 4px;font-weight:600}
+.ask p.sub{margin:0 0 14px;color:var(--text-2);font-size:13.5px}
+.qrow{display:flex;gap:8px}
+.q{flex:1;font-size:16px;padding:11px 14px;border-radius:11px;border:1px solid var(--line-2);background:var(--surface-2);outline:none}
+.q:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.go{border:0;background:var(--accent);color:#fff;border-radius:11px;padding:0 18px;font-weight:600;cursor:pointer}
+.go:active{transform:scale(.98)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{border:1px solid var(--line-2);background:var(--surface);border-radius:999px;padding:4px 11px;font-size:12.5px;color:var(--text-2);cursor:pointer}
+.chip:hover{color:var(--text);border-color:var(--text-3)}
+.chip .k{color:var(--text-3)}
+#answer{margin-top:16px}
+.ans{padding:18px}
+.pillrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.pill{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px}
+.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.p-ok{color:var(--ok);background:var(--ok-bg)} .p-info{color:var(--info);background:var(--info-bg)}
+.p-warn{color:var(--warn);background:var(--warn-bg)} .p-mute{color:var(--mute);background:var(--mute-bg)}
+.p-bad{color:var(--bad);background:var(--bad-bg)}
+.tag{font-size:12px;padding:3px 8px;border-radius:7px;background:var(--mute-bg);color:var(--text-2)}
+.headline{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:2px 0 6px}
+.lede{color:var(--text-2);margin:0 0 12px}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13.5px;margin:12px 0;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kv dt{color:var(--text-2)} .kv dd{margin:0}
+.sent{margin:10px 0;padding-left:12px;border-left:2px solid var(--line-2)}
+.sent p{margin:0}
+.cite{display:inline-flex;gap:4px;align-items:center;margin-left:6px;border:1px solid var(--line-2);background:var(--surface-2);
+  border-radius:6px;padding:0 6px;font-family:var(--mono);font-size:11px;color:var(--text-2);cursor:pointer;vertical-align:1px}
+.cite:hover{color:var(--accent);border-color:var(--accent)}
+.mode{font-size:11.5px;color:var(--text-3);margin-top:8px}
+details.why{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+details.why summary{cursor:pointer;font-size:13px;color:var(--text-2);list-style:none}
+details.why summary::-webkit-details-marker{display:none}
+details.why summary:before{content:"›";display:inline-block;margin-right:6px;transition:transform .2s}
+details.why[open] summary:before{transform:rotate(90deg)}
+.checks{list-style:none;margin:10px 0 0;padding:0;font-size:13px}
+.checks li{display:flex;gap:8px;padding:4px 0;color:var(--text-2)}
+.checks li b{font-weight:600;color:var(--text);min-width:110px}
+.cands{display:grid;gap:8px;margin-top:10px}
+.cand{text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:11px;padding:10px 12px;cursor:pointer}
+.cand:hover{border-color:var(--line-2)}
+.cand .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cand .s{font-size:13px;color:var(--text-2);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.src{position:sticky;top:76px;max-height:calc(100vh - 96px);overflow:auto}
+.src .hd{padding:14px 16px;border-bottom:1px solid var(--line)}
+.src .hd .t{font-size:12px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+.src .hd h2{margin:4px 0 2px;font-size:17px;font-family:var(--mono)}
+.src .body{padding:12px 16px 18px}
+.empty{color:var(--text-3);font-size:13.5px;padding:28px 16px;text-align:center}
+.tl{list-style:none;margin:0 0 12px;padding:0}
+.tl li{position:relative;padding:0 0 12px 20px;font-size:13px}
+.tl li:before{content:"";position:absolute;left:4px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--text-3)}
+.tl li:after{content:"";position:absolute;left:7.5px;top:16px;bottom:0;width:1px;background:var(--line-2)}
+.tl li:last-child:after{display:none}
+.tl li.cur:before{background:var(--accent)}
+.tl .a{font-weight:600}
+.tl .m{color:var(--text-3)}
+.vhead{font-size:12px;color:var(--text-3);margin:14px 0 6px;display:flex;justify-content:space-between;gap:8px}
+.ss{padding:6px 8px;border-radius:8px;font-size:13.5px;margin:2px 0;display:flex;gap:10px}
+.ss .n{font-family:var(--mono);font-size:11px;color:var(--text-3);min-width:24px;padding-top:2px}
+.ss.on{background:var(--hl)}
+a{color:var(--info);text-decoration:none} a:hover{text-decoration:underline}
+.view[hidden]{display:none}
+.evalhead{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.metric{padding:14px 16px}
+.metric .l{font-size:12px;color:var(--text-2)}
+.metric .v{font-size:26px;font-weight:600;letter-spacing:-.02em}
+.metric .b{font-size:12px;color:var(--text-3)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--text-2);font-size:12px}
+.pad{padding:16px}
+.notice{font-size:12.5px;color:var(--text-2);background:var(--mute-bg);border-radius:10px;padding:10px 12px;margin-top:12px}
+.spinner{width:14px;height:14px;border:2px solid var(--line-2);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.credit{display:block;font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:0}
+.brand{line-height:1.15}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.btn{border:1px solid var(--line-2);background:var(--surface);border-radius:9px;padding:6px 12px;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;color:var(--text)}
+.btn:hover{border-color:var(--text-3);text-decoration:none}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.checks li .ic{flex:none;width:16px;height:16px;margin-top:2px;color:var(--ok)}
+.checks li .ic.x{color:var(--warn)}
+.listed{font-family:var(--mono);font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.7}
+.fleetin{display:flex;gap:8px;flex-wrap:wrap}
+.fleetin .q{min-width:260px}
+.fgrid{display:grid;gap:14px;margin-top:16px}
+.fcard .fh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+.fcard .fh h3{margin:0;font-family:var(--mono);font-size:16px}
+.fcard td.mono{white-space:nowrap}
+.fcard tr{cursor:pointer} .fcard tr:hover td{background:var(--surface-2)}
+.open{color:var(--ok);font-weight:600}
+.cite.cur{color:var(--accent);border-color:var(--accent)}
+.help{width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2);background:var(--surface);font-weight:600;font-size:13px;cursor:pointer;color:var(--text-2)}
+.help:hover{color:var(--accent);border-color:var(--accent)}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}
+.creator{display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none}
+.creator:hover{text-decoration:none}
+.creator img{border-radius:50%;object-fit:cover}
+.creator b{display:block;font-size:13.5px;font-weight:600}
+.foot > .stats{max-width:560px}
+#tour{position:fixed;inset:0;z-index:50}
+.tour-spot{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.48);pointer-events:none;transition:all .35s cubic-bezier(.2,.8,.2,1)}
+.tour-pop{position:fixed;width:340px;max-width:calc(100vw - 32px);padding:16px 18px;z-index:51;transition:top .35s,left .35s}
+.tour-pop h3{margin:4px 0 6px;font-size:17px;letter-spacing:-.01em}
+.tour-pop p{margin:0 0 14px;color:var(--text-2);font-size:14px}
+.tour-acts{display:flex;gap:8px;align-items:center}
+.grid > *{min-width:0}
+.kv dd,.ss,.cand .s,.sent p,.lede,.vhead,td{overflow-wrap:anywhere}
+@media (max-width:600px){
+  .kv{grid-template-columns:1fr;gap:2px 0}.kv dt{margin-top:6px}
+  .bar{gap:10px}.ctx{width:100%;flex-wrap:wrap}.ctx .field{flex:1;min-width:0}.stats#stats{width:100%}
+  .fcard table,.card.pad table{display:block;overflow-x:auto}
+  .src{position:static;max-height:none}
+}
+kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--text-2)}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand"><img src="/static/logo.svg" alt="" width="28" height="28" style="border-radius:7px"><span>Torque Stripe<span class="credit">Built for Airbus Challenge #4 · Autonomous SG 2026</span></span></div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-view="ask">Ask</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="fleet">Fleet</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="eval">Evaluation</button>
+    </div>
+    <div class="ctx">
+      <label for="model">Aircraft / engine model</label>
+      <input id="model" class="field mono" list="models" placeholder="e.g. AS350B3" autocomplete="off">
+      <datalist id="models"></datalist>
+      <span class="stats" id="stats"></span>
+      <button class="help" id="tourbtn" aria-label="Show the guided tour" title="Guided tour">?</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="view" id="view-ask">
+    <div class="grid">
+      <div>
+        <div class="card ask">
+          <h1>Ask about proposed ADs</h1>
+          <p class="sub">Answers quote the FAA notice word for word, with the docket, Federal Register page and sentence. Model coverage, revisions and withdrawals are checked by rules, not by the AI.</p>
+          <form class="qrow" id="f">
+            <input class="q" id="q" placeholder="e.g. main rotor servo-control torque inspection" autocomplete="off" aria-label="Question">
+            <button class="go" type="submit">Ask</button>
+          </form>
+          <div class="chips" id="chips"></div>
+        </div>
+        <div id="answer"></div>
+      </div>
+      <aside class="card src" id="src"><div class="empty">Tap a citation to see the exact source sentence and the docket's history.</div></aside>
+    </div>
+  </section>
+
+  <section class="view" id="view-fleet" hidden>
+    <div class="card ask">
+      <h1>Fleet check</h1>
+      <p class="sub">Enter the aircraft and engine models you maintain. For each one: every proposal whose model list covers it, its status, and whether the comment period is still open. Matching is by fixed rules (exact model or FAA series), never by the AI.</p>
+      <form class="fleetin" id="ff">
+        <input class="q mono" id="fleetq" value="AS350B3, A330-243, 787-9, PW1524G-3, A380-841" aria-label="Models">
+        <button class="go" type="submit">Check fleet</button>
+      </form>
+    </div>
+    <div class="fgrid" id="fleetout"></div>
+  </section>
+
+  <section class="view" id="view-eval" hidden>
+    <div class="evalhead" id="evalhead"></div>
+    <div class="card pad">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <div><b>Gold-set run</b> <span class="stats">real FAA data · deterministic · no LLM in the decision path</span></div>
+        <button class="chip" id="runeval">Run evaluation now</button>
+      </div>
+      <div id="evaltable" style="margin-top:12px"></div>
+      <div class="notice">The gold questions were written by the team. Two gold answers were corrected after reading the source text: both cases where the system was right and the question writer was wrong. Each correction is recorded in <span class="mono">eval/gold_faa.json</span>. The baseline is plain keyword retrieval that always answers with the top match.</div>
+    </div>
+  </section>
+  <footer class="foot">
+    <a class="creator" href="https://www.linkedin.com/in/aljabri-alam/" target="_blank" rel="noopener">
+      <img src="/static/creator.jpg" alt="Aljabri Alam" width="36" height="36">
+      <span><b>Made by Aljabri Alam</b><span class="stats">Technical Lead & AI Advocate · linkedin.com/in/aljabri-alam</span></span>
+    </a>
+    <span class="stats">Data: FAA AD NPRM notices supplied for Airbus Challenge #4. Proposals are not binding; always check the Federal Register text before acting.</span>
+  </footer>
+</main>
+<div id="tour" hidden>
+  <div class="tour-spot" id="tourspot"></div>
+  <div class="tour-pop card" id="tourpop" role="dialog" aria-modal="true" aria-labelledby="tourtitle">
+    <div class="stats" id="tourstep"></div>
+    <h3 id="tourtitle"></h3>
+    <p id="tourtext"></p>
+    <div class="tour-acts"><button class="btn" id="tourskip">Skip</button><span style="flex:1"></span>
+      <button class="btn" id="tourback">Back</button><button class="btn pri" id="tournext">Next</button></div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const anim = (el, kf, o) => { try { if (window.Motion) Motion.animate(el, kf, o); } catch (e) {} };
+let last = null;
+
+const CHIPS = [
+  ["AS350B3", "Any proposed ADs for AS350B3?"],
+  ["AS350B3", "main rotor servo-control torque inspection"],
+  ["AS350B",  "What does FAA-2026-11800 require?"],
+  ["AS350B3", "What does FAA-2026-11800 require?"],
+  ["",        "Status of FAA-2026-1338"],
+  ["",        "Is FAA-2013-0541 still active?"],
+  ["",        "Does FAA-2026-1335 apply to my 787?"],
+  ["787-9",   "Does FAA-2026-1335 apply to my 787-9?"],
+  ["A330-941","Any proposed ADs for A330-941?"],
+  ["",        "Which NPRM supersedes AD 2026-09-02?"],
+  ["",        "What is the torque for the A380-841 landing gear?", "Try: A380-841 · refuses"],
+];
+
+function chips() {
+  $("#chips").innerHTML = CHIPS.map(([m, q, label], i) =>
+    `<button class="chip" data-i="${i}">${m ? `<span class="k mono">${esc(m)}</span> · ` : ""}${esc(label || q)}</button>`).join("");
+  $("#chips").onclick = e => { const b = e.target.closest(".chip"); if (!b) return;
+    const [m, q] = CHIPS[+b.dataset.i]; $("#model").value = m; $("#q").value = q; ask(); };
+}
+
+async function init() {
+  chips();
+  try {
+    const h = await (await fetch("/health")).json();
+    if (h.mode === "faa_nprm") $("#stats").textContent = `${h.rows} notices · ${h.dockets} dockets · ${h.federal_register_pages.toLocaleString()} pages`;
+    const ms = await (await fetch("/models")).json();
+    $("#models").innerHTML = ms.map(m => `<option value="${esc(m)}">`).join("");
+  } catch (e) { $("#stats").textContent = "API not reachable"; }
+}
+
+$("#f").onsubmit = e => { e.preventDefault(); ask(); };
+let mt; $("#model").addEventListener("input", () => { clearTimeout(mt); mt = setTimeout(() => { if ($("#q").value.trim()) ask(); }, 450); });
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement.tagName !== "INPUT") { e.preventDefault(); $("#q").focus(); }
+  if ((e.key === "[" || e.key === "]") && document.activeElement.tagName !== "INPUT") {
+    const cs = [...document.querySelectorAll("#answer .cite")]; if (!cs.length) return;
+    let i = cs.findIndex(c => c.classList.contains("cur")); i = e.key === "]" ? i + 1 : i - 1;
+    i = (i + cs.length) % cs.length; cs.forEach(c => c.classList.remove("cur")); cs[i].classList.add("cur"); cs[i].click();
+  }
+});
+
+async function ask() {
+  const query = $("#q").value.trim(); if (!query) return;
+  const model = $("#model").value.trim() || null;
+  $("#answer").innerHTML = `<div class="card ans"><span class="spinner"></span> <span class="stats">Checking rules…</span></div>`;
+  try {
+    const res = await fetch("/ask", { method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ query, model, use_llm: true }) });
+    last = await res.json();
+    render(last);
+    window.va && va("event", { name: "Ask", data: { status: last.status, verdict: last.applicability?.verdict || "none" } });
+  } catch (e) {
+    $("#answer").innerHTML = `<div class="card ans"><div class="headline">Couldn't reach the server</div><p class="lede">${esc(e.message)}</p></div>`;
+  }
+}
+
+const REG = {
+  PROPOSED: ["p-info", "Proposed · not binding"],
+  REVISED_PROPOSAL: ["p-info", "Revised proposal · not binding"],
+  WITHDRAWN: ["p-mute", "Withdrawn · imposes nothing"],
+};
+
+function headline(r) {
+  const m = r.config?.model, v = r.applicability?.verdict, f = r.fields || {};
+  if (r.status === "REFUSED") return ["p-warn", "Refused", "I can't answer that from this data", r.refusal?.message];
+  if (r.status === "NOT_APPLICABLE") return ["p-mute", "Not applicable", `${m} is not covered by ${r.ad}`, (r.applicability.reasons || []).join(" ")];
+  if (r.status === "NEEDS_INPUT") {
+    if (v === "NEEDS_VARIANT") return ["p-info", "Needs input", `Which ${m} variant?`, r.applicability.reasons.join(" ")];
+    if (r.candidates?.length) return ["p-info", "Needs input", "Several proposals match. Which one?", "Pick a docket to see its details."];
+    return ["p-info", "Needs input", "Tell me the model or a docket", "Set an aircraft or engine model above, or name a docket such as FAA-2026-11814."];
+  }
+  if (r.candidates?.length && !r.ad) return ["p-ok", "Answered", `${f.count} proposals list ${m || "this topic"}`,
+    `${f.by_status?.PROPOSED ?? 0} proposed, ${f.by_status?.REVISED_PROPOSAL ?? 0} revised, ${f.by_status?.WITHDRAWN ?? 0} withdrawn. Newest first.`];
+  if (f.regulatory_status === "WITHDRAWN") return ["p-ok", "Answered", `${r.ad} was withdrawn`, "This proposal imposes no requirement. The sentences below are quoted from the notice."];
+  if (v === "MODEL_LISTED_ALL_UNITS") return ["p-ok", "Answered", `Proposed for all ${m} units`, "The model is listed and the notice says the proposal applies to all units."];
+  if (v === "MODEL_LISTED_UNITS_UNCONFIRMED") return ["p-info", "Answered · applicability unconfirmed", `${m} is listed, but only certain units are covered`,
+    "The serial-number or configuration criteria are only in the full Federal Register text, which this dataset doesn't contain. Check them before acting."];
+  if (v === "UNDETERMINED") return ["p-info", "Answered · applicability unknown", `About ${r.ad}`, r.applicability.reasons.join(" ")];
+  return ["p-info", "Answered", `About ${r.ad}`, "Set your aircraft or engine model above to check whether it's covered."];
+}
+
+function render(r) {
+  const [cls, label, head, lede] = headline(r);
+  const f = r.fields || {}, rev = r.revision || {};
+  const reg = REG[f.regulatory_status];
+  let h = `<div class="card ans">
+    <div class="pillrow"><span class="pill ${cls}">${esc(label)}</span>
+      ${reg ? `<span class="pill ${reg[0]}">${esc(reg[1])}</span>` : ""}
+      ${r.ad ? `<span class="tag mono">${esc(r.ad)}</span>` : ""}
+      ${rev.versions?.length > 1 ? `<span class="tag">v${rev.versions.length} of ${rev.versions.length}</span>` : ""}
+      ${(f.supersedes_ads || []).slice(0, 3).map(a => `<span class="tag mono">Supersedes AD ${esc(a)}</span>`).join("")}
+    </div>
+    <div class="headline">${esc(head)}</div>
+    ${lede ? `<p class="lede">${esc(lede)}</p>` : ""}`;
+  const app = r.applicability || {};
+  if (app.verdict === "NEEDS_VARIANT" && app.variants?.length)
+    h += `<div class="acts">${app.variants.slice(0, 12).map(v => `<button class="btn" data-variant="${esc(v)}">${esc(v)}</button>`).join("")}</div>`;
+  if (app.verdict === "NOT_LISTED" && app.listed?.length)
+    h += `<details><summary class="stats" style="cursor:pointer">Show the ${app.listed.length} listed models</summary><div class="listed">${app.listed.map(esc).join(" · ")}</div></details>`;
+  if ((app.verdict === "MODEL_LISTED_UNITS_UNCONFIRMED" || app.verdict === "UNDETERMINED") && f.link)
+    h += `<div class="acts"><a class="btn pri" href="${esc(f.link)}" target="_blank" rel="noopener">Check unit criteria in the Federal Register</a></div>`;
+
+  if (r.ad && f.regulatory_status) {
+    const rows = [
+      ["Status", (REG[f.regulatory_status] || ["", f.regulatory_status])[1]],
+      ["Comments due", f.comments_due],
+      ["Supersedes", (f.supersedes_ads || []).map(a => `AD ${a}`).join(", ")],
+      ["Make", f.make],
+      ["Scope wording", f.scope_wording === "ALL" ? "All units of listed models" : f.scope_wording === "CERTAIN" ? "Certain units (criteria in full text)" : "Not stated"],
+      ["Published", f.latest_publication],
+    ].filter(x => x[1]);
+    h += `<dl class="kv">${rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`;
+  }
+
+  if (r.candidates?.length) {
+    h += `<div class="cands">${r.candidates.map(c => {
+      const st = REG[c.status] || ["p-mute", c.status];
+      return `<button class="cand" data-d="${esc(c.docket)}">
+        <div class="top"><span class="mono"><b>${esc(c.docket)}</b></span><span class="pill ${st[0]}">${esc(st[1])}</span><span class="stats">${esc(c.latest)}</span></div>
+        <div class="s">${esc(c.first_sentence)}</div></button>`; }).join("")}</div>`;
+  } else if (r.answer?.sentences?.length) {
+    h += r.answer.sentences.map(s => `<div class="sent"><p>${esc(s.text)}${(s.cites || []).map(cid => citeChip(r, cid)).join("")}</p></div>`).join("");
+    const mode = r.answer.mode === "llm_verified" ? "Reworded by Claude · every sentence verified against the cited text"
+               : "Quoted word for word from the notice";
+    const note = r.answer.rejected?.length ? r.answer.note : "";
+    h += `<div class="mode">${esc(mode)}${note ? ` · ${esc(note)}` : ""}</div>`;
+  }
+
+  const OK = `<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const STOP = `<svg class="ic x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 8h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+  const steps = r.trace.map(t => [t.startsWith("REFUSE") || t.includes("asking") ? STOP : OK, t]);
+  h += `<details class="why"><summary>Why this answer · ${steps.length + (app.reasons?.length || 0)} checks · ${r.latency_ms} ms · no AI in these decisions</summary>
+    <ul class="checks">${(app.reasons || []).map(x => `<li>${app.verdict === "NOT_LISTED" ? STOP : OK}<b>Applicability</b><span>${esc(x)}</span></li>`).join("")}
+    ${steps.map(([ic, t]) => `<li>${ic}<b>Rule</b><span class="mono">${esc(t)}</span></li>`).join("")}</ul></details></div>`;
+
+  $("#answer").innerHTML = h;
+  anim($("#answer .ans"), { opacity: [0, 1], transform: ["translateY(8px)", "translateY(0)"] }, { duration: .28, easing: "ease-out" });
+  $("#answer").querySelectorAll(".cite").forEach(b => b.onclick = () => openSource(b.dataset.d, +b.dataset.row, +b.dataset.s));
+  $("#answer").querySelectorAll("[data-variant]").forEach(b => b.onclick = () => { $("#model").value = b.dataset.variant; ask(); });
+  $("#answer").querySelectorAll(".cand").forEach(b => b.onclick = () => { $("#q").value = `Status of ${b.dataset.d}`; ask(); });
+  const first = r.claims?.[0]?.cite;
+  if (first) openSource(first.docket, first.sheet_row, first.sentence, true);
+  else $("#src").innerHTML = `<div class="empty">No source for this answer: nothing in the dataset supports one.</div>`;
+}
+
+function citeChip(r, cid) {
+  const c = (r.claims || []).find(x => x.id === cid); if (!c) return "";
+  return `<button class="cite" data-d="${esc(c.cite.docket)}" data-row="${c.cite.sheet_row}" data-s="${c.cite.sentence}"
+    title="${esc(c.cite.fr_citation)} ${esc(c.cite.pages)}">${esc(c.cite.version_date)} · S${c.cite.sentence + 1}</button>`;
+}
+
+async function openSource(docket, row, sidx, quiet) {
+  const d = await (await fetch(`/dockets/${encodeURIComponent(docket)}`)).json();
+  const v = d.versions.find(x => x.sheet_row === row) || d.versions[d.versions.length - 1];
+  const ACT = { NEW_AD: "New AD proposed", SUPERSEDE: "Proposes to supersede an AD", REVISED_PROPOSAL: "Proposal revised",
+    WITHDRAWN: "Proposal withdrawn", CORRECTION: "Correction", RESCIND_AD: "Proposes to rescind an AD", REVISE_EXISTING_AD: "Proposes to revise an AD" };
+  $("#src").innerHTML = `<div class="hd"><div class="t">Source</div><h2>${esc(d.docket)}</h2>
+      <div class="stats">${esc(v.make)} · ${esc(v.subject)}</div></div>
+    <div class="body">
+      <ul class="tl">${d.versions.map(x => `<li class="${x.sheet_row === v.sheet_row ? "cur" : ""}">
+        <div class="a">${esc(ACT[x.action] || x.action)}</div>
+        <div class="m">${esc(x.publish_date)} · ${esc(x.pages)}${x.link ? ` · <a href="${esc(x.link)}" target="_blank" rel="noopener">Federal Register</a>` : ""}</div></li>`).join("")}</ul>
+      <div class="vhead"><span>${esc(v.fr_citation)}</span><span class="mono">row ${v.sheet_row}</span></div>
+      ${v.sentences.map((s, i) => `<div class="ss ${i === sidx ? "on" : ""}" id="ss${i}"><span class="n">S${i + 1}</span><span>${esc(s)}</span></div>`).join("")}
+    </div>`;
+  const on = $("#src .ss.on");
+  if (on) { if (!quiet) on.scrollIntoView({ block: "center", behavior: "smooth" });
+    anim(on, { backgroundColor: ["rgba(212,87,15,.32)", "var(--hl)"] }, { duration: .8 }); }
+}
+
+// tabs
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t));
+  document.querySelectorAll(".view").forEach(v => v.hidden = v.id !== `view-${t.dataset.view}`);
+  if (t.dataset.view === "eval" && !$("#evalhead").innerHTML) runEval();
+});
+$("#runeval").onclick = runEval;
+
+async function runEval() {
+  $("#evaltable").innerHTML = `<span class="spinner"></span> <span class="stats">Running ${""}gold set…</span>`;
+  const t0 = performance.now();
+  const { summary: s, rows, failures } = await (await fetch("/eval")).json();
+  const ms = Math.round(performance.now() - t0);
+  const m = (l, v, b) => `<div class="card metric"><div class="l">${l}</div><div class="v">${v}</div><div class="b">${b}</div></div>`;
+  $("#evalhead").innerHTML =
+    m("Fully correct", s.fully_correct, `Baseline ${s.baseline_fully_correct}`) +
+    m("Unsafe answers", s["unsafe_answers (answered when it should refuse/ask/say not applicable)"], `Baseline ${s.baseline_unsafe_answers}`) +
+    m("Withdrawn proposals flagged", s["withdrawn proposals flagged as withdrawn"], `Baseline ${s.baseline_withdrawn_flagged}`) +
+    m("Retrieval latency", `${s.latency_max_ms} ms`, `max over ${s.corpus.federal_register_pages.toLocaleString()} pages · p50 ${s.latency_p50_ms} ms`);
+  $("#evaltable").innerHTML = `<table><thead><tr><th>Question</th><th>Model</th><th>Expected</th><th>Got</th><th>Docket</th><th>Baseline</th></tr></thead><tbody>
+    ${rows.map(x => `<tr><td>${esc(x.q)}</td><td class="mono">${esc(x.cfg.model || "")}</td><td>${esc(x.want)}</td>
+      <td><span class="pill ${x.ok ? "p-ok" : "p-bad"}">${esc(x.got)}</span></td><td class="mono">${esc(x.got_docket || x.code || "")}</td>
+      <td class="mono">${x.base_ok ? "correct" : "wrong"} · ${esc(x.base_docket || "")}</td></tr>`).join("")}</tbody></table>
+    <div class="stats" style="margin-top:8px">Run took ${ms} ms end to end.</div>
+    <h3 style="margin:22px 0 4px;font-size:16px">Where it fails, and how the user would know</h3>
+    <p class="stats" style="margin:0 0 8px">Run live just now. These are real weaknesses, not staged.</p>
+    <table><thead><tr><th>Question</th><th>What happens now</th><th>Why</th><th>Effect on the user</th><th>Fix</th></tr></thead><tbody>
+    ${(failures || []).map(k => `<tr><td>${esc(k.q)}${k.cfg.model ? ` <span class="mono stats">${esc(k.cfg.model)}</span>` : ""}</td>
+      <td><span class="pill p-warn">${esc(k.got)}</span><div class="mono stats">${esc(k.code || k.verdict || "")} ${esc(k.docket || "")}</div></td>
+      <td>${esc(k.why)}</td><td>${esc(k.impact)}</td><td>${esc(k.fix)}</td></tr>`).join("")}</tbody></table>`;
+  anim("#evalhead .metric", { opacity: [0, 1], transform: ["translateY(6px)", "translateY(0)"] }, { duration: .3, delay: window.Motion?.stagger ? window.Motion.stagger(.05) : 0 });
+}
+
+$("#ff").onsubmit = async e => {
+  e.preventDefault();
+  const models = $("#fleetq").value.split(/[,\n]/).map(x => x.trim()).filter(Boolean);
+  $("#fleetout").innerHTML = `<div class="card ans"><span class="spinner"></span> <span class="stats">Checking ${models.length} models…</span></div>`;
+  window.va && va("event", { name: "Fleet check", data: { models: models.length } });
+  const data = await (await fetch("/fleet", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ models }) })).json();
+  $("#fleetout").innerHTML = data.map(f => {
+    if (!f.known) return `<div class="card fcard"><div class="fh"><h3>${esc(f.model)}</h3><span class="pill p-warn">Not in this dataset</span>
+      <span class="stats">No proposal lists this model, so nothing can be said about it.</span></div></div>`;
+    return `<div class="card fcard"><div class="fh"><h3>${esc(f.model)}</h3>
+      <span class="stats">${f.dockets.length} proposals · ${f.counts.PROPOSED} proposed · ${f.counts.REVISED_PROPOSAL} revised · ${f.counts.WITHDRAWN} withdrawn</span>
+      ${f.open_comments ? `<span class="pill p-ok">${f.open_comments} open for comment</span>` : ""}</div>
+      ${f.dockets.length ? `<table><thead><tr><th>Docket</th><th>Status</th><th>Comments due</th><th>Units</th><th>Summary</th></tr></thead><tbody>
+      ${f.dockets.map(d => { const st = REG[d.status] || ["p-mute", d.status];
+        return `<tr data-d="${esc(d.docket)}" data-m="${esc(f.model)}"><td class="mono">${esc(d.docket)}</td><td><span class="pill ${st[0]}">${esc(st[1])}</span></td>
+        <td>${d.comments_due ? `<span class="${d.comments_open ? "open" : ""}">${esc(d.comments_due)}${d.comments_open ? " · open" : ""}</span>` : "—"}</td>
+        <td>${d.scope === "ALL" ? "All" : d.scope === "CERTAIN" ? "Certain" : "Unclear"}</td>
+        <td class="stats">${esc(d.first_sentence.slice(0, 140))}${d.first_sentence.length > 140 ? "…" : ""}</td></tr>`; }).join("")}</tbody></table>`
+      : `<div class="empty">Only listed as part of a family; give the exact variant.</div>`}</div>`;
+  }).join("");
+  document.querySelectorAll("#fleetout tr[data-d]").forEach(tr => tr.onclick = () => {
+    $("#model").value = tr.dataset.m; $("#q").value = `What does ${tr.dataset.d} propose?`;
+    document.querySelector('.tab[data-view="ask"]').click(); ask();
+  });
+  anim("#fleetout .fcard", { opacity: [0, 1], transform: ["translateY(6px)", "translateY(0)"] }, { duration: .3, delay: window.Motion?.stagger ? window.Motion.stagger(.05) : 0 });
+};
+
+// ---------- guided tour (first visit; ? replays) ----------
+const TOUR = [
+  { sel: "#model", title: "Set the aircraft or engine", text: "Answers are checked against this model by fixed rules: exact model, FAA series (A330-200 covers A330-243), or 'give the exact variant'." },
+  { sel: "#f", title: "Ask in plain words", text: "Ask about a docket, an AD it supersedes, or a topic. Press / to jump here from anywhere." },
+  { sel: "#chips", title: "Try the demo questions", text: "Each one shows a different behaviour: answered, withdrawn, needs variant, not applicable, refused.", run: 1 },
+  { sel: "#answer .ans", title: "Status first, then evidence", text: "Every sentence is quoted from the FAA notice with its date and sentence number. Proposals are labelled not binding. 'Why this answer' lists every rule that fired; no AI is involved in those decisions." },
+  { sel: "#src", title: "Check the source yourself", text: "The exact sentence is highlighted, with the docket's full history and a link to the Federal Register page. Use [ and ] to step through citations." },
+  { sel: '.tab[data-view="fleet"]', title: "Fleet check", text: "Enter every model you maintain to see which proposals cover each one and which comment periods are still open." },
+  { sel: '.tab[data-view="eval"]', title: "See where it fails", text: "Runs our 42-question test set live against a plain-search baseline, and lists the system's known failures with reasons." },
+];
+let tourI = 0;
+function placeTour() {
+  const st = TOUR[tourI], el = document.querySelector(st.sel);
+  if (!el) return;
+  el.scrollIntoView({ block: "center", behavior: "instant" });
+  const r = el.getBoundingClientRect(), pad = 8, spot = $("#tourspot"), pop = $("#tourpop");
+  Object.assign(spot.style, { left: r.left - pad + "px", top: r.top - pad + "px", width: r.width + pad * 2 + "px", height: r.height + pad * 2 + "px" });
+  $("#tourstep").textContent = `${tourI + 1} of ${TOUR.length}`;
+  $("#tourtitle").textContent = st.title; $("#tourtext").textContent = st.text;
+  $("#tourback").disabled = tourI === 0; $("#tournext").textContent = tourI === TOUR.length - 1 ? "Done" : "Next";
+  const pw = Math.min(340, innerWidth - 32), ph = pop.offsetHeight || 180;
+  let top = r.bottom + 16, left = Math.min(Math.max(16, r.left), innerWidth - pw - 16);
+  if (top + ph > innerHeight - 16) top = r.top - ph - 16;
+  if (top < 16) {                                   // tall target: put the card beside it, or pin it bottom-right
+    top = Math.min(Math.max(16, r.top), innerHeight - ph - 16);
+    if (r.right + 16 + pw < innerWidth) left = r.right + 16;
+    else if (r.left - 16 - pw > 0) left = r.left - 16 - pw;
+    else { top = innerHeight - ph - 16; left = innerWidth - pw - 16; }
+  }
+  Object.assign(pop.style, { top: top + "px", left: left + "px" });
+}
+async function tourGo(i) {
+  tourI = i;
+  if (TOUR[i].sel.startsWith("#answer") && !document.querySelector("#answer .ans")) {
+    $("#model").value = "AS350B3"; $("#q").value = "main rotor servo-control torque inspection"; await ask();
+  }
+  placeTour();
+}
+function startTour() {
+  document.querySelector('.tab[data-view="ask"]').click();
+  $("#tour").hidden = false; tourGo(0);
+  anim("#tourpop", { opacity: [0, 1], transform: ["translateY(6px)", "translateY(0)"] }, { duration: .25 });
+}
+function endTour() { window.va && va("event", { name: "Tour closed", data: { step: tourI + 1 } }); $("#tour").hidden = true; try { localStorage.setItem("ts_tour_done", "1"); } catch (e) {} }
+$("#tournext").onclick = () => tourI === TOUR.length - 1 ? endTour() : tourGo(tourI + 1);
+$("#tourback").onclick = () => tourI > 0 && tourGo(tourI - 1);
+$("#tourskip").onclick = endTour;
+$("#tourbtn").onclick = startTour;
+addEventListener("resize", () => { if (!$("#tour").hidden) placeTour(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#tour").hidden) endTour(); });
+
+init();
+let seen = false; try { seen = localStorage.getItem("ts_tour_done") === "1"; } catch (e) {}
+if (!seen && !/[?&]notour\b/.test(location.search)) setTimeout(startTour, 500);
+</script>
+</body>
+</html>
