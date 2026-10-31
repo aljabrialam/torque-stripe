@@ -27,6 +27,37 @@ A torque stripe is the paint mark a technician puts across a fastener once it ha
 
 ---
 
+## In plain words
+
+*New to aviation? Start here. The rest of this page is written for engineers.*
+
+**Think of a car recall, but for aircraft.** When a safety problem is found on a type of aircraft or engine, the US aviation regulator (the FAA) issues an **Airworthiness Directive**: an order to inspect or fix it. Before that order becomes final, the FAA publishes it as a **proposal** so airlines and manufacturers can comment. Proposals often change. Some get rewritten, some replace older orders, and some are cancelled years later.
+
+Aircraft maintenance engineers have to keep track of all this for the aircraft they look after. Today that means reading government notices one by one. This project works with 431 of them, about 1,300 pages.
+
+**Why that is harder than it sounds:**
+
+| What makes it tricky | An everyday comparison |
+|---|---|
+| A proposal can be changed or cancelled later, in a separate notice | A product recall that was called off, announced on a different page than the original warning |
+| Each notice names exact models. An A350-941 is not "any A350" | A recall for the iPhone 15 Pro that does not cover the iPhone 15 |
+| Some notices cover only "certain" aircraft, by serial number, and that list is not in the summary | "Only cars built in March" when you do not know when yours was built |
+
+**Why a normal AI chatbot is risky here.** A chatbot sounds sure of itself even when it is guessing. It might tell an engineer to inspect a part for a proposal that was cancelled, say a notice applies to their aircraft because the name looks similar, or make up a number it has never seen. In a hangar, a wrong answer means either an unnecessary repair or a missed safety check.
+
+**What Torque Stripe does instead.** You enter your aircraft model and ask a question in plain words. Torque Stripe:
+
+1. finds the right notice and checks its **latest** version (still proposed, changed, or cancelled);
+2. checks whether **your exact model** is on the list;
+3. answers by **quoting the notice word for word**, with the page it came from;
+4. **says so plainly when it cannot be sure**, instead of guessing.
+
+The checking is done by fixed rules written in code, not by AI judgement. AI can help put the answer into clearer words, but every sentence is checked against the original notice, and the engineer makes the final call. You can export each answer as a PDF report for them to sign.
+
+**Why the name?** A *torque stripe* is the line of paint a mechanic draws across a bolt once it has been tightened and checked. If the paint line is ever broken, someone knows to stop and look. This tool aims to be that mark for answers: checked, traceable, and clear about when to stop.
+
+---
+
 ## Summary
 
 | | |
