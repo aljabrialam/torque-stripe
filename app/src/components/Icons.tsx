@@ -16,10 +16,10 @@ export const IconCube = (p: SVGProps<SVGSVGElement>) => <svg {...base(p)}><path 
 export function Logo({ size = 28 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffb061" /><stop offset="1" stopColor="#ff6a12" /></linearGradient></defs>
-      <circle cx="16" cy="16" r="10.5" fill="none" stroke="#f2e5d0" strokeOpacity=".5" strokeWidth="1.5" />
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#9ccaff" /><stop offset="1" stopColor="#3d8bff" /></linearGradient></defs>
+      <circle cx="16" cy="16" r="10.5" fill="none" stroke="#f5f7fa" strokeOpacity=".45" strokeWidth="1.5" />
       <path d="M16 5.5a10.5 10.5 0 0 1 0 21" fill="none" stroke="url(#lg)" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="16" cy="16" r="3" fill="#f2e5d0" />
+      <circle cx="16" cy="16" r="3" fill="#f5f7fa" />
     </svg>
   )
 }
