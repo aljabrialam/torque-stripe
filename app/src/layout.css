@@ -200,7 +200,7 @@
 /* ---------- tour ---------- */
 .tour { position: fixed; inset: 0; z-index: 50; background: rgba(0, 20, 60, .18); }
 .tour-ring { position: fixed; border-radius: 22px; border: 2px solid var(--molten); box-shadow: 0 0 0 9999px rgba(0, 20, 60, .18), 0 0 30px rgba(0, 133, 202, .5); transition: all .35s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
-.tour-card { position: fixed; left: 50%; top: 50%; width: 360px; padding: 18px 20px; border-radius: 20px; transform: none; }
+.tour-card { position: fixed; left: 50%; top: 50%; width: 420px; padding: 18px 20px; border-radius: 20px; transform: none; }
 .tour-card:not([style]) { transform: translate(-50%, -50%); }
 .tour-card h3 { font-family: var(--f-cond); font-weight: 500; font-size: 26px; margin: 4px 0 6px; }
 .tour-card p { margin: 0 0 14px; color: var(--sand-2); font-size: 14px; }
@@ -239,3 +239,7 @@
   .kv { grid-template-columns: 1fr 1fr; }
   .fleet-form { flex-wrap: wrap; }
 }
+
+.tour-body { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: start; }
+.tour-torq { margin: -6px 0 0 -8px; filter: drop-shadow(0 8px 14px rgba(0, 32, 91, .18)); }
+.empty-torq { float: left; margin: -6px 14px 0 -10px; }

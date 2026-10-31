@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 270 270" width="270" height="270" role="img" aria-label="Torq, the Torque Stripe guide">
+  <title>Torq, the Torque Stripe guide</title>
+  <defs>
+    <clipPath id="torq-body-wave"><polygon points="120.00,50.00 187.55,89.00 187.55,167.00 120.00,206.00 52.45,167.00 52.45,89.00"/></clipPath>
+    <linearGradient id="torq-face-wave" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A2F78"/><stop offset="1" stop-color="#00205B"/></linearGradient>
+  </defs>
+  <ellipse cx="120" cy="252" rx="78" ry="9" fill="#0B1F45" opacity=".12"/>
+  <!-- washer (the seat the stripe continues onto) -->
+  <ellipse cx="120" cy="236" rx="70" ry="15" fill="#C9D3E2" stroke="#0B1F45" stroke-width="3"/>
+  <ellipse cx="120" cy="233" rx="30" ry="6" fill="#E9EEF5"/>
+  <path d="M148 230 l14 10" stroke="#0085CA" stroke-width="10" stroke-linecap="butt"/>
+  <!-- legs -->
+  <path d="M100 196 v26 M140 196 v26" stroke="#00205B" stroke-width="12" stroke-linecap="round"/>
+  <!-- left arm (relaxed) -->
+  <path d="M54 150 Q32 168 36 194" fill="none" stroke="#00205B" stroke-width="10" stroke-linecap="round"/><circle cx="36" cy="198" r="11" fill="#FFFFFF" stroke="#0B1F45" stroke-width="3"/>
+  <!-- body: hex bolt head -->
+  <polygon points="120.00,50.00 187.55,89.00 187.55,167.00 120.00,206.00 52.45,167.00 52.45,89.00" fill="url(#torq-face-wave)" stroke="#0B1F45" stroke-width="4" stroke-linejoin="round"/>
+  <polygon points="120.00,60.00 175.43,92.00 175.43,156.00 120.00,188.00 64.57,156.00 64.57,92.00" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="3" stroke-linejoin="round"/>
+  <!-- torque stripe sash, broken at the edge like the logo -->
+  <g clip-path="url(#torq-body-wave)"><rect x="128" y="20" width="22" height="230" fill="#0085CA" transform="rotate(32 139 135)"/><rect x="128" y="20" width="6" height="230" fill="#5CC3F0" opacity=".6" transform="rotate(32 139 135)"/></g>
+  <polygon points="120.00,50.00 187.55,89.00 187.55,167.00 120.00,206.00 52.45,167.00 52.45,89.00" fill="none" stroke="#0B1F45" stroke-width="4" stroke-linejoin="round"/>
+  <!-- face plate -->
+  <rect x="78" y="94" width="84" height="76" rx="30" fill="#F4F8FC"/>
+  <path d="M90 104 q9 -6 18 -1 M132 103 q9 -5 18 1" fill="none" stroke="#0B1F45" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="100" cy="124" rx="9" ry="11" fill="#0B1F45"/><circle cx="103" cy="120" r="3.2" fill="#FFFFFF"/>
+  <ellipse cx="140" cy="124" rx="9" ry="11" fill="#0B1F45"/><circle cx="143" cy="120" r="3.2" fill="#FFFFFF"/>
+  <circle cx="88" cy="146" r="6" fill="#5CC3F0" opacity=".45"/><circle cx="152" cy="146" r="6" fill="#5CC3F0" opacity=".45"/>
+  <path d="M106 156 q14 13 28 0" fill="none" stroke="#0B1F45" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- ground-crew headset -->
+  <path d="M60 104 Q120 22 180 104" fill="none" stroke="#0B1F45" stroke-width="9" stroke-linecap="round"/>
+  <path d="M60 104 Q120 22 180 104" fill="none" stroke="#0085CA" stroke-width="4" stroke-linecap="round"/>
+  <rect x="44" y="96" width="24" height="40" rx="11" fill="#FFFFFF" stroke="#0B1F45" stroke-width="3.5"/>
+  <rect x="172" y="96" width="24" height="40" rx="11" fill="#FFFFFF" stroke="#0B1F45" stroke-width="3.5"/>
+  <rect x="49" y="106" width="14" height="20" rx="6" fill="#FFB547"/>
+  <rect x="177" y="106" width="14" height="20" rx="6" fill="#FFB547"/>
+  <!-- right arm by pose -->
+  <path d="M188 150 Q214 128 216 92" fill="none" stroke="#00205B" stroke-width="10" stroke-linecap="round"/><circle cx="216" cy="86" r="11" fill="#FFFFFF" stroke="#0B1F45" stroke-width="3"/><path d="M232 70 q8 6 6 16 M240 60 q12 10 9 26" fill="none" stroke="#0085CA" stroke-width="3" stroke-linecap="round"/>
+</svg>

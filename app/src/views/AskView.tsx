@@ -6,6 +6,7 @@ import type { StageApi } from '../components/Stage'
 import { IconChecks, IconCube, IconDoc, IconLink, IconQuote } from '../components/Icons'
 import { Radar } from '../components/Radar'
 import { exportReport } from '../lib/report'
+import { mascotSvg } from '../components/mascot.js'
 
 interface Props {
   model: string; setModel(m: string): void; query: string; setQuery(q: string): void
@@ -64,6 +65,7 @@ export function AskView(p: Props) {
       <section className="results" id="answer">
         {r ? <Answer r={r} ask={p.ask} openDocket={p.openDocket} health={health} fallbackQuery={p.query} /> : (
           <div className="glass strong card empty">
+            <div className="empty-torq" aria-hidden="true" dangerouslySetInnerHTML={{ __html: mascotSvg('wave', { size: 104 }) }} />
             <h2>Ask about FAA proposed airworthiness directives</h2>
             <p>Set your aircraft model, then ask a question or pick a demo above. Every answer is quoted from the Federal Register notice and checked by rules. If the data can't support an answer, it says so.</p>
             <p className="label" style={{ marginTop: 10 }}>Built for Airbus Challenge #4 at Autonomous SG 2026. Not an official Airbus product.</p>

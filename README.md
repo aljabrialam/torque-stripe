@@ -11,7 +11,7 @@ Torque Stripe reads 431 FAA proposed airworthiness directives (NPRMs) covering 1
 
 A torque stripe is the paint mark a technician puts across a fastener once it has been checked. If the mark has moved, you stop. *The AI reads. The rules decide. The engineer signs.*
 
-[![Torque Stripe console](app/public/og.png)](https://torque-stripe.vercel.app)
+<p align="center"><a href="https://torque-stripe.vercel.app"><img src="docs/cover/torque-stripe-cover.jpg" alt="Torque Stripe: cited answers about FAA proposed ADs, or a clear refusal. Rule-checked status, exact model filtering, quoted evidence, refusals, signed PDF report and rendered 3D inspection." width="100%"></a></p>
 
 ---
 
@@ -213,6 +213,17 @@ The baseline gets exact docket lookup plus the same BM25 search, but no rules.
 - Testing found a real bug: proposals with no machine-readable model list were silently dropped by the model filter. They are now kept and marked "applicability unknown".
 - The four known failures are shown in the app on purpose ([`eval/known_failures.json`](eval/known_failures.json)).
 
+## Meet Torq
+
+<p align="center">
+  <img src="docs/brand/mascot/torq-wave.svg" width="150" alt="Torq waving">
+  <img src="docs/brand/mascot/torq-point.svg" width="150" alt="Torq pointing">
+  <img src="docs/brand/mascot/torq-check.svg" width="150" alt="Torq with a checked clipboard">
+  <img src="docs/brand/mascot/torq-stop.svg" width="150" alt="Torq signalling stop">
+</p>
+
+Torq is the guide in the in-app tutorial. He is a hex bolt head like the logo, wears the torque stripe as a sash and a ground-crew headset, and stands on his washer. Each tour step picks a pose: **wave** to say hello, **point** at the part of the screen being explained, **check** for rule checks and results, and **stop** for refusals. One shared drawing ([`app/src/components/mascot.js`](app/src/components/mascot.js)) feeds the app, the cover and the SVG/PNG exports in [`docs/brand/mascot/`](docs/brand/mascot/).
+
 ## Brand
 
 <img src="docs/brand/app-icon.svg" width="72" align="left" alt="Torque Stripe app icon">
@@ -277,6 +288,10 @@ node scripts/film.mjs teaser 30     # 30 s cinematic teaser -> film/out/torque-s
 node scripts/narrate.mjs            # narration + timeline (macOS say)
 node scripts/film.mjs demo 24       # ~3 min captioned demo -> film/out/torque-stripe-demo.mp4
 ```
+
+### Cover image
+
+[`docs/cover/torque-stripe-cover.jpg`](docs/cover/torque-stripe-cover.jpg) (1920 x 1080, under 400 KB) for hackathon and project pages, and [`torque-stripe-cover-1280x640.jpg`](docs/cover/torque-stripe-cover-1280x640.jpg) for the GitHub social preview. Rebuild with `node docs/cover/build.mjs`.
 
 ### Social graphics
 
