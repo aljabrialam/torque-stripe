@@ -84,6 +84,9 @@ export default function App() {
           ))}
           <span className="rail-gap" />
           <button className="rail-btn" onClick={() => setTour(true)} aria-label="Show the guided tour"><IconHelp /><span>Tour</span></button>
+          <a className="rail-me" href="https://www.linkedin.com/in/aljabri-alam/" target="_blank" rel="noopener" title="Built by Aljabri Alam, Technical Lead & AI Advocate">
+            <img src="/creator.jpg" alt="Aljabri Alam" width="40" height="40" /><span>Aljabri<br />Alam</span>
+          </a>
         </nav>
         <header className="topbar">
           <span className="tb-item brand"><b>Torque Stripe</b></span>

@@ -323,9 +323,17 @@ flowchart LR
 
 **Rollout:** pilot with one operator's planning team in shadow mode (Torque Stripe answers next to the current manual process), compare against their own decisions, then widen to line engineers once the miss rate is zero on their fleet.
 
+## Built by
+
+<img src="docs/brand/creator.jpg" width="96" align="left" alt="Aljabri Alam" style="border-radius:50%">
+
+**Aljabri Alam**, Technical Lead & AI Advocate. Built for Airbus Challenge #4 at Autonomous SG 2026.
+[LinkedIn](https://www.linkedin.com/in/aljabri-alam/) · [GitHub](https://github.com/aljabrialam)
+<br clear="left">
+
 ## Further reading
 
 - Handoff and decision record: [`HANDOFF.md`](HANDOFF.md)
 - Gold set and known failures: [`eval/`](eval/)
 
-MIT licence. Built by [Aljabri Alam](https://www.linkedin.com/in/aljabri-alam/). Hackathon prototype; not an Airbus or FAA product.
+MIT licence. Hackathon prototype; not an Airbus or FAA product.

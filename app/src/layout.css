@@ -7,6 +7,9 @@
 .rail-btn[aria-current="page"] { color: var(--sand); background: rgba(0, 133, 202, .12); border-color: rgba(0, 133, 202, .35); }
 .rail-btn[aria-current="page"] svg { color: var(--molten); filter: drop-shadow(0 0 6px rgba(0, 133, 202, .7)); }
 .rail-gap { flex: 1; }
+.rail-me { display: grid; justify-items: center; gap: 4px; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--glass-line); width: 56px; color: var(--sand-2); text-decoration: none; font-size: 10.5px; line-height: 1.15; text-align: center; }
+.rail-me img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 4px 12px -4px rgba(0, 32, 91, .4); }
+.rail-me:hover { color: var(--sand); }
 .topbar { display: flex; align-items: center; gap: 22px; padding: 0 22px 0 18px; font-family: var(--f-cond); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--sand-2); white-space: nowrap; overflow: hidden; }
 .topbar .mono { text-transform: none; letter-spacing: 0; font-size: 12.5px; color: var(--sand); }
 .tb-item { display: inline-flex; align-items: center; gap: 8px; }
@@ -216,7 +219,7 @@
   body { overflow: auto; }
   .shell { grid-template-columns: 1fr; grid-template-rows: 48px 1fr 70px; height: 100dvh; }
   .rail { grid-row: 3; flex-direction: row; justify-content: space-around; margin: 0 8px 8px; padding: 6px; }
-  .rail-logo, .rail-gap { display: none; }
+  .rail-logo, .rail-gap, .rail-me { display: none; }
   .topbar { gap: 14px; padding: 0 14px; }
   .hide-sm { display: none; }
   .console { height: auto; min-height: 0; pointer-events: auto; padding: 8px 12px 0; display: grid; gap: 12px; }
