@@ -17,7 +17,7 @@
               scanFill: new T.MeshBasicMaterial({ transparent: true, opacity: 0, side: T.DoubleSide, depthWrite: false }),
               dots: new T.PointsMaterial({ size: 0.035, transparent: true, opacity: 0.8 }) };
   function colors() {
-    M.wire.color.set(css("--wire")); M.dim.color.set(css("--wire-dim")); M.dots.color.set(css("--wire-dim"));
+    M.wire.color.set(css("--wire")); M.dim.color.set(css("--wire-dim")); M.dots.color.set(css("--wire-dim")); scene.fog && scene.fog.color.set(css("--stage"));
     M.scan.color.set(css("--accent")); M.scanFill.color.set(css("--accent")); zoneFill.color.set(css("--accent")); zoneEdge.color.set(css("--accent")); paintStripe();
   }
   // ---------- geometry helpers ----------
@@ -106,7 +106,7 @@
     airliner: { wings: [[0.6, 0, 2.85, 2.3, 0.5, 4.6], [0.6, 0, -2.85, 2.3, 0.5, 4.6]], engines: [[0.1, -0.62, 1.95, 1.6, 0.8, 0.8], [0.1, -0.62, -1.95, 1.6, 0.8, 0.8]],
       fuselage: [[-0.5, 0, 0, 6.5, 1.35, 1.35]], tail: [[4.2, 0.9, 0, 1.9, 2.6, 4.0]], gear: [[0.4, -0.85, 0, 1.6, 0.6, 2.0], [-3.6, -0.75, 0, 0.6, 0.5, 0.5]],
       avionics: [[-4.3, 0, 0, 1.5, 1.2, 1.2]], fuel: [[0.6, -0.05, 2.0, 1.9, 0.4, 2.6], [0.6, -0.05, -2.0, 1.9, 0.4, 2.6], [0, -0.3, 0, 1.6, 0.6, 1.0]] },
-    helicopter: { rotor: [[0, 1.12, 0, 7.9, 0.35, 7.9]], fuselage: [[-0.1, 0, 0, 3.2, 1.6, 1.6]], tail: [[3.2, 0.3, 0, 3.4, 1.4, 0.9]], gear: [[-0.2, -0.95, 0, 3.3, 0.4, 1.5]],
+    helicopter: { rotor: [[0, 1.12, 0, 7.9, 0.1, 7.9]], fuselage: [[-0.1, 0, 0, 3.2, 1.6, 1.6]], tail: [[3.2, 0.3, 0, 3.4, 1.4, 0.9]], gear: [[-0.2, -0.95, 0, 3.3, 0.4, 1.5]],
       engines: [[0.4, 0.75, 0, 1.4, 0.45, 0.9]], avionics: [[-1.4, 0, 0, 0.8, 1.2, 1.4]], fuel: [[0.3, -0.45, 0, 1.4, 0.6, 1.3]] },
     turbofan: { fan: [[-1.5, 0, 0, 0.6, 2.25, 2.25]], core: [[1.7, 0, 0, 2.8, 1.3, 1.3]], nacelle: [[-0.3, 0, 0, 4.4, 2.35, 2.35]], engines: [[0.3, 0, 0, 5.4, 2.3, 2.3]] },
   };
@@ -124,8 +124,16 @@
   }
 
   // ---------- scene ----------
-  const floor = (() => { const a = []; for (let i = -12; i <= 12; i++) for (let j = -12; j <= 12; j++) a.push(i * 0.55, 0, j * 0.55);
-    const g = new T.BufferGeometry(); g.setAttribute("position", new T.Float32BufferAttribute(a, 3)); return new T.Points(g, M.dots); })();
+  // wireframe terrain: a valley under the aircraft, ridges rising toward the horizon, fading into fog
+  const floor = (() => {
+    const N = 64, S = 1.1, H = (x, z) => { const d = Math.hypot(x, z), ridge = Math.max(0, d - 7) / 10;
+      return -2.6 + ridge * ridge * 2.2 * (0.55 + 0.45 * Math.sin(x * 0.23 + Math.cos(z * 0.17) * 2) * Math.cos(z * 0.21 - x * 0.07))
+        + 0.25 * Math.sin(x * 0.9) * Math.cos(z * 0.8) * Math.min(1, ridge); };
+    const a = [], P = (i, j) => { const x = (i - N / 2) * S, z = (j - N / 2) * S; return [x, H(x, z), z]; };
+    for (let i = 0; i <= N; i++) for (let j = 0; j < N; j++) { a.push(...P(i, j), ...P(i, j + 1)); a.push(...P(j, i), ...P(j + 1, i)); }
+    const g = new T.BufferGeometry(); g.setAttribute("position", new T.Float32BufferAttribute(a, 3)); return new T.LineSegments(g, M.dim);
+  })();
+  scene.fog = new T.Fog(0x000000, 16, 46);
   scene.add(floor);
   const scanner = new T.Group();
   scanner.add(seg([0, -1.6, -5.6, 0, 1.6, -5.6, 0, 1.6, -5.6, 0, 1.6, 5.6, 0, 1.6, 5.6, 0, -1.6, 5.6, 0, -1.6, 5.6, 0, -1.6, -5.6], M.scan));
@@ -138,7 +146,7 @@
     rotor = tailRotor = fan = null; stripe.rotation.set(0, 0, 0);
     model = { airliner, helicopter, turbofan }[k]();
     const s = model.userData.scale; model.scale.setScalar(s); model.position.y = 1.15;
-    floor.position.y = k === "helicopter" ? -0.2 : 0; scene.add(model); model.add(zoneGroup); setZone(null); paintStripe(); kick();
+    floor.position.y = k === "helicopter" ? -0.3 : 0; scene.add(model); model.add(zoneGroup); setZone(null); paintStripe(); kick();
   }
   // ---------- camera, drag, resize ----------
   let az = -0.75, el = 0.42, dragging = false, px = 0, py = 0, autoT = 0, view = "3d", tAz = null, tEl = null;
