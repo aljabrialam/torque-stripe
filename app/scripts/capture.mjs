@@ -24,7 +24,14 @@ async function answerShots(name) {
 }
 await p.goto(base + '/?notour#/ask'); await p.waitForTimeout(2000)
 await shot('idle-console'); await shot('idle-radar', p.locator('.hud.br')); await shot('askbar', p.locator('.askbar'))
-await ask('AS350B3', 'main rotor servo-control torque inspection'); await answerShots('servo'); await shot('servo-radar', p.locator('.hud.br')); await shot('servo-legend', p.locator('.hud.bc'))
+await ask('AS350B3', 'main rotor servo-control torque inspection'); await answerShots('servo');
+await p.locator('text=Export PDF').click(); await p.waitForTimeout(150)
+{ const html = await p.evaluate(() => document.querySelector('iframe').contentDocument.documentElement.outerHTML)
+  const q = await b.newPage({ viewport: { width: 820, height: 1160 }, deviceScaleFactor: 2 }); await q.setContent(html); await q.waitForTimeout(200)
+  const h = await q.evaluate(() => document.body.scrollHeight)
+  await q.screenshot({ path: `${out}report-top.jpg`, type: 'jpeg', quality: 92, clip: { x: 0, y: 0, width: 820, height: 1000 } })
+  await q.screenshot({ path: `${out}report-bottom.jpg`, type: 'jpeg', quality: 92, clip: { x: 0, y: Math.max(0, h - 1000), width: 820, height: 1000 }, fullPage: true })
+  await q.close() } await shot('servo-radar', p.locator('.hud.br')); await shot('servo-legend', p.locator('.hud.bc'))
 await ask('AS350B', 'What does FAA-2026-11800 require?'); await answerShots('b-listed')
 await ask('AS350B3', 'What does FAA-2026-11800 require?'); await answerShots('b3-na')
 await ask('', 'Status of FAA-2026-1338'); await answerShots('revision')

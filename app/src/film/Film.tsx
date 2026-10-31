@@ -125,6 +125,7 @@ function Teaser({ t }: { t: number }) {
         <div style={{ transform: `scale(${mix(.8, 1, out(prog(t, 26.6, 28)))})` }}><Logo size={84} /></div>
         <h2 className="mega small">The AI reads. The rules decide.<br />The engineer signs.</h2>
         <p className="sub mono">torque-stripe.vercel.app</p>
+        <div className="byline"><img src="/creator.jpg" alt="" /><span><b>Aljabri Alam</b><br />Technical Lead & AI Advocate</span></div>
       </div>
     </Layer>
     <div className="fade" style={{ opacity: 1 - Math.min(out(t / .8), out((TEASER_LEN - t) / .8)) }} />
@@ -141,6 +142,7 @@ function platesFor(l: (typeof script)[number]): string[] {
   const L = l as { layout?: string; prefix?: string; src?: string }
   if (L.src) return [L.src]
   if (!L.prefix) return ['eval-metrics', 'eval-fails', 'idle-console', 'askbar']
+  if (L.layout === 'report') return ['report-top', 'report-bottom']
   return { full: [`${L.prefix}-console`], pair: [`${L.prefix}-checks`, `${L.prefix}-proposal`, `${L.prefix}-console`], card: [`${L.prefix}-card`, `${L.prefix}-sources`, `${L.prefix}-console`] }[L.layout || 'full'] || []
 }
 const SHOT_STAGE: Record<string, Partial<Cam>> = {
@@ -243,6 +245,7 @@ function Demo({ t, lines }: { t: number; lines: Line[] }) {
         <Logo size={84} />
         <h2 className="mega small">The AI reads. The rules decide.<br />The engineer signs.</h2>
         <p className="sub mono">torque-stripe.vercel.app · github.com/aljabrialam/torque-stripe</p>
+        <div className="byline"><img src="/creator.jpg" alt="" /><span><b>Aljabri Alam</b><br />Technical Lead & AI Advocate</span></div>
       </div>
     </Layer>
 
@@ -264,6 +267,10 @@ function DemoShot({ l, t }: { l: Line; t: number }) {
   const d = prog(t, l.start, l.start + l.dur), k = ease(prog(t, l.start, l.start + 1.2))
   const bg = L.prefix ? <Plate src={`${L.prefix}-console`} w={1760} y={560} o={.32} blur={3} z={-200} /> : null
   if (L.layout === 'full') return <Layer o={o}><Plate src={`${L.prefix}-console`} w={mix(1540, 1640, d)} y={mix(600, 560, k)} rx={mix(14, 2, k)} glow /></Layer>
+  if (L.layout === 'report') return <Layer o={o}>
+    <Plate src="report-top" w={600} x={mix(820, 700, k)} y={mix(560, 540, d)} ry={10} z={30} glow radius={6} />
+    <Plate src="report-bottom" w={600} x={mix(1100, 1250, k)} y={mix(580, 540, d)} ry={-12} z={-20} glow radius={6} />
+  </Layer>
   if (L.layout === 'single') return <Layer o={o}><Plate src={L.src!} w={mix(1540, 1620, d)} y={mix(620, 560, k)} rx={mix(12, 2, k)} glow /></Layer>
   if (L.layout === 'pair') return <Layer o={o}>{bg}
     <Plate src={`${L.prefix}-checks`} w={620} x={mix(860, 640, k)} y={540} ry={mix(4, 12, d)} z={mix(-100, 40, k)} glow />

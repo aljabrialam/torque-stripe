@@ -276,6 +276,16 @@ node scripts/narrate.mjs            # narration + timeline (macOS say)
 node scripts/film.mjs demo 24       # ~3 min captioned demo -> film/out/torque-stripe-demo.mp4
 ```
 
+### Social graphics
+
+Ready-to-post PNGs with editable HTML sources and captions in [`docs/social/`](docs/social/) (rebuild with `node docs/social/build.mjs`):
+
+<p>
+  <img src="docs/social/torque-stripe-portrait-1080x1350.png" width="24%" alt="Portrait graphic: cited answers or a clear refusal">
+  <img src="docs/social/torque-stripe-results-1080x1080.png" width="30%" alt="Square graphic: results against a search baseline">
+  <img src="docs/social/torque-stripe-report-1080x1350.png" width="24%" alt="Portrait graphic: the signed report">
+</p>
+
 ### Known limits
 
 - 165 proposals cover "certain" units, and their criteria are only in the full Federal Register text.

@@ -1,29 +1,220 @@
 [
-  { "shot": "title", "section": "Title", "caption": "Torque Stripe. Built for Airbus Challenge 4 at Autonomous SG 2026.", "say": "Torque Stripe. Built for Airbus Challenge four, at Autonomous S G, twenty twenty six." },
-  { "shot": "hook", "section": "Problem", "caption": "A licensed engineer asks: which FAA proposals touch my AS350B3?", "say": "A licensed engineer asks: which F A A proposals touch my A S 350 B 3?" },
-  { "shot": "problem", "section": "Problem", "caption": "Today that means reading Federal Register notices, one by one.", "k": 0 },
-  { "shot": "problem", "section": "Problem", "caption": "431 notices. 1,302 pages. Proposals revised, corrected and withdrawn.", "say": "Four hundred thirty one notices. Thirteen hundred pages. Proposals revised, corrected, and withdrawn.", "k": 1 },
-  { "shot": "problem", "section": "Problem", "caption": "A general chatbot will tell you to do what a withdrawn proposal never required.", "k": 2 },
-  { "shot": "approach", "section": "Approach", "caption": "So we split the job. Rules decide every safety question.", "k": 0 },
-  { "shot": "approach", "section": "Approach", "caption": "AI may only reword evidence the rules already selected.", "say": "A I may only reword evidence the rules already selected.", "k": 1 },
-  { "shot": "arch", "section": "Architecture", "caption": "The parser finds docket, model and intent. Unknown or out of scope? It refuses.", "k": 0 },
-  { "shot": "arch", "section": "Architecture", "caption": "The version chain uses the latest notice, so withdrawn proposals never slip through.", "k": 1 },
-  { "shot": "arch", "section": "Architecture", "caption": "Model rules check exact variants, FAA series conventions, and all versus certain units.", "say": "Model rules check exact variants, F A A series conventions, and all versus certain units.", "k": 2 },
-  { "shot": "arch", "section": "Architecture", "caption": "Every sentence is quoted word for word and cited to docket, page and sentence.", "k": 3 },
-  { "shot": "servo", "section": "Demo", "demo": "Demo 1 of 3", "title": "Answered, all units", "caption": "Demo one. AS350B3, main rotor servo-control torque inspection.", "say": "Demo one. A S 350 B 3. Main rotor servo control torque inspection.", "layout": "full", "prefix": "servo" },
-  { "shot": "servo", "section": "Demo", "demo": "Demo 1 of 3", "title": "Answered, all units", "caption": "Every rule check passes. All units covered. 33 days left to comment.", "say": "Every rule check passes. All units are covered, with thirty three days left to comment.", "layout": "pair", "prefix": "servo" },
-  { "shot": "servo", "section": "Demo", "demo": "Demo 1 of 3", "title": "Answered, all units", "caption": "Each sentence links to its Federal Register page. Proposed, not binding.", "layout": "card", "prefix": "servo" },
-  { "shot": "config", "section": "Demo", "demo": "Demo 2 of 3", "title": "Configuration filtering", "caption": "Demo two. The same proposal for the AS350B: listed.", "say": "Demo two. The same proposal, for the A S 350 B. Listed.", "layout": "pair", "prefix": "b-listed" },
-  { "shot": "config", "section": "Demo", "demo": "Demo 2 of 3", "title": "Configuration filtering", "caption": "Switch to the AS350B3: not applicable. The model isn't in the proposal.", "say": "Switch to the A S 350 B 3. Not applicable. The model is not in the proposal.", "layout": "pair", "prefix": "b3-na" },
-  { "shot": "revision", "section": "Demo", "demo": "Demo 3 of 3", "title": "Revision logic", "caption": "Demo three. FAA-2026-1338 is a revised proposal that supersedes three ADs.", "say": "Demo three. Docket thirteen thirty eight is a revised proposal that supersedes three directives.", "layout": "pair", "prefix": "revision" },
-  { "shot": "withdrawn", "section": "Safety", "demo": "Safety 1 of 3", "title": "Withdrawn means nothing to do", "caption": "Safety one. Is FAA-2013-0541 still active? No. Withdrawn, imposes nothing.", "say": "Safety one. Is docket zero five four one still active? No. It was withdrawn, and imposes nothing.", "layout": "pair", "prefix": "withdrawn" },
-  { "shot": "variant", "section": "Safety", "demo": "Safety 2 of 3", "title": "Asking, not guessing", "caption": "Safety two. Does it apply to my 787? It asks which variant.", "say": "Safety two. Does it apply to my seven eight seven? It asks which variant, instead of guessing.", "layout": "card", "prefix": "variant" },
-  { "shot": "variant", "section": "Safety", "demo": "Safety 2 of 3", "title": "Asking, not guessing", "caption": "787-9 is listed, but only certain units. Serial criteria aren't in the data, so it won't confirm.", "say": "The seven eight seven dash nine is listed, but only for certain units. The serial criteria are not in the data, so it will not confirm.", "layout": "pair", "prefix": "unconfirmed" },
-  { "shot": "refused", "section": "Safety", "demo": "Safety 3 of 3", "title": "Refused, with a reason", "caption": "Safety three. Torque for the A380-841 landing gear? Refused.", "say": "Safety three. Torque values for the A 380 landing gear? Refused.", "layout": "full", "prefix": "refused" },
-  { "shot": "refused", "section": "Safety", "demo": "Safety 3 of 3", "title": "Refused, with a reason", "caption": "Nothing in the data supports an answer, so the stripe stays broken.", "layout": "card", "prefix": "refused" },
-  { "shot": "fleet", "section": "Fleet", "caption": "Fleet check runs every model you maintain and hides withdrawn proposals.", "layout": "single", "src": "fleet-page" },
-  { "shot": "results", "section": "Results", "caption": "We measured it. 42 real questions: 42 correct, 0 of 16 unsafe answers.", "say": "We measured it. Forty two real questions. Forty two correct. Zero of sixteen unsafe answers.", "k": 0 },
-  { "shot": "results", "section": "Results", "caption": "A plain search baseline gets 5 right and answers all 16 unsafe questions.", "say": "A plain search baseline gets five right, and answers all sixteen unsafe questions.", "k": 1 },
-  { "shot": "results", "section": "Results", "caption": "We wrote the test set ourselves, and we show where it still fails.", "k": 2 },
-  { "shot": "close", "section": "Close", "caption": "Torque Stripe. The AI reads. The rules decide. The engineer signs.", "say": "Torque Stripe. The A I reads. The rules decide. The engineer signs." }
+ {
+  "shot": "title",
+  "section": "Title",
+  "caption": "Torque Stripe. Built for Airbus Challenge 4 at Autonomous SG 2026.",
+  "say": "Torque Stripe. Built for Airbus Challenge four, at Autonomous S G, twenty twenty six."
+ },
+ {
+  "shot": "hook",
+  "section": "Problem",
+  "caption": "A licensed engineer asks: which FAA proposals touch my AS350B3?",
+  "say": "A licensed engineer asks: which F A A proposals touch my A S 350 B 3?"
+ },
+ {
+  "shot": "problem",
+  "section": "Problem",
+  "caption": "Today that means reading Federal Register notices, one by one.",
+  "k": 0
+ },
+ {
+  "shot": "problem",
+  "section": "Problem",
+  "caption": "431 notices. 1,302 pages. Proposals revised, corrected and withdrawn.",
+  "say": "Four hundred thirty one notices. Thirteen hundred pages. Proposals revised, corrected, and withdrawn.",
+  "k": 1
+ },
+ {
+  "shot": "problem",
+  "section": "Problem",
+  "caption": "A general chatbot will tell you to do what a withdrawn proposal never required.",
+  "k": 2
+ },
+ {
+  "shot": "approach",
+  "section": "Approach",
+  "caption": "So we split the job. Rules decide every safety question.",
+  "k": 0
+ },
+ {
+  "shot": "approach",
+  "section": "Approach",
+  "caption": "AI may only reword evidence the rules already selected.",
+  "say": "A I may only reword evidence the rules already selected.",
+  "k": 1
+ },
+ {
+  "shot": "arch",
+  "section": "Architecture",
+  "caption": "The parser finds docket, model and intent. Unknown or out of scope? It refuses.",
+  "k": 0
+ },
+ {
+  "shot": "arch",
+  "section": "Architecture",
+  "caption": "The version chain uses the latest notice, so withdrawn proposals never slip through.",
+  "k": 1
+ },
+ {
+  "shot": "arch",
+  "section": "Architecture",
+  "caption": "Model rules check exact variants, FAA series conventions, and all versus certain units.",
+  "say": "Model rules check exact variants, F A A series conventions, and all versus certain units.",
+  "k": 2
+ },
+ {
+  "shot": "arch",
+  "section": "Architecture",
+  "caption": "Every sentence is quoted word for word and cited to docket, page and sentence.",
+  "k": 3
+ },
+ {
+  "shot": "servo",
+  "section": "Demo",
+  "demo": "Demo 1 of 3",
+  "title": "Answered, all units",
+  "caption": "Demo one. AS350B3, main rotor servo-control torque inspection.",
+  "say": "Demo one. A S 350 B 3. Main rotor servo control torque inspection.",
+  "layout": "full",
+  "prefix": "servo"
+ },
+ {
+  "shot": "servo",
+  "section": "Demo",
+  "demo": "Demo 1 of 3",
+  "title": "Answered, all units",
+  "caption": "Every rule check passes. All units covered. 33 days left to comment.",
+  "say": "Every rule check passes. All units are covered, with thirty three days left to comment.",
+  "layout": "pair",
+  "prefix": "servo"
+ },
+ {
+  "shot": "servo",
+  "section": "Demo",
+  "demo": "Demo 1 of 3",
+  "title": "Answered, all units",
+  "caption": "Each sentence links to its Federal Register page. Proposed, not binding.",
+  "layout": "card",
+  "prefix": "servo"
+ },
+ {
+  "shot": "config",
+  "section": "Demo",
+  "demo": "Demo 2 of 3",
+  "title": "Configuration filtering",
+  "caption": "Demo two. The same proposal for the AS350B: listed.",
+  "say": "Demo two. The same proposal, for the A S 350 B. Listed.",
+  "layout": "pair",
+  "prefix": "b-listed"
+ },
+ {
+  "shot": "config",
+  "section": "Demo",
+  "demo": "Demo 2 of 3",
+  "title": "Configuration filtering",
+  "caption": "Switch to the AS350B3: not applicable. The model isn't in the proposal.",
+  "say": "Switch to the A S 350 B 3. Not applicable. The model is not in the proposal.",
+  "layout": "pair",
+  "prefix": "b3-na"
+ },
+ {
+  "shot": "revision",
+  "section": "Demo",
+  "demo": "Demo 3 of 3",
+  "title": "Revision logic",
+  "caption": "Demo three. FAA-2026-1338 is a revised proposal that supersedes three ADs.",
+  "say": "Demo three. Docket thirteen thirty eight is a revised proposal that supersedes three directives.",
+  "layout": "pair",
+  "prefix": "revision"
+ },
+ {
+  "shot": "withdrawn",
+  "section": "Safety",
+  "demo": "Safety 1 of 3",
+  "title": "Withdrawn means nothing to do",
+  "caption": "Safety one. Is FAA-2013-0541 still active? No. Withdrawn, imposes nothing.",
+  "say": "Safety one. Is docket zero five four one still active? No. It was withdrawn, and imposes nothing.",
+  "layout": "pair",
+  "prefix": "withdrawn"
+ },
+ {
+  "shot": "variant",
+  "section": "Safety",
+  "demo": "Safety 2 of 3",
+  "title": "Asking, not guessing",
+  "caption": "Safety two. Does it apply to my 787? It asks which variant.",
+  "say": "Safety two. Does it apply to my seven eight seven? It asks which variant, instead of guessing.",
+  "layout": "card",
+  "prefix": "variant"
+ },
+ {
+  "shot": "variant",
+  "section": "Safety",
+  "demo": "Safety 2 of 3",
+  "title": "Asking, not guessing",
+  "caption": "787-9 is listed, but only certain units. Serial criteria aren't in the data, so it won't confirm.",
+  "say": "The seven eight seven dash nine is listed, but only for certain units. The serial criteria are not in the data, so it will not confirm.",
+  "layout": "pair",
+  "prefix": "unconfirmed"
+ },
+ {
+  "shot": "refused",
+  "section": "Safety",
+  "demo": "Safety 3 of 3",
+  "title": "Refused, with a reason",
+  "caption": "Safety three. Torque for the A380-841 landing gear? Refused.",
+  "say": "Safety three. Torque values for the A 380 landing gear? Refused.",
+  "layout": "full",
+  "prefix": "refused"
+ },
+ {
+  "shot": "refused",
+  "section": "Safety",
+  "demo": "Safety 3 of 3",
+  "title": "Refused, with a reason",
+  "caption": "Nothing in the data supports an answer, so the stripe stays broken.",
+  "layout": "card",
+  "prefix": "refused"
+ },
+ {
+  "shot": "report",
+  "section": "Report",
+  "caption": "Every answer exports as a PDF report, fingerprinted, for the engineer to review and sign.",
+  "say": "Every answer exports as a P D F report, fingerprinted, for the engineer to review and sign.",
+  "layout": "report",
+  "prefix": "report"
+ },
+ {
+  "shot": "fleet",
+  "section": "Fleet",
+  "caption": "Fleet check runs every model you maintain and hides withdrawn proposals.",
+  "layout": "single",
+  "src": "fleet-page"
+ },
+ {
+  "shot": "results",
+  "section": "Results",
+  "caption": "We measured it. 42 real questions: 42 correct, 0 of 16 unsafe answers.",
+  "say": "We measured it. Forty two real questions. Forty two correct. Zero of sixteen unsafe answers.",
+  "k": 0
+ },
+ {
+  "shot": "results",
+  "section": "Results",
+  "caption": "A plain search baseline gets 5 right and answers all 16 unsafe questions.",
+  "say": "A plain search baseline gets five right, and answers all sixteen unsafe questions.",
+  "k": 1
+ },
+ {
+  "shot": "results",
+  "section": "Results",
+  "caption": "We wrote the test set ourselves, and we show where it still fails.",
+  "k": 2
+ },
+ {
+  "shot": "close",
+  "section": "Close",
+  "caption": "Torque Stripe. The AI reads. The rules decide. The engineer signs.",
+  "say": "Torque Stripe. The A I reads. The rules decide. The engineer signs."
+ }
 ]
