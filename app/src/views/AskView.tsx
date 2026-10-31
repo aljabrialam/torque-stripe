@@ -157,7 +157,7 @@ function StripeLegend({ r, zone, stage }: { r: AskResult | null; zone: Props['zo
   const render = (x: typeof mode) => { setMode(x); stage.current?.setRender(x) }
   return (
     <div className="hud bc glass">
-      <span className={`sw ${s.state}`} aria-hidden="true" />
+      <span className={`heat ${s.state}`} aria-hidden="true"><i /></span>
       <div className="sl-t"><b>{s.text}</b>{zone && <span className="label">Affected area · {zone.label} · matched “{zone.word}” in the quoted notice</span>}</div>
       <div className="views-col">
       <div className="views" role="group" aria-label="Camera">

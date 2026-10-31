@@ -14,7 +14,7 @@ export function createStage(cv, host, opts = {}) {
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
   const scene = new T.Scene(), cam = new T.PerspectiveCamera(32, 1, 0.1, 200);
   // ---------- rendered look: PBR skin, studio environment, sunset key + molten rim ----------
-  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.82;
+  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.95;
   const pmrem = new T.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.add(new T.HemisphereLight(0xffdcb4, 0x1c120a, 0.35));
   const key = new T.DirectionalLight(0xffb27a, 2.0); key.position.set(-6, 7, 5); scene.add(key);
@@ -26,32 +26,43 @@ export function createStage(cv, host, opts = {}) {
               scanFill: new T.MeshBasicMaterial({ transparent: true, opacity: 0, side: T.DoubleSide, depthWrite: false }),
               dots: new T.PointsMaterial({ size: 0.035, transparent: true, opacity: 0.8 }),
               floor: new T.LineBasicMaterial({ transparent: true, opacity: 0.55 }),
-              hull: new T.MeshStandardMaterial({ color: 0xb89f84, metalness: 0.7, roughness: 0.34, envMapIntensity: 0.55, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
-              hullDim: new T.MeshStandardMaterial({ color: 0x7a6552, metalness: 0.55, roughness: 0.42, envMapIntensity: 0.6, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+              hull: new T.MeshPhysicalMaterial({ color: 0xffffff, vertexColors: true, metalness: 0.6, roughness: 0.34, clearcoat: 0.5, clearcoatRoughness: 0.25, envMapIntensity: 0.9, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+              hullDim: new T.MeshPhysicalMaterial({ color: 0x6f747a, vertexColors: true, metalness: 0.4, roughness: 0.5, envMapIntensity: 0.6, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+              fem: new T.MeshBasicMaterial({ color: 0xf2e5d0, wireframe: true, transparent: true, opacity: 0.045, depthWrite: false }),
+              intake: new T.MeshStandardMaterial({ color: 0x120c08, metalness: 0.2, roughness: 0.8, side: T.DoubleSide }),
               stripeSolid: new T.MeshStandardMaterial({ metalness: 0.2, roughness: 0.45, transparent: true }) };
-  const skin = (geo, mat) => { const m = new T.Mesh(geo, mat === M.dim ? M.hullDim : M.hull); m.visible = solid; solids.push(m); return m; };
-  function applyRender() { M.wire.opacity = solid ? 0.2 : 0.72; M.dim.opacity = solid ? 0.14 : 0.55; solids.forEach(m => m.visible = solid); }
+  const skin = (geo, mat) => { const m = new T.Mesh(geo, mat === M.dim ? M.hullDim : M.hull); m.add(new T.Mesh(geo, M.fem)); m.visible = solid; solids.push(m); return m; };
+  function applyRender() { M.wire.opacity = solid ? 0.07 : 0.72; M.dim.opacity = solid ? 0.05 : 0.55; solids.forEach(m => m.visible = solid); }
   function colors() {
     M.wire.color.set(css("--wire")); M.dim.color.set(css("--wire-dim")); M.dots.color.set(css("--wire-dim")); M.floor.color.set(css("--wire-dim")); applyRender(); scene.fog && scene.fog.color.set(css("--stage"));
     M.scan.color.set(css("--accent")); M.scanFill.color.set(css("--accent")); zoneFill.color.set(css("--accent")); zoneEdge.color.set(css("--accent")); paintStripe();
   }
   // ---------- geometry helpers ----------
   const seg = (arr, mat) => { const g = new T.BufferGeometry(); g.setAttribute("position", new T.Float32BufferAttribute(arr, 3)); return new T.LineSegments(g, mat || M.wire); };
-  function lathe(profile, long = 16, ringEvery = 1, mat) {   // profile: [[x, r], ...] along X
+  function lathe(profile, long = 16, ringEvery = 1, mat, cut = false) {   // profile: [[x, r], ...] along X
     const a = [];
     for (let k = 0; k < long; k++) { const t = k / long * Math.PI * 2, c = Math.cos(t), s = Math.sin(t);
       for (let i = 0; i < profile.length - 1; i++) { const [x0, r0] = profile[i], [x1, r1] = profile[i + 1]; a.push(x0, r0 * c, r0 * s, x1, r1 * c, r1 * s); } }
     profile.forEach(([x, r], i) => { if (i % ringEvery || r < 0.02) return;
       for (let k = 0; k < 40; k++) { const t0 = k / 40 * Math.PI * 2, t1 = (k + 1) / 40 * Math.PI * 2; a.push(x, r * Math.cos(t0), r * Math.sin(t0), x, r * Math.cos(t1), r * Math.sin(t1)); } });
-    const geo = new T.LatheGeometry(profile.map(([x, r]) => new T.Vector2(Math.max(r, 0.001), x)), Math.max(long, 24) * 2); geo.rotateZ(-Math.PI / 2);
+    const curve = new T.CatmullRomCurve3(profile.map(([x, r]) => new T.Vector3(x, r, 0)), false, "centripetal");
+    const pts = curve.getPoints(Math.max(24, profile.length * 10)).map(v => new T.Vector2(Math.max(v.y, 0.001), v.x));
+    const geo = new T.LatheGeometry(pts, Math.max(long, 24) * 2, cut ? Math.PI * 1.5 : 0, cut ? Math.PI * 1.5 : Math.PI * 2); geo.rotateZ(-Math.PI / 2);
     const g = new T.Group(); g.add(skin(geo, mat), seg(a, mat)); return g;
   }
   function panel(pts, ribs = 0, mat) {   // closed polygon of [x,y,z] + optional ribs between edge 0-1 and 3-2
     const a = []; pts.forEach((p, i) => { const q = pts[(i + 1) % pts.length]; a.push(...p, ...q); });
     for (let i = 1; i <= ribs; i++) { const t = i / (ribs + 1), L = (p, q) => p.map((v, j) => v + (q[j] - v) * t);
       a.push(...L(pts[0], pts[1]), ...L(pts[3], pts[2])); }
-    const pos = []; for (let i = 1; i < pts.length - 1; i++) pos.push(...pts[0], ...pts[i], ...pts[i + 1]);
-    const geo = new T.BufferGeometry(); geo.setAttribute("position", new T.Float32BufferAttribute(pos, 3)); geo.computeVertexNormals();
+    let geo;
+    if (pts.length === 4) {
+      const N = 10, pos = [], idx = [], L = (p, q, t) => p.map((v, j) => v + (q[j] - v) * t);
+      for (let j = 0; j <= N; j++) for (let i = 0; i <= N; i++) pos.push(...L(L(pts[0], pts[1], i / N), L(pts[3], pts[2], i / N), j / N));
+      for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const a0 = j * (N + 1) + i, b0 = a0 + 1, c0 = a0 + N + 1, d0 = c0 + 1; idx.push(a0, b0, d0, a0, d0, c0); }
+      geo = new T.BufferGeometry(); geo.setAttribute("position", new T.Float32BufferAttribute(pos, 3)); geo.setIndex(idx);
+    } else { const pos = []; for (let i = 1; i < pts.length - 1; i++) pos.push(...pts[0], ...pts[i], ...pts[i + 1]);
+      geo = new T.BufferGeometry(); geo.setAttribute("position", new T.Float32BufferAttribute(pos, 3)); }
+    geo.computeVertexNormals();
     const g = new T.Group(); g.add(skin(geo, mat), seg(a, mat)); return g;
   }
   const mirrorZ = pts => pts.map(([x, y, z]) => [x, y, -z]);
@@ -81,7 +92,8 @@ export function createStage(cv, host, opts = {}) {
     g.add(seg(ring(r, 40), M.dim)); return g; }
   function nacelle(len, r, prop) { const g = new T.Group();
     r *= 1.15; g.add(lathe([[-len / 2, r * 0.82], [-len / 2 + 0.1, r], [len * 0.25, r * 0.95], [len / 2, r * 0.6]], 14, 2, M.wire));
-    if (!prop) { const f = seg(ring(r * 0.8, 24)); f.position.x = -len / 2 + 0.02; g.add(f); }
+    if (!prop) { const f = seg(ring(r * 0.8, 24)); f.position.x = -len / 2 + 0.02; g.add(f);
+      const d = new T.Mesh(new T.CircleGeometry(r * 0.8, 32), M.intake); d.rotation.y = Math.PI / 2; d.position.x = -len / 2 + 0.06; g.add(d); }
     if (prop) { const p = spin(propeller(r * 2.6, 4), "x", 9); p.position.x = -len / 2 - 0.08; g.add(p); } return g; }
   function fixedWing(S) {
     const g = new T.Group(), L = S.len / 2, R = S.rad, Z = [];
@@ -110,7 +122,7 @@ export function createStage(cv, host, opts = {}) {
     if (S.ga && !S.high && false) {}
     Z.push(["fuselage", [0, 0, 0, S.len * 0.62, R * 2.2, R * 2.2]], ["avionics", [-L + 0.8, 0, 0, 1.6, R * 2, R * 2]],
       ["gear", [wx + 0.3, -R - 0.25, 0, 1.4, 0.5, R * 3.2]], ["gear", [-L + 1.6, -R - 0.2, 0, 0.5, 0.4, 0.5]]);
-    buildStripe(R * 1.09); stripe.position.set(wx - cr * 0.8, 0, 0); g.add(stripe);
+    buildStripe(R * 1.09); stripe.position.set(wx - cr * 0.8, 0, 0); 
     g.userData = { len: S.len + 0.6, span: S.span, scale: S.scale || 1, zones: Z };
     return g;
   }
@@ -123,7 +135,7 @@ export function createStage(cv, host, opts = {}) {
         Z.push(["rotor", [x, h, 0, 6.7, 0.1, 6.7]]); }
       for (const z of [0.7, -0.7]) g.add(seg([-1.6, -1.0, z, -1.6, -0.75, z, 1.8, -1.0, z, 1.8, -0.75, z], M.dim));
       Z.push(["fuselage", [0, 0, 0, 6.2, 1.7, 1.7]], ["engines", [2.6, 0.95, 0, 1.4, 0.5, 1.9]], ["gear", [0, -0.95, 0, 4, 0.4, 1.6]], ["avionics", [-2.9, 0, 0, 0.8, 1.4, 1.6]], ["tail", [2.9, 1, 0, 1, 1.2, 1]], ["fuel", [0, -0.5, 0.75, 3.5, 0.6, 0.4]]);
-      buildStripe(0.86); stripe.position.set(0, 0, 0); g.add(stripe);
+      buildStripe(0.86); stripe.position.set(0, 0, 0); 
       g.userData = { len: 7.2, span: 7.6, scale: 1.05, zones: Z }; return g;
     }
     const pod = S.small ? [[-1.3, 0], [-1.2, .32], [-0.9, .55], [-0.2, .62], [0.5, .52], [0.9, .28], [1.1, .14]] : [[-1.7, 0], [-1.6, .38], [-1.2, .66], [-0.3, .78], [0.7, .7], [1.3, .42], [1.6, .2]];
@@ -149,7 +161,7 @@ export function createStage(cv, host, opts = {}) {
     Z.push(["rotor", [0, mh, 0, rr * 2 + 0.1, 0.1, rr * 2 + 0.1]], ["fuselage", [-0.1, 0, 0, pod[pod.length - 1][0] - pod[0][0] + 0.2, 1.6, 1.6]],
       ["tail", [(tb + 1.5) / 2, 0.3, 0, tb - 1.3, 1.4, 0.9]], ["gear", [-0.2, -0.95, 0, sk * 2 + 0.3, 0.4, 1.5]], ["engines", [0.4, mh - 0.35, 0, 1.4, 0.45, 0.9]],
       ["avionics", [pod[0][0] + 0.4, 0, 0, 0.8, 1.2, 1.4]], ["fuel", [0.3, -0.45, 0, 1.4, 0.6, 1.3]]);
-    buildStripe(pod[3][1] * 1.06); stripe.position.set(-0.15, 0, 0); g.add(stripe);
+    buildStripe(pod[3][1] * 1.06); stripe.position.set(-0.15, 0, 0); 
     g.userData = { len: tb + 2, span: rr * 2, scale: S.small ? 1.4 : 1.25, zones: Z };
     return g;
   }
@@ -161,19 +173,25 @@ export function createStage(cv, host, opts = {}) {
       for (const z of [0.7, -0.7]) g.add(seg([0.6, 0.2, z * 0.8, 0.9, 0.45, z * 1.3, 0.9, 0.45, z * 1.3, 1.2, 0.3, z * 1.2], M.dim));
       if (S.prop) { const p = spin(propeller(1.9, 4), "x", 7); p.position.x = -2.0; g.add(p); Z.push(["fan", [-2.0, 0, 0, 0.4, 3.9, 3.9]]); }
       Z.push(["core", [0, 0, 0, 3.6, 1.3, 1.3]], ["nacelle", [0.2, 0, 0, 4.2, 1.5, 1.5]], ["engines", [0.2, 0, 0, 4.2, 1.5, 1.5]]);
-      buildStripe(0.64); stripe.position.set(-0.4, 0, 0); g.add(stripe);
+      buildStripe(0.64); stripe.position.set(-0.4, 0, 0); 
       g.userData = { len: 4.4, span: 1.6, scale: 1.45, zones: Z }; return g;
     }
     const fr = S.bypass === "low" ? 0.72 : 1.0, ln = S.bypass === "low" ? 1.25 : 1;
-    g.add(lathe([[-2.2, .95 * fr], [-2.05, 1.06 * fr], [-1.4, 1.1 * fr], [0.6 * ln, 1.04 * fr], [1.5 * ln, .84 * fr], [1.9 * ln, .66 * fr]], 20, 1));
+    g.add(lathe([[-2.2, .95 * fr], [-2.05, 1.06 * fr], [-1.4, 1.1 * fr], [0.6 * ln, 1.04 * fr], [1.5 * ln, .84 * fr], [1.9 * ln, .66 * fr]], 20, 1, undefined, true));
+    for (const [x0, r0, r1, n] of [[-0.6, .2, .52, 26], [-0.25, .2, .48, 30], [0.1, .22, .44, 34], [0.45, .24, .4, 38], [1.1 * ln, .22, .46, 30], [1.45 * ln, .22, .5, 28]]) {
+      const st = new T.Group(); st.position.x = x0;
+      for (let k = 0; k < n; k++) { const b = panel([[-0.05, r0 * fr, -0.025], [0.04, r1 * fr, 0.03], [0.09, r1 * fr, 0.0], [0.03, r0 * fr, -0.04]], 0, M.dim); b.rotation.x = k / n * Math.PI * 2; st.add(b); }
+      g.add(spin(st, "x", 1.2));
+    }
     g.add(lathe([[0.4, .6 * fr], [1.9 * ln, .58 * fr], [2.7 * ln, .44 * fr], [3.1 * ln, .26 * fr]], 14, 1, M.dim));
     g.add(lathe([[-2.0, 0], [-1.75, .2 * fr], [-1.45, .34 * fr]], 10, 2, M.dim));
     const fan = spin(new T.Group(), "x", 0.9); fan.position.set(-1.45, 0, 0);
     const nb = S.bypass === "low" ? 30 : S.blades || 22, a = [];
-    for (let k = 0; k < nb; k++) { const t = k / nb * Math.PI * 2, t2 = t + 0.18; a.push(0, .34 * fr * Math.cos(t), .34 * fr * Math.sin(t), 0.08, fr * Math.cos(t2), fr * Math.sin(t2)); }
-    fan.add(seg(a)); fan.add(seg(ring(fr, 60), M.dim)); g.add(fan);
+    const nbs = Math.min(nb, 24);
+    for (let k = 0; k < nbs; k++) { const b = panel([[-0.09, .33 * fr, -0.1], [0.02, fr * 0.97, 0.16], [0.17, fr * 0.97, 0.05], [0.11, .33 * fr, -0.14]], 0); b.rotation.x = k / nbs * Math.PI * 2; fan.add(b); }
+    fan.add(seg(ring(fr, 60), M.dim)); g.add(fan);
     Z.push(["fan", [-1.5, 0, 0, 0.6, 2.25 * fr, 2.25 * fr]], ["core", [1.7 * ln, 0, 0, 2.8 * ln, 1.3 * fr, 1.3 * fr]], ["nacelle", [-0.3, 0, 0, 4.4, 2.35 * fr, 2.35 * fr]], ["engines", [0.3, 0, 0, 5.4, 2.3 * fr, 2.3 * fr]]);
-    buildStripe(1.13 * fr); stripe.position.set(-0.6, 0, 0); g.add(stripe);
+    buildStripe(1.13 * fr); stripe.position.set(-0.6, 0, 0); 
     g.userData = { len: 5.4 * ln, span: 2.3 * fr, scale: S.bypass === "low" ? 1.45 : 1.3, zones: Z };
     return g;
   }
@@ -234,7 +252,35 @@ export function createStage(cv, host, opts = {}) {
         const m = new T.Mesh(g, zoneFill), e = new T.LineSegments(new T.EdgesGeometry(g), zoneEdge); m.position.set(x, y, z); e.position.set(x, y, z); m.renderOrder = e.renderOrder = 10; zoneGroup.add(m, e); }
       zoneOn = true; zonePulse = 0; }
     if (model && zoneGroup.parent !== model) model.add(zoneGroup);
-    kick();
+    curZone = name || null; paintField(); kick();
+  }
+  // ---------- field: distance to the affected zone, painted on the skin as banded contours ----------
+  let curZone = null;
+  const RAMP = [[0, new T.Color(0x9a9fa6)], [0.3, new T.Color(0xb19a74)], [0.5, new T.Color(0xf0a040)], [0.75, new T.Color(0xff7a1f)], [1, new T.Color(0xff3b0f)]];
+  const ramp = (v, out) => { for (let i = 1; i < RAMP.length; i++) if (v <= RAMP[i][0]) { const [a, ca] = RAMP[i - 1], [b, cb] = RAMP[i]; return out.copy(ca).lerp(cb, (v - a) / (b - a)); } return out.copy(RAMP[RAMP.length - 1][1]); };
+  function paintField() {
+    if (!model) return;
+    model.updateMatrixWorld(true);
+    const inv = new T.Matrix4().copy(model.matrixWorld).invert(), m = new T.Matrix4(), p = new T.Vector3(), c = new T.Color();
+    const on = curZone && state !== "na" && state !== "broken";
+    const boxes = on ? (model.userData.zones || []).filter(z => z[0] === curZone).map(z => z[1]) : [];
+    const cap = state === "general" ? 0.72 : 1, dark = state === "broken" ? 0.62 : 1;
+    const dist = ([x, y, z, sx, sy, sz]) => sy < 0.2
+      ? Math.hypot(Math.max(Math.hypot(p.x - x, p.z - z) - sx / 2, 0), Math.max(Math.abs(p.y - y) - sy / 2, 0))
+      : Math.hypot(Math.max(Math.abs(p.x - x) - sx / 2, 0), Math.max(Math.abs(p.y - y) - sy / 2, 0), Math.max(Math.abs(p.z - z) - sz / 2, 0));
+    const fall = 0.85;
+    for (const mesh of solids) {
+      const g = mesh.geometry, pos = g.attributes.position;
+      if (!g.attributes.color || g.attributes.color.count !== pos.count) g.setAttribute("color", new T.Float32BufferAttribute(new Float32Array(pos.count * 3), 3));
+      const col = g.attributes.color; m.multiplyMatrices(inv, mesh.matrixWorld);
+      for (let i = 0; i < pos.count; i++) {
+        let v = 0;
+        if (boxes.length) { p.fromBufferAttribute(pos, i).applyMatrix4(m); let d = Infinity; for (const b of boxes) d = Math.min(d, dist(b));
+          v = Math.max(0, 1 - d / fall); v = v * v * (3 - 2 * v); if (v > 0.03) v = Math.ceil(v * 8) / 8; v *= cap; }
+        ramp(v, c).multiplyScalar(dark); col.setXYZ(i, c.r, c.g, c.b);
+      }
+      col.needsUpdate = true;
+    }
   }
   const hasZone = name => !!(model && (model.userData.zones || []).some(z => z[0] === name));
 
@@ -286,7 +332,7 @@ export function createStage(cv, host, opts = {}) {
     let easing = false;
     if (tAz !== null && !dragging) { az += (tAz - az) * Math.min(1, dt * 4); if (Math.abs(tAz - az) > 0.002) easing = true; }
     if (tEl !== null && !dragging) { el += (tEl - el) * Math.min(1, dt * 4); if (Math.abs(tEl - el) > 0.002) easing = true; else if (view === "3d") tEl = null; }
-    if (zoneOn) { zonePulse += dt; const f = reduce ? 0.6 : 0.45 + 0.35 * Math.sin(zonePulse * 2.4); zoneFill.opacity = 0.10 * f + 0.04; zoneEdge.opacity = (solid ? 0.3 : 0.55) + (solid ? 0.25 : 0.4) * f; }
+    if (zoneOn) { zonePulse += dt; const f = reduce ? 0.6 : 0.45 + 0.35 * Math.sin(zonePulse * 2.4); zoneFill.opacity = 0.10 * f + 0.04; zoneEdge.opacity = solid ? 0.12 + 0.1 * f : 0.55 + 0.4 * f; if (solid) zoneFill.opacity = 0.03 * f; }
     if (!reduce) for (const sp of spinners) sp.o.rotation[sp.axis] += dt * sp.speed;
     broken += (brokenTarget - broken) * Math.min(1, dt * 6);
     halfB.position.set(broken * 0.16, broken * 0.05, 0); halfB.rotation.x = broken * 0.22;
@@ -303,7 +349,7 @@ export function createStage(cv, host, opts = {}) {
   }
   api.setKind = setKind; api.setZone = setZone; api.setView = setView; api.kind = () => kind; api.hasZone = hasZone;
   api.archetype = (m, k) => { const a = archetype(m, k); return { key: a, label: A[a].label }; };
-  api.setState = s => { state = s; brokenTarget = s === "broken" ? 1 : 0; paintStripe(); kick(); };
+  api.setState = s => { if (s !== state) { state = s; paintField(); } brokenTarget = s === "broken" ? 1 : 0; paintStripe(); kick(); };
   api.scan = () => { if (reduce) return; scanT = 0; kick(); };
   colors(); setKind("airliner", ""); size();
   api.setRender = mode => { solid = mode !== "wire"; applyRender(); kick(); };

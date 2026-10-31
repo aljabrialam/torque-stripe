@@ -67,6 +67,11 @@
 .readouts { display: flex; gap: 34px; }
 .readouts .readout { font-size: 58px; }
 .hud.bc { left: 50%; bottom: 26px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 10px 12px 10px 16px; border-radius: 16px; max-width: min(620px, calc(100% - 900px)); min-width: 360px; }
+.heat { width: 12px; height: 40px; border-radius: 6px; flex: none; position: relative; border: 1px solid var(--glass-line-2);
+  background: linear-gradient(0deg, #9a9fa6 0%, #b19a74 30%, #f0a040 50%, #ff7a1f 75%, #ff3b0f 100%); box-shadow: 0 0 14px rgba(255, 122, 31, .35); }
+.heat.general { background: linear-gradient(0deg, #9a9fa6 0%, #b19a74 40%, #f0a040 100%); box-shadow: none; }
+.heat.na, .heat.idle { background: #9a9fa6; box-shadow: none; opacity: .6; }
+.heat.broken { background: repeating-linear-gradient(135deg, #5a4d41 0 4px, #3a3029 4px 8px); box-shadow: none; border-color: var(--amber); }
 .sw { width: 30px; height: 30px; border-radius: 99px; border: 3px solid var(--sand-3); flex: none; position: relative; }
 .sw.applied { border-color: var(--molten); box-shadow: 0 0 14px var(--molten); }
 .sw.general { border-color: var(--molten); opacity: .75; border-style: dashed; }
