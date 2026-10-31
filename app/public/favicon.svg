@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Torque Stripe">
-  <rect width="64" height="64" rx="15" fill="#1d1d1f"/>
-  <polygon points="32,11 50,21.5 50,42.5 32,53 14,42.5 14,21.5" fill="#3a3a3e" stroke="#5c5c62" stroke-width="1.5"/>
-  <circle cx="32" cy="32" r="9" fill="#26262a" stroke="#5c5c62" stroke-width="1.5"/>
-  <path d="M6 44 L58 20" stroke="#ff7a2f" stroke-width="6" stroke-linecap="round"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#FFFFFF"/><g transform="translate(3.2 3.2) scale(0.9)">
+    <defs><clipPath id="h2"><polygon points="49.32,42.00 32.00,52.00 14.68,42.00 14.68,22.00 32.00,12.00 49.32,22.00"/></clipPath></defs>
+    <rect x="28" y="3" width="8" height="58" rx="1.2" fill="#0085CA" transform="rotate(32 32 32)"/>
+    <polygon points="49.32,42.00 32.00,52.00 14.68,42.00 14.68,22.00 32.00,12.00 49.32,22.00" fill="#00205B"/>
+    <g clip-path="url(#h2)"><rect x="28" y="3" width="8" height="58" rx="1.2" fill="#0085CA" transform="rotate(32 32 32)"/></g>
+    <polygon points="49.32,42.00 32.00,52.00 14.68,42.00 14.68,22.00 32.00,12.00 49.32,22.00" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round"/>
+  </g></svg>

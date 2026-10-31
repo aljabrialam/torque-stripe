@@ -1,4 +1,9 @@
-# Torque Stripe
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/logo-lockup-dark.svg">
+    <img src="docs/brand/logo-lockup-light.svg" alt="Torque Stripe" width="440">
+  </picture>
+</p>
 
 **An engineer types "does FAA-2026-11800 apply to my AS350B3?" and gets a cited, model-checked, revision-aware answer, or a clear refusal. It never tells a mechanic to do something a withdrawn proposal never required.**
 
@@ -204,6 +209,15 @@ The baseline gets exact docket lookup plus the same BM25 search, but no rules.
 - The first run scored 29/33 with 2 unsafe answers. The fixes were general rules (the FAA series convention, a stricter out-of-scope gate, a per-docket relevance gate), not per-question patches.
 - Testing found a real bug: proposals with no machine-readable model list were silently dropped by the model filter. They are now kept and marked "applicability unknown".
 - The four known failures are shown in the app on purpose ([`eval/known_failures.json`](eval/known_failures.json)).
+
+## Brand
+
+<img src="docs/brand/app-icon.svg" width="72" align="left" alt="Torque Stripe app icon">
+
+The mark is a hex bolt head seen from above, with a torque stripe painted across it and onto the seat. The stripe breaks at the joint, which is where a technician looks for movement: if the two halves no longer line up, the fastener has moved and you stop. Navy for structure, sky blue for the one thing that has been checked.
+
+Files: [`docs/brand/`](docs/brand/) (lockups for light and dark backgrounds, app icon) and [`app/public/logo.svg`](app/public/logo.svg).
+<br clear="left">
 
 ## Project structure
 

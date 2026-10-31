@@ -14,7 +14,7 @@ export function createStage(cv, host, opts = {}) {
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
   const scene = new T.Scene(), cam = new T.PerspectiveCamera(32, 1, 0.1, 200);
   // ---------- rendered look: PBR skin, studio environment, sunset key + molten rim ----------
-  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.92;
   const pmrem = new T.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.add(new T.HemisphereLight(0xeef3ff, 0x1a1d22, 0.55));
   const key = new T.DirectionalLight(0xffffff, 2.1); key.position.set(-6, 7, 5); scene.add(key);
@@ -25,10 +25,10 @@ export function createStage(cv, host, opts = {}) {
               stripe: new T.LineBasicMaterial({ transparent: true, opacity: 1 }), scan: new T.LineBasicMaterial({ transparent: true, opacity: 0 }),
               scanFill: new T.MeshBasicMaterial({ transparent: true, opacity: 0, side: T.DoubleSide, depthWrite: false }),
               dots: new T.PointsMaterial({ size: 0.035, transparent: true, opacity: 0.8 }),
-              floor: new T.LineBasicMaterial({ transparent: true, opacity: 0.22 }),
+              floor: new T.LineBasicMaterial({ transparent: true, opacity: 0.5 }),
               hull: new T.MeshPhysicalMaterial({ color: 0xffffff, vertexColors: true, metalness: 0.6, roughness: 0.34, clearcoat: 0.5, clearcoatRoughness: 0.25, envMapIntensity: 0.9, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
               hullDim: new T.MeshPhysicalMaterial({ color: 0x6f747a, vertexColors: true, metalness: 0.4, roughness: 0.5, envMapIntensity: 0.6, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
-              fem: new T.MeshBasicMaterial({ color: 0xf2e5d0, wireframe: true, transparent: true, opacity: 0.045, depthWrite: false }),
+              fem: new T.MeshBasicMaterial({ color: 0x00205b, wireframe: true, transparent: true, opacity: 0.035, depthWrite: false }),
               intake: new T.MeshStandardMaterial({ color: 0x120c08, metalness: 0.2, roughness: 0.8, side: T.DoubleSide }),
               stripeSolid: new T.MeshStandardMaterial({ metalness: 0.2, roughness: 0.45, transparent: true }) };
   const skin = (geo, mat) => { const m = new T.Mesh(geo, mat === M.dim ? M.hullDim : M.hull); m.add(new T.Mesh(geo, M.fem)); m.visible = solid; solids.push(m); return m; };
@@ -256,7 +256,7 @@ export function createStage(cv, host, opts = {}) {
   }
   // ---------- field: distance to the affected zone, painted on the skin as banded contours ----------
   let curZone = null;
-  const RAMP = [[0, new T.Color(0xb9bfc7)], [0.3, new T.Color(0xa7c3e3)], [0.5, new T.Color(0x7fb3f5)], [0.75, new T.Color(0x4c9dff)], [1, new T.Color(0x1f6bff)]];
+  const RAMP = [[0, new T.Color(0x98a3b3)], [0.3, new T.Color(0xa7c3e3)], [0.5, new T.Color(0x7fb3f5)], [0.75, new T.Color(0x4c9dff)], [1, new T.Color(0x1f6bff)]];
   const ramp = (v, out) => { for (let i = 1; i < RAMP.length; i++) if (v <= RAMP[i][0]) { const [a, ca] = RAMP[i - 1], [b, cb] = RAMP[i]; return out.copy(ca).lerp(cb, (v - a) / (b - a)); } return out.copy(RAMP[RAMP.length - 1][1]); };
   function paintField() {
     if (!model) return;

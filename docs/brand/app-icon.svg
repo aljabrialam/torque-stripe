@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4EDF7"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#g)"/><g transform="translate(3.2 3.2) scale(0.9)">
+    <defs><clipPath id="h3"><polygon points="49.32,42.00 32.00,52.00 14.68,42.00 14.68,22.00 32.00,12.00 49.32,22.00"/></clipPath></defs>
+    <rect x="28" y="3" width="8" height="58" rx="1.2" fill="#0085CA" transform="rotate(32 32 32)"/>
+    <polygon points="49.32,42.00 32.00,52.00 14.68,42.00 14.68,22.00 32.00,12.00 49.32,22.00" fill="#00205B"/>
+    <g clip-path="url(#h3)"><rect x="28" y="3" width="8" height="58" rx="1.2" fill="#0085CA" transform="rotate(32 32 32)"/></g>
+    <polygon points="49.32,42.00 32.00,52.00 14.68,42.00 14.68,22.00 32.00,12.00 49.32,22.00" fill="none" stroke="#F4F8FC" stroke-width="3.2" stroke-linejoin="round"/>
+  </g></svg>

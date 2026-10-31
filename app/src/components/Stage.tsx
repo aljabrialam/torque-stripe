@@ -14,17 +14,16 @@ export interface StageApi {
   archetype(m: string, k: string): { key: string; label: string }
 }
 
-/** Rendered aircraft. Decoration only: it shows the engine's verdict, never makes one. */
-export const Stage = forwardRef<StageApi | null, { zoom?: number; onReady?: () => void }>(function Stage({ zoom, onReady }, ref) {
+/** Full-bleed wireframe aircraft over a dusk valley. Decoration only: it shows the engine's verdict, never makes one. */
+export const Stage = forwardRef<StageApi | null, { dim?: boolean }>(function Stage({ dim }, ref) {
   const host = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), api = useRef<StageApi | null>(null)
-  const ready = useRef(onReady); ready.current = onReady
+  useEffect(() => {
+    const s = createStage(cv.current!, host.current!, { spinSpeed: 0.08, lookY: 0.9, zoom: innerWidth < 860 ? 1.8 : 1.55 }) as unknown as StageApi & { dispose(): void }
+    api.current = s
+    return () => { s.dispose(); api.current = null }
+  }, [])
   useImperativeHandle(ref, () => new Proxy({} as StageApi, {
     get: (_t, k: keyof StageApi) => (...a: unknown[]) => (api.current?.[k] as ((...x: unknown[]) => unknown) | undefined)?.(...a),
   }), [])
-  useEffect(() => {
-    const s = createStage(cv.current!, host.current!, { spinSpeed: 0.08, lookY: 0.9, zoom: zoom ?? (innerWidth < 760 ? 1.5 : 1.25) }) as unknown as StageApi & { dispose(): void }
-    api.current = s; ready.current?.()
-    return () => { s.dispose(); api.current = null }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-  return <div ref={host} className="stage-host" aria-hidden="true"><canvas ref={cv} /></div>
+  return <div ref={host} className={`stage-host${dim ? ' dim' : ''}`} aria-hidden="true"><canvas ref={cv} /></div>
 })

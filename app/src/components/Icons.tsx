@@ -14,12 +14,16 @@ export const IconLink = (p: SVGProps<SVGSVGElement>) => <svg {...base(p)}><path 
 export const IconCube = (p: SVGProps<SVGSVGElement>) => <svg {...base(p)}><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9Z" /><path d="m4 7.5 8 4.5 8-4.5M12 12v9" /></svg>
 
 export function Logo({ size = 28 }: { size?: number }) {
+  // Hex bolt head with the torque stripe painted across the joint (same geometry as /logo.svg).
+  const hex = '49.32,42 32,52 14.68,42 14.68,22 32,12 49.32,22'
+  const bar = <rect x="28" y="3" width="8" height="58" rx="1.2" fill="#0085CA" transform="rotate(32 32 32)" />
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#9ccaff" /><stop offset="1" stopColor="#3d8bff" /></linearGradient></defs>
-      <circle cx="16" cy="16" r="10.5" fill="none" stroke="#f5f7fa" strokeOpacity=".45" strokeWidth="1.5" />
-      <path d="M16 5.5a10.5 10.5 0 0 1 0 21" fill="none" stroke="url(#lg)" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="16" cy="16" r="3" fill="#f5f7fa" />
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+      <defs><clipPath id="ts-hex"><polygon points={hex} /></clipPath></defs>
+      {bar}
+      <polygon points={hex} fill="#00205B" />
+      <g clipPath="url(#ts-hex)">{bar}</g>
+      <polygon points={hex} fill="none" stroke="#FFFFFF" strokeWidth="3.2" strokeLinejoin="round" />
     </svg>
   )
 }

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Torque Stripe"><g transform="translate(0 0) scale(1.0)">
+    <defs><clipPath id="h1"><polygon points="49.32,42.00 32.00,52.00 14.68,42.00 14.68,22.00 32.00,12.00 49.32,22.00"/></clipPath></defs>
+    <rect x="28" y="3" width="8" height="58" rx="1.2" fill="#0085CA" transform="rotate(32 32 32)"/>
+    <polygon points="49.32,42.00 32.00,52.00 14.68,42.00 14.68,22.00 32.00,12.00 49.32,22.00" fill="#00205B"/>
+    <g clip-path="url(#h1)"><rect x="28" y="3" width="8" height="58" rx="1.2" fill="#0085CA" transform="rotate(32 32 32)"/></g>
+    <polygon points="49.32,42.00 32.00,52.00 14.68,42.00 14.68,22.00 32.00,12.00 49.32,22.00" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round"/>
+  </g></svg>

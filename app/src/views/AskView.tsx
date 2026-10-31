@@ -2,20 +2,15 @@ import { useState, type RefObject } from 'react'
 import type { AskResult, FleetRow, Health } from '../lib/types'
 import { DEMO_QUESTIONS } from '../lib/demo'
 import { REG, daysUntil, headline, ruleChecks, stripeState } from '../lib/present'
-import { Stage, type StageApi } from '../components/Stage'
-import { IconChecks, IconDoc, IconLink, IconQuote } from '../components/Icons'
+import type { StageApi } from '../components/Stage'
+import { IconChecks, IconCube, IconDoc, IconLink, IconQuote } from '../components/Icons'
 import { Radar } from '../components/Radar'
 
 interface Props {
   model: string; setModel(m: string): void; query: string; setQuery(q: string): void
   ask(q?: string, m?: string): void; result: AskResult | null; busy: boolean; models: string[]; health: Health | null
-  fleetInfo: FleetRow | null; arcLabel: string; zone: { zone: string; label: string; word: string } | null
-  stage: RefObject<StageApi | null>; openDocket(d: string): void; onStageReady(): void
-}
-
-const VERDICT: Record<string, string> = {
-  MODEL_LISTED_ALL_UNITS: 'All units', MODEL_LISTED_UNITS_UNCONFIRMED: 'Certain units', NEEDS_VARIANT: 'Needs variant',
-  NOT_LISTED: 'Not listed', UNDETERMINED: 'Unknown', NO_MODEL_GIVEN: 'No model set',
+  modelInfo: { label: string; fleet: FleetRow | null }; zone: { zone: string; label: string; word: string } | null
+  stage: RefObject<StageApi | null>; openDocket(d: string): void
 }
 
 export function AskView(p: Props) {
@@ -24,11 +19,10 @@ export function AskView(p: Props) {
   const f = r?.fields || {}
   const due = (f.comments_due || '').slice(0, 10), open = /open/.test(f.comments_due || '')
   const days = due && open ? daysUntil(due, today) : null
-  const h = r ? headline(r) : null
   return (
     <main className="view ask scroll" id="ask">
-      <div className="window glass">
-        <form className="askbar" onSubmit={e => { e.preventDefault(); p.ask() }} data-tour="ask">
+      <section className="console">
+        <form className="askbar glass strong" onSubmit={e => { e.preventDefault(); p.ask() }} data-tour="ask">
           <label className="ab-model">
             <span className="label">Aircraft or engine model</span>
             <input className="mono" value={p.model} onChange={e => p.setModel(e.target.value.toUpperCase())} list="models" placeholder="e.g. AS350B3" spellCheck={false} aria-label="Aircraft or engine model" />
@@ -42,31 +36,35 @@ export function AskView(p: Props) {
         </form>
         <div className="chips" data-tour="chips">
           {DEMO_QUESTIONS.map((d, i) => (
-            <button key={i} className="chip" onClick={() => p.ask(d.q, d.model)} title={d.shows}>
+            <button key={i} className="chip glass" onClick={() => p.ask(d.q, d.model)} title={d.shows}>
               {d.model && <span className="mono k">{d.model}</span>}{d.label || d.q}
             </button>
           ))}
         </div>
 
-        <div className="bento">
-          <StageTile {...p} days={days} />
-          <RuleChecks r={r} />
-          <Proposal r={r} today={today} />
+        <RuleChecks r={r} />
+        <Proposal r={r} today={today} />
 
-          <div className="tile t-metric"><span className="label">Answer</span><span className={`readout t-${h?.tone ?? 'mute'}`}>{h?.label.split(' · ')[0] ?? '—'}</span></div>
-          <div className="tile t-metric"><span className="label">Applicability</span><span className="readout">{r?.applicability.verdict ? VERDICT[r.applicability.verdict] : '—'}</span></div>
-          <div className="tile t-metric"><span className="label">Evidence quoted</span><span className="readout">{r && r.status !== 'REFUSED' ? r.claims.length : 0}<small>sentences</small></span></div>
-
-          <Verdict r={r} zone={p.zone} />
-          <Radar fleet={p.fleetInfo} today={today} model={p.model} onOpen={p.openDocket} />
+        <div className="hud bl" data-tour="stage">
+          <div className="model-tag">
+            <div className="readout" style={{ fontSize: 46 }}>{p.model || '—'}</div>
+            <div className="label">{p.modelInfo.label || 'Set a model to load its silhouette'}</div>
+            <div className="model-sum">{modelSummary(p.modelInfo.fleet)}</div>
+          </div>
+          <div className="readouts">
+            <div><div className="readout">{days ?? '—'}<small>d</small></div><div className="label">Comment period left</div></div>
+            <div><div className="readout">{r ? r.latency_ms.toFixed(1) : '—'}<small>ms</small></div><div className="label">Rule check time</div></div>
+          </div>
         </div>
-      </div>
+        <StripeLegend r={r} zone={p.zone} stage={p.stage} />
+        <Radar fleet={p.modelInfo.fleet} today={today} model={p.model} onOpen={p.openDocket} />
+      </section>
 
       <section className="results" id="answer">
         {r ? <Answer r={r} ask={p.ask} openDocket={p.openDocket} /> : (
-          <div className="glass card empty">
+          <div className="glass strong card empty">
             <h2>Ask about FAA proposed airworthiness directives</h2>
-            <p>Set your aircraft model, then ask a question or pick one above. Every answer is quoted from the Federal Register notice and checked by rules. If the data can't support an answer, it says so.</p>
+            <p>Set your aircraft model, then ask a question or pick a demo above. Every answer is quoted from the Federal Register notice and checked by rules. If the data can't support an answer, it says so.</p>
           </div>
         )}
       </section>
@@ -74,51 +72,29 @@ export function AskView(p: Props) {
   )
 }
 
-function StageTile(p: Props & { days: number | null }) {
-  const [v, setV] = useState<'3d' | 'top' | 'side'>('3d')
-  const [mode, setMode] = useState<'solid' | 'wire'>('solid')
-  const f = p.fleetInfo
-  const sum = !f ? '' : !f.known ? 'No proposal in this dataset lists this model.' : !f.dockets.length ? 'Listed only as part of a family. Give the exact variant.'
-    : `${f.dockets.length} proposal${f.dockets.length > 1 ? 's list' : ' lists'} this model · ${f.open_comments} open for comment${f.counts.WITHDRAWN ? ` · ${f.counts.WITHDRAWN} withdrawn` : ''}`
-  return (
-    <section className="tile t-stage" data-tour="stage" aria-label="Aircraft">
-      <Stage ref={p.stage} onReady={p.onStageReady} />
-      <div className="st-head">
-        <div className="st-name"><span className="label">{p.arcLabel || 'Aircraft'}</span><b className="mono">{p.model || 'No model set'}</b></div>
-        <div className="st-tools">
-          <div className="seg" role="group" aria-label="Camera">
-            {(['3d', 'top', 'side'] as const).map(x => <button key={x} aria-pressed={v === x} onClick={() => { setV(x); p.stage.current?.setView(x) }}>{x === '3d' ? '3D' : x === 'top' ? 'Top' : 'Side'}</button>)}
-          </div>
-          <div className="seg" role="group" aria-label="Render mode">
-            {(['solid', 'wire'] as const).map(x => <button key={x} aria-pressed={mode === x} onClick={() => { setMode(x); p.stage.current?.setRender(x) }}>{x === 'solid' ? 'Render' : 'Wire'}</button>)}
-          </div>
-        </div>
-      </div>
-      <div className="st-foot">
-        <div className="st-stat"><div className="readout">{p.days ?? '—'}<small>days</small></div><div className="label">Comment period left</div></div>
-        <div className="st-stat"><div className="readout">{p.result ? p.result.latency_ms.toFixed(1) : '—'}<small>ms</small></div><div className="label">Rule check time</div></div>
-        <div className="st-sum">{sum}</div>
-      </div>
-    </section>
-  )
+function modelSummary(f: FleetRow | null) {
+  if (!f) return ''
+  if (!f.known) return 'No proposal in this dataset lists this model.'
+  if (!f.dockets.length) return 'Listed only as part of a family. Give the exact variant.'
+  return `${f.dockets.length} proposal${f.dockets.length > 1 ? 's list' : ' lists'} this model · ${f.open_comments} open for comment${f.counts.WITHDRAWN ? ` · ${f.counts.WITHDRAWN} withdrawn` : ''}`
 }
 
 function RuleChecks({ r }: { r: AskResult | null }) {
   const { checks, pct } = ruleChecks(r)
   const segColor = r?.status === 'REFUSED' ? 'var(--stop)' : pct < 100 ? 'var(--amber)' : 'var(--ok)'
   return (
-    <section className="tile t-checks" aria-label="Rule checks" data-tour="checks">
+    <aside className="hud left glass" aria-label="Rule checks" data-tour="checks">
       <div className="ph"><IconChecks />Rule checks<span className="meta">deterministic</span></div>
       <div className="readiness">
         <div className="segs" style={{ ['--seg' as string]: segColor }}>{Array.from({ length: 12 }, (_, i) => <i key={i} className={i < Math.round(pct / 100 * 12) ? 'on' : ''} />)}</div>
-        <span className="pct">{r ? `${pct}%` : '—'}</span>
+        <span className="cond pct">{r ? `${pct}%` : '—'}</span>
       </div>
       <ul className="checks">
         {checks.length ? checks.map((c, i) => (
           <li key={i}><span className={`dot ${c.tone}`} /><span className="ct"><b>{c.title}</b><span>{c.sub}</span></span><span className={`cs t-${c.tone}`}>{c.state}</span></li>
         )) : <li className="idle">Ask a question to run the checks.</li>}
       </ul>
-    </section>
+    </aside>
   )
 }
 
@@ -127,67 +103,72 @@ function Proposal({ r, today }: { r: AskResult | null; today: string }) {
   const wd = f.regulatory_status === 'WITHDRAWN'
   const due = (f.comments_due || '').slice(0, 10), open = /open/.test(f.comments_due || '')
   const days = due ? daysUntil(due, today) : null
-  const frac = days === null || !open ? 0 : Math.max(0, Math.min(1, days / 60))
-  const R = 92, C = 2 * Math.PI * R, arc = 0.75   // 270° gauge, like a thermostat
+  const frac = days === null || !open ? 0 : Math.max(0, Math.min(1, days / 60)), C = 2 * Math.PI * 34
   return (
-    <aside className="tile t-proposal" aria-label="Proposal" data-tour="proposal">
+    <aside className="hud right glass" aria-label="Proposal" data-tour="proposal">
       <div className="ph"><IconDoc />Proposal<span className="meta mono">{r?.ad || ''}</span></div>
-      <div className="pad">
-        <div className="dial">
-          <svg viewBox="0 0 210 210" aria-hidden="true">
-            <circle cx="105" cy="105" r={R} fill="none" stroke="rgba(255,255,255,.12)" strokeWidth="10" strokeLinecap="round" strokeDasharray={`${C * arc} ${C}`} transform="rotate(135 105 105)" />
-            {frac > 0 && <circle cx="105" cy="105" r={R} fill="none" stroke="var(--accent)" strokeWidth="10" strokeLinecap="round" strokeDasharray={`${C * arc * frac} ${C}`} transform="rotate(135 105 105)"  />}
-            {frac > 0 && (() => { const a = (135 + 270 * frac) * Math.PI / 180; return <circle cx={105 + R * Math.cos(a)} cy={105 + R * Math.sin(a)} r="9" fill="#fff" stroke="var(--accent)" strokeWidth="3" /> })()}
-          </svg>
-          <div className="dial-c">
-            <div className="readout">{!r?.ad ? '—' : wd || !due || !open ? (wd ? 'Closed' : due ? 'Closed' : '—') : <>{days}<small>d</small></>}</div>
-            <span className="label">{!r?.ad ? 'Comment period' : wd ? 'Proposal withdrawn' : due ? `${open ? 'Comments due' : 'Ended'} ${due}` : 'No deadline in the notice'}</span>
-          </div>
-        </div>
-        {r?.ad ? (
+      {!r?.ad ? (
+        <div className="pad">{r?.candidates?.length ? (
+          <div className="tiles"><Tile l="Proposals" v={String(r.candidates.length)} /><Tile l="Withdrawn" v={String(r.candidates.filter(c => c.status === 'WITHDRAWN').length)} tone="mute" /></div>
+        ) : <p className="label">No docket behind this answer yet.</p>}</div>
+      ) : (
+        <div className="pad">
           <div className="tiles">
             <Tile l="Binding" v="No" tone={wd ? 'mute' : 'warn'} />
             <Tile l="Status" v={wd ? 'Withdrawn' : f.regulatory_status === 'REVISED_PROPOSAL' ? 'Revised' : 'Proposed'} />
             <Tile l="Units" v={f.scope_wording === 'ALL' ? 'All' : f.scope_wording === 'CERTAIN' ? 'Certain' : 'Unclear'} tone={f.scope_wording === 'ALL' ? 'ok' : 'warn'} />
-            <Tile l="Supersedes" v={(f.supersedes_ads || []).length ? `${f.supersedes_ads![0]}${f.supersedes_ads!.length > 1 ? ` +${f.supersedes_ads!.length - 1}` : ''}` : 'None'} tone="mute" />
+            <Tile l="Supersedes" v={(f.supersedes_ads || []).length ? `${f.supersedes_ads![0]}${f.supersedes_ads!.length > 1 ? ` +${f.supersedes_ads!.length - 1}` : ''}` : 'None'} tone="mute" small />
           </div>
-        ) : r?.candidates?.length ? (
-          <div className="tiles"><Tile l="Proposals" v={String(r.candidates.length)} /><Tile l="Withdrawn" v={String(r.candidates.filter(c => c.status === 'WITHDRAWN').length)} tone="mute" /></div>
-        ) : <p className="label" style={{ textAlign: 'center' }}>No docket behind this answer yet.</p>}
-        {vs.length > 0 && (
-          <div className="vtl-wrap">
-            <div className="label">Versions</div>
-            <div className="vtl">{vs.map((v, i) => (
-              <span key={i} className="vtl-step">{i > 0 && <span className="ln" />}<span className={`n ${v.action === 'WITHDRAWN' ? 'wd' : i === vs.length - 1 ? 'cur' : ''}`} title={`${v.action} ${v.date}`} /></span>
-            ))}</div>
-            <div className="vtl-l mono"><span>{vs[0].date}</span>{vs.length > 1 && <span>{vs[vs.length - 1].date}</span>}</div>
+          <div className="dial">
+            <svg viewBox="0 0 84 84" aria-hidden="true">
+              <circle cx="42" cy="42" r="34" fill="none" stroke="rgba(0,32,91,.08)" strokeWidth="6" />
+              <circle cx="42" cy="42" r="34" fill="none" stroke={open ? 'var(--molten)' : 'var(--sand-3)'} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${C * frac} ${C}`} transform="rotate(-90 42 42)" style={{ filter: open ? 'drop-shadow(0 0 6px rgba(0,133,202,.35))' : undefined }} />
+            </svg>
+            <div>
+              <div className="label">Comment period</div>
+              <div className="readout" style={{ fontSize: 34 }}>{wd ? 'Closed' : !due ? '—' : open ? <>{days}<small>days</small></> : 'Closed'}</div>
+              <div className="label">{wd ? 'Proposal withdrawn' : due ? `${open ? 'due' : 'ended'} ${due}` : 'No deadline in the notice'}</div>
+            </div>
           </div>
-        )}
-      </div>
+          {vs.length > 0 && (
+            <div className="vtl-wrap">
+              <div className="label">Versions</div>
+              <div className="vtl">{vs.map((v, i) => (
+                <span key={i} className="vtl-step">{i > 0 && <span className="ln" />}<span className={`n ${v.action === 'WITHDRAWN' ? 'wd' : i === vs.length - 1 ? 'cur' : ''}`} title={`${v.action} ${v.date}`} /></span>
+              ))}</div>
+              <div className="vtl-l mono"><span>{vs[0].date}</span>{vs.length > 1 && <span>{vs[vs.length - 1].date}</span>}</div>
+            </div>
+          )}
+        </div>
+      )}
     </aside>
   )
 }
 
-function Tile({ l, v, tone }: { l: string; v: string; tone?: string }) {
-  return <div className="tile-s"><div className="label">{l}</div><div className={`tv t-${tone || ''}`}>{v}</div></div>
+function Tile({ l, v, tone, small }: { l: string; v: string; tone?: string; small?: boolean }) {
+  return <div className="tile"><div className="label">{l}</div><div className={`tv cond t-${tone || ''}`} style={small ? { fontSize: 15 } : undefined}>{v}</div></div>
 }
 
-function Verdict({ r, zone }: { r: AskResult | null; zone: Props['zone'] }) {
+function StripeLegend({ r, zone, stage }: { r: AskResult | null; zone: Props['zone']; stage: RefObject<StageApi | null> }) {
   const s = stripeState(r)
+  const [v, setV] = useState<'3d' | 'top' | 'side'>('3d')
+  const [mode, setMode] = useState<'solid' | 'wire'>('solid')
+  const pick = (x: typeof v) => { setV(x); stage.current?.setView(x) }
+  const render = (x: typeof mode) => { setMode(x); stage.current?.setRender(x) }
   return (
-    <section className="tile t-verdict" aria-label="Verdict">
-      <div className="sl-t">
-        <span className="label">Verdict</span>
-        <b>{s.text}</b>
-        <span className="label">{zone ? `Affected area: ${zone.label}, from “${zone.word}” in the quoted notice.` : 'No affected area shaded for this answer.'}</span>
+    <div className="hud bc glass">
+      <span className={`heat ${s.state}`} aria-hidden="true"><i /></span>
+      <div className="sl-t"><b>{s.text}</b>{zone && <span className="label">Affected area · {zone.label} · matched “{zone.word}” in the quoted notice</span>}</div>
+      <div className="views-col">
+      <div className="views" role="group" aria-label="Camera">
+        <IconCube />
+        {(['3d', 'top', 'side'] as const).map(x => <button key={x} className="glass-btn" aria-pressed={v === x} onClick={() => pick(x)}>{x === '3d' ? '3D' : x === 'top' ? 'Top' : 'Side'}</button>)}
       </div>
-      <div className="scale">
-        <span className="label">Shading on the aircraft</span>
-        <span className={`heat-h ${s.state}`} aria-hidden="true" />
-        <span className="scale-l label"><span>Not mentioned</span><span>Named in the notice</span></span>
-        <span className="label">Display only. The rules decide the verdict.</span>
+      <div className="views" role="group" aria-label="Render mode">
+        {(['solid', 'wire'] as const).map(x => <button key={x} className="glass-btn" aria-pressed={mode === x} onClick={() => render(x)}>{x === 'solid' ? 'Render' : 'Wire'}</button>)}
       </div>
-    </section>
+      </div>
+    </div>
   )
 }
 
