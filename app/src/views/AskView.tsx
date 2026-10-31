@@ -66,6 +66,7 @@ export function AskView(p: Props) {
           <div className="glass strong card empty">
             <h2>Ask about FAA proposed airworthiness directives</h2>
             <p>Set your aircraft model, then ask a question or pick a demo above. Every answer is quoted from the Federal Register notice and checked by rules. If the data can't support an answer, it says so.</p>
+            <p className="label" style={{ marginTop: 10 }}>Built for Airbus Challenge #4 at Autonomous SG 2026. Not an official Airbus product.</p>
           </div>
         )}
       </section>

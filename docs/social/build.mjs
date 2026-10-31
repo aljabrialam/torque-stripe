@@ -41,7 +41,7 @@ h1 { font-family: C; font-weight: 600; line-height: .98; letter-spacing: -.01em;
 const page = (w, h, body) => `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=${w}"><style>:root{--w:${w}px;--h:${h}px}${css}</style></head><body>${body}</body></html>`
 const footer = (size = 1) => `
   <div style="display:flex;justify-content:space-between;align-items:center">
-    <div class="brand">${mark(46 * size)}<b style="font-size:${30 * size}px">TORQUE <span>STRIPE</span></b></div>
+    <div><img src="${B}/cobrand-light-compact.svg" style="height:${44 * size}px;display:block"><div class="lab" style="font-size:${14 * size}px;margin:6px 0 0 ${52 * size}px">Not an official Airbus product</div></div>
     <div class="me"><img src="${B}/creator.jpg" width="${56 * size}" height="${56 * size}"><div style="font-size:${18 * size}px"><b>Aljabri Alam</b><span>Autonomous SG 2026 · Airbus Challenge 4</span></div></div>
   </div>`
 
@@ -84,7 +84,7 @@ const G = {
   'torque-stripe-landscape-1600x900': [1600, 900, `
   <div style="padding:70px 72px;height:100%;display:grid;grid-template-columns:560px 1fr;gap:56px;align-items:center">
     <div style="display:flex;flex-direction:column;gap:26px;height:100%">
-      <div class="brand">${mark(64)}<b style="font-size:40px">TORQUE <span>STRIPE</span></b></div>
+      <div><img src="${B}/cobrand-light-compact.svg" style="height:58px;display:block"><div class="lab" style="font-size:16px;margin:6px 0 0 68px">Built for Airbus Challenge #4. Not an official Airbus product.</div></div>
       <h1 style="font-size:92px">The AI reads.<br>The rules decide.<br>The engineer signs.</h1>
       <p class="lede" style="font-size:26px;line-height:1.35">Cited, model-checked, revision-aware answers about FAA proposed ADs. Every safety decision is a rule, not a model's guess.</p>
       <div style="flex:1"></div>

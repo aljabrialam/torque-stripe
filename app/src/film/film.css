@@ -54,3 +54,5 @@ body { overflow: hidden; background: #e9f0f8; }
 .byline { display: flex; align-items: center; gap: 14px; margin-top: 10px; text-align: left; font-size: 20px; color: var(--sand-2); }
 .byline img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 8px 24px -8px rgba(0, 32, 91, .45); }
 .byline b { color: var(--navy); font-size: 22px; }
+.cobrand { height: 64px; width: auto; margin-bottom: 8px; }
+.cobrand.lg { height: 88px; }

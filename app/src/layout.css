@@ -15,6 +15,8 @@
 .tb-item { display: inline-flex; align-items: center; gap: 8px; }
 .tb-item.brand b { font-family: var(--f-body); text-transform: none; letter-spacing: 0; font-size: 15px; font-weight: 600; color: var(--sand); }
 .tb-sp { flex: 1; }
+.tb-x { color: var(--sand-3); font-family: var(--f-body); font-size: 14px; margin: 0 2px; }
+.tb-airbus { height: 12px; width: auto; display: block; }
 .view { min-height: 0; position: relative; }
 
 /* ---------- ask console ---------- */

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { Stage, type StageApi } from '../components/Stage'
-import { Logo } from '../components/Icons'
 import { Layer, Plate, Typed, ease, mix, out, prog, vis } from './kit'
 import script from './demo-script.json'
 
@@ -82,6 +81,7 @@ function Teaser({ t }: { t: number }) {
     {/* A. title */}
     <Layer o={vis(t, 0.3, 4.2, 1.2, .6)}>
       <div className="title-block" style={{ transform: `translateY(${mix(14, 0, out(prog(t, .3, 2)))}px)` }}>
+        <img className="cobrand" src="/cobrand.svg" alt="Torque Stripe × Airbus" />
         <div className="kicker">Autonomous SG 2026 · Airbus Challenge 4</div>
         <h1 className="mega" style={{ letterSpacing: `${mix(.12, -.01, out(prog(t, .3, 3)))}em` }}>Torque Stripe</h1>
         <p className="sub">Cited, rule-checked answers about FAA proposed airworthiness directives</p>
@@ -122,10 +122,11 @@ function Teaser({ t }: { t: number }) {
     {/* G. close */}
     <Layer o={vis(t, 26.6, 31, .8, 1)}>
       <div className="title-block">
-        <div style={{ transform: `scale(${mix(.8, 1, out(prog(t, 26.6, 28)))})` }}><Logo size={84} /></div>
+        <div style={{ transform: `scale(${mix(.8, 1, out(prog(t, 26.6, 28)))})` }}><img className="cobrand lg" src="/cobrand.svg" alt="Torque Stripe × Airbus" /></div>
         <h2 className="mega small">The AI reads. The rules decide.<br />The engineer signs.</h2>
         <p className="sub mono">torque-stripe.vercel.app</p>
         <div className="byline"><img src="/creator.jpg" alt="" /><span><b>Aljabri Alam</b><br />Technical Lead & AI Advocate</span></div>
+        <p className="disc">Built for Airbus Challenge #4. Not an official Airbus product.</p>
       </div>
     </Layer>
     <div className="fade" style={{ opacity: 1 - Math.min(out(t / .8), out((TEASER_LEN - t) / .8)) }} />
@@ -182,10 +183,11 @@ function Demo({ t, lines }: { t: number; lines: Line[] }) {
     {/* title */}
     <Layer o={so('title')}>
       <div className="title-block">
+        <img className="cobrand" src="/cobrand.svg" alt="Torque Stripe × Airbus" />
         <div className="kicker">Autonomous SG 2026 · Airbus Challenge 4</div>
         <h1 className="mega">Torque Stripe</h1>
         <p className="sub">Find, understand and verify FAA proposed airworthiness directives</p>
-        <p className="disc">Hackathon prototype. Not an Airbus or FAA product.</p>
+        <p className="disc">Hackathon prototype built for Airbus Challenge #4. Not an official Airbus or FAA product.</p>
       </div>
     </Layer>
     {/* hook: typed question */}
@@ -242,10 +244,11 @@ function Demo({ t, lines }: { t: number; lines: Line[] }) {
     {/* close */}
     <Layer o={so('close') + (t > (S('close')?.b ?? 1e9) ? 1 : 0)}>
       <div className="title-block">
-        <Logo size={84} />
+        <img className="cobrand lg" src="/cobrand.svg" alt="Torque Stripe × Airbus" />
         <h2 className="mega small">The AI reads. The rules decide.<br />The engineer signs.</h2>
         <p className="sub mono">torque-stripe.vercel.app · github.com/aljabrialam/torque-stripe</p>
         <div className="byline"><img src="/creator.jpg" alt="" /><span><b>Aljabri Alam</b><br />Technical Lead & AI Advocate</span></div>
+        <p className="disc">Built for Airbus Challenge #4. Not an official Airbus product.</p>
       </div>
     </Layer>
 

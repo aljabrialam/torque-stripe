@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/logo-lockup-dark.svg">
-    <img src="docs/brand/logo-lockup-light.svg" alt="Torque Stripe" width="440">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/cobrand-dark.svg">
+    <img src="docs/brand/cobrand-light.svg" alt="Torque Stripe × Airbus" width="560">
   </picture>
 </p>
 
@@ -19,7 +19,7 @@ A torque stripe is the paint mark a technician puts across a fastener once it ha
 
 | | |
 |---|---|
-| **Live app** | [torque-stripe.vercel.app](https://torque-stripe.vercel.app) (classic UI: [torque-stripe-classic.vercel.app](https://torque-stripe-classic.vercel.app)) |
+| **Live app** | [torque-stripe.vercel.app](https://torque-stripe.vercel.app) |
 | **Built for** | Airbus Challenge #4, Autonomous SG 2026 (NUS, 31 Oct 2026): *"How might AI help people find, understand, and verify regulated technical information?"* |
 | **Who it's for** | A B1 licensed aircraft maintenance engineer, or the CAMO planner tracking which proposed ADs touch their fleet |
 | **Problem solved** | Proposals get revised, corrected and withdrawn. Many cover only "certain" units. A general chatbot answers anyway, and sounds sure of itself. |
@@ -219,7 +219,9 @@ The baseline gets exact docket lookup plus the same BM25 search, but no rules.
 
 The mark is a hex bolt head seen from above, with a torque stripe painted across it and onto the seat. The stripe breaks at the joint, which is where a technician looks for movement: if the two halves no longer line up, the fastener has moved and you stop. Navy for structure, sky blue for the one thing that has been checked.
 
-Files: [`docs/brand/`](docs/brand/) (lockups for light and dark backgrounds, app icon) and [`app/public/logo.svg`](app/public/logo.svg).
+The co-brand lockup (Torque Stripe × Airbus) marks the project as built for the Airbus track at Autonomous SG 2026 and always carries the line "Not an official Airbus product". The Airbus logo is a trademark of Airbus and is used here only to identify the challenge.
+
+Files: [`docs/brand/`](docs/brand/) (Torque Stripe lockups and co-brand lockups for light and dark backgrounds, app icon) and [`app/public/logo.svg`](app/public/logo.svg).
 <br clear="left">
 
 ## Project structure
@@ -237,10 +239,10 @@ torque-stripe/
 │   ├── nprm_engine.py      query parsing, model rules, ranking, refusals, citations, fleet
 │   ├── phrase.py           optional Claude rewording + deterministic verifier
 │   ├── api.py              /health /ask /fleet /models /dockets /eval
-│   └── static/             classic single-file UI
-├── web/                 JS port of the engine (engine.js), data snapshot, classic static build
+│   └── static/             original single-file UI (superseded by app/)
+├── web/                 JS port of the engine (engine.js), data snapshot, original static build
 ├── eval/                gold set (42 q), known failures, evaluation runner
-├── tests/               Playwright e2e (classic UI), Python vs JS engine parity
+├── tests/               Playwright e2e (original UI), Python vs JS engine parity
 └── data/faa/            the real dataset (ad_nprm.xlsx); data/sample/ is synthetic and labelled
 ```
 
