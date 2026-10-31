@@ -171,16 +171,16 @@ stateDiagram-v2
 │ Ask│        [ AS350B3 | main rotor servo-control torque inspection | Check ]│
 │    │  ┌ RULE CHECKS ─────── 100% ┐                   ┌ PROPOSAL ─────────┐ │
 │Flt │  │ ● Docket identified  NOM │     rendered 3D    │ Binding  No       │ │
-│    │  │ ● Latest version     NOM │     aircraft with  │ Status   Proposed │ │
-│Ins │  │ ● Proposed, not binding  │     torque stripe  │ Units    All      │ │
-│    │  │ ● Model listed       NOM │     + affected     │ ◔ 33 days to      │ │
-│Eval│  │ ● Evidence quoted    NOM │     zone           │   comment         │ │
+│    │  │ ● Latest version     NOM │     aircraft, the  │ Status   Proposed │ │
+│Ins │  │ ● Proposed, not binding  │     affected zone  │ Units    All      │ │
+│    │  │ ● Model listed       NOM │     painted as a   │ ◔ 33 days to      │ │
+│Eval│  │ ● Evidence quoted    NOM │     contour field  │   comment         │ │
 │    │  └──────────────────────────┘                   └───────────────────┘ │
-│    │  AS350B3      33 d    7.0 ms      ◯ Stripe intact       ┌ RADAR ┐    │
+│    │  AS350B3      33 d    7.0 ms      ▮ Stripe intact       ┌ RADAR ┐    │
 └────┴──────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Ask:** a rendered 3D aircraft whose shape comes from the real model designation (23 parametric archetypes: narrow-body, wide-body, double-deck, T-tail, turboprop, helicopters by rotor type, turbofans and more). The answer's topic highlights the affected zone. The torque stripe ring shows the verdict: intact, dashed (general), grey (not applicable) or broken (refused or needs input). Switch between Render and Wire, and between 3D, Top and Side views. The shapes are generic, not CAD, not to scale.
+- **Ask:** a rendered 3D aircraft whose shape comes from the real model designation (23 parametric archetypes: narrow-body, wide-body, double-deck, T-tail, turboprop, helicopters by rotor type, turbofans with a cutaway nacelle, and more). The area the quoted notice talks about (rotor, gear, engines, avionics...) is painted on the skin as banded contours, like a CAE field plot. The contours are full strength when the rules confirm coverage, capped when units are unconfirmed, and off (hatched in the legend) when the answer is refused or not applicable. Switch between Render and Wire, and between 3D, Top and Side views. The shapes are generic, not CAD, not to scale.
 - **Rule checks** lists every deterministic check with its pass or stop state. **Proposal** shows binding status, revision, units scope, superseded ADs, the comment-period dial and the version timeline. **Comment radar** plots open proposals for the model by days left.
 - **Fleet:** paste the models you maintain to see the live proposals per model, with withdrawn ones hidden.
 - **Insights:** proposals by year and category, makers, upcoming comment deadlines and model-list coverage.
