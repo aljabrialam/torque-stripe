@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# film build artefacts (regenerate with scripts/capture.mjs and scripts/film.mjs)
+film/plates
+film/out
+film/audio

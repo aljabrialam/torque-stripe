@@ -75,6 +75,7 @@
 .sl-t { display: grid; min-width: 0; flex: 1; }
 .sl-t b { font-weight: 500; font-size: 14px; }
 .views { display: flex; gap: 6px; align-items: center; color: var(--sand-3); }
+.views-col { display: grid; gap: 6px; justify-items: end; }
 .views .glass-btn { height: 30px; padding: 0 10px; font-size: 13px; }
 .hud.br { right: 20px; bottom: 22px; width: 320px; }
 .radar { display: flex; align-items: center; gap: 10px; padding: 0 14px 12px 8px; }

@@ -6,6 +6,7 @@ export interface StageApi {
   setState(s: string): void
   setZone(z: string | null): void
   setView(v: '3d' | 'top' | 'side'): void
+  setRender(mode: 'solid' | 'wire'): void
   setCamera(o: { az?: number; el?: number; zoom?: number; spin?: number; lookY?: number }): void
   scan(): void
   kind(): string

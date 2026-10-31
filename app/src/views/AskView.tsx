@@ -152,14 +152,21 @@ function Tile({ l, v, tone, small }: { l: string; v: string; tone?: string; smal
 function StripeLegend({ r, zone, stage }: { r: AskResult | null; zone: Props['zone']; stage: RefObject<StageApi | null> }) {
   const s = stripeState(r)
   const [v, setV] = useState<'3d' | 'top' | 'side'>('3d')
+  const [mode, setMode] = useState<'solid' | 'wire'>('solid')
   const pick = (x: typeof v) => { setV(x); stage.current?.setView(x) }
+  const render = (x: typeof mode) => { setMode(x); stage.current?.setRender(x) }
   return (
     <div className="hud bc glass">
       <span className={`sw ${s.state}`} aria-hidden="true" />
       <div className="sl-t"><b>{s.text}</b>{zone && <span className="label">Affected area · {zone.label} · matched “{zone.word}” in the quoted notice</span>}</div>
+      <div className="views-col">
       <div className="views" role="group" aria-label="Camera">
         <IconCube />
         {(['3d', 'top', 'side'] as const).map(x => <button key={x} className="glass-btn" aria-pressed={v === x} onClick={() => pick(x)}>{x === '3d' ? '3D' : x === 'top' ? 'Top' : 'Side'}</button>)}
+      </div>
+      <div className="views" role="group" aria-label="Render mode">
+        {(['solid', 'wire'] as const).map(x => <button key={x} className="glass-btn" aria-pressed={mode === x} onClick={() => render(x)}>{x === 'solid' ? 'Render' : 'Wire'}</button>)}
+      </div>
       </div>
     </div>
   )

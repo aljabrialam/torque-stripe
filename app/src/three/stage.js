@@ -4,6 +4,7 @@
    system refuses or needs input, and grey when the proposal does not list the model.
    Decoration only: it shows the engine's verdict and never makes one. */
 import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 export function createStage(cv, host, opts = {}) {
   const api = { setKind() {}, setState() {}, scan() {}, setView() {}, setZone() {}, dispose() {} };
   let spinSpeed = opts.spinSpeed ?? 0.12, lookY = opts.lookY ?? 1.0, zoom = opts.zoom ?? 1;
@@ -12,12 +13,26 @@ export function createStage(cv, host, opts = {}) {
   const renderer = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
   const scene = new T.Scene(), cam = new T.PerspectiveCamera(32, 1, 0.1, 200);
+  // ---------- rendered look: PBR skin, studio environment, sunset key + molten rim ----------
+  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.82;
+  const pmrem = new T.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.add(new T.HemisphereLight(0xffdcb4, 0x1c120a, 0.35));
+  const key = new T.DirectionalLight(0xffb27a, 2.0); key.position.set(-6, 7, 5); scene.add(key);
+  const rim = new T.DirectionalLight(0xff7a1f, 2.2); rim.position.set(6, 2.5, -7); scene.add(rim);
+  const fill = new T.DirectionalLight(0xc9b8a4, 0.5); fill.position.set(2, -3, 6); scene.add(fill);
+  let solid = opts.render !== "wire"; const solids = [];
   const M = { wire: new T.LineBasicMaterial({ transparent: true, opacity: 0.72 }), dim: new T.LineBasicMaterial({ transparent: true, opacity: 0.55 }),
               stripe: new T.LineBasicMaterial({ transparent: true, opacity: 1 }), scan: new T.LineBasicMaterial({ transparent: true, opacity: 0 }),
               scanFill: new T.MeshBasicMaterial({ transparent: true, opacity: 0, side: T.DoubleSide, depthWrite: false }),
-              dots: new T.PointsMaterial({ size: 0.035, transparent: true, opacity: 0.8 }) };
+              dots: new T.PointsMaterial({ size: 0.035, transparent: true, opacity: 0.8 }),
+              floor: new T.LineBasicMaterial({ transparent: true, opacity: 0.55 }),
+              hull: new T.MeshStandardMaterial({ color: 0xb89f84, metalness: 0.7, roughness: 0.34, envMapIntensity: 0.55, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+              hullDim: new T.MeshStandardMaterial({ color: 0x7a6552, metalness: 0.55, roughness: 0.42, envMapIntensity: 0.6, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+              stripeSolid: new T.MeshStandardMaterial({ metalness: 0.2, roughness: 0.45, transparent: true }) };
+  const skin = (geo, mat) => { const m = new T.Mesh(geo, mat === M.dim ? M.hullDim : M.hull); m.visible = solid; solids.push(m); return m; };
+  function applyRender() { M.wire.opacity = solid ? 0.2 : 0.72; M.dim.opacity = solid ? 0.14 : 0.55; solids.forEach(m => m.visible = solid); }
   function colors() {
-    M.wire.color.set(css("--wire")); M.dim.color.set(css("--wire-dim")); M.dots.color.set(css("--wire-dim")); scene.fog && scene.fog.color.set(css("--stage"));
+    M.wire.color.set(css("--wire")); M.dim.color.set(css("--wire-dim")); M.dots.color.set(css("--wire-dim")); M.floor.color.set(css("--wire-dim")); applyRender(); scene.fog && scene.fog.color.set(css("--stage"));
     M.scan.color.set(css("--accent")); M.scanFill.color.set(css("--accent")); zoneFill.color.set(css("--accent")); zoneEdge.color.set(css("--accent")); paintStripe();
   }
   // ---------- geometry helpers ----------
@@ -28,13 +43,16 @@ export function createStage(cv, host, opts = {}) {
       for (let i = 0; i < profile.length - 1; i++) { const [x0, r0] = profile[i], [x1, r1] = profile[i + 1]; a.push(x0, r0 * c, r0 * s, x1, r1 * c, r1 * s); } }
     profile.forEach(([x, r], i) => { if (i % ringEvery || r < 0.02) return;
       for (let k = 0; k < 40; k++) { const t0 = k / 40 * Math.PI * 2, t1 = (k + 1) / 40 * Math.PI * 2; a.push(x, r * Math.cos(t0), r * Math.sin(t0), x, r * Math.cos(t1), r * Math.sin(t1)); } });
-    return seg(a, mat);
+    const geo = new T.LatheGeometry(profile.map(([x, r]) => new T.Vector2(Math.max(r, 0.001), x)), Math.max(long, 24) * 2); geo.rotateZ(-Math.PI / 2);
+    const g = new T.Group(); g.add(skin(geo, mat), seg(a, mat)); return g;
   }
   function panel(pts, ribs = 0, mat) {   // closed polygon of [x,y,z] + optional ribs between edge 0-1 and 3-2
     const a = []; pts.forEach((p, i) => { const q = pts[(i + 1) % pts.length]; a.push(...p, ...q); });
     for (let i = 1; i <= ribs; i++) { const t = i / (ribs + 1), L = (p, q) => p.map((v, j) => v + (q[j] - v) * t);
       a.push(...L(pts[0], pts[1]), ...L(pts[3], pts[2])); }
-    return seg(a, mat);
+    const pos = []; for (let i = 1; i < pts.length - 1; i++) pos.push(...pts[0], ...pts[i], ...pts[i + 1]);
+    const geo = new T.BufferGeometry(); geo.setAttribute("position", new T.Float32BufferAttribute(pos, 3)); geo.computeVertexNormals();
+    const g = new T.Group(); g.add(skin(geo, mat), seg(a, mat)); return g;
   }
   const mirrorZ = pts => pts.map(([x, y, z]) => [x, y, -z]);
   function ring(r, n = 64) { const a = []; for (let k = 0; k < n; k++) { const t0 = k / n * Math.PI * 2, t1 = (k + 1) / n * Math.PI * 2; a.push(0, r * Math.cos(t0), r * Math.sin(t0), 0, r * Math.cos(t1), r * Math.sin(t1)); } return a; }
@@ -47,11 +65,13 @@ export function createStage(cv, host, opts = {}) {
       for (const dx of [-0.035, 0, 0.035]) a.push(dx, r * Math.cos(t0), r * Math.sin(t0), dx, r * Math.cos(t1), r * Math.sin(t1)); } return a; };
     halfA.geometry.setAttribute("position", new T.Float32BufferAttribute(half(0), 3));
     halfB.geometry.setAttribute("position", new T.Float32BufferAttribute(half(Math.PI), 3));
+    for (const [h, s] of [[halfA, 0], [halfB, Math.PI]]) { h.clear(); const geo = new T.TorusGeometry(r, 0.05, 10, 48, Math.PI); geo.rotateY(-Math.PI / 2); geo.rotateX(Math.PI / 2 + s); h.add(new T.Mesh(geo, M.stripeSolid)); }
   }
   let state = "idle", broken = 0, brokenTarget = 0;
   function paintStripe() {
     const c = { applied: "--accent", general: "--accent", na: "--text-3", broken: "--warn", idle: "--wire-dim" }[state] || "--wire-dim";
     M.stripe.color.set(css(c)); M.stripe.opacity = state === "general" ? 0.7 : 1;
+    M.stripeSolid.color.copy(M.stripe.color); M.stripeSolid.emissive.copy(M.stripe.color); M.stripeSolid.emissiveIntensity = state === "idle" || state === "na" ? 0.15 : 0.9; M.stripeSolid.opacity = M.stripe.opacity;
   }
 
   // ---------- models: generic silhouettes driven by the aircraft family (not to scale, no liveries) ----------
@@ -204,14 +224,14 @@ export function createStage(cv, host, opts = {}) {
     return { helicopter: "heli_light", turbofan: "hbpr", airliner: "narrowbody", ga: "ga_high" }[fallbackKind] || "narrowbody";
   }
   // ---------- affected-area zones come from each built model ----------
-  const zoneGroup = new T.Group(), zoneFill = new T.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
-        zoneEdge = new T.LineBasicMaterial({ transparent: true, opacity: 0 });
+  const zoneGroup = new T.Group(), zoneFill = new T.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, depthTest: false }),
+        zoneEdge = new T.LineBasicMaterial({ transparent: true, opacity: 0, depthTest: false });
   let zonePulse = 0, zoneOn = false;
   function setZone(name) {
     zoneGroup.clear(); zoneOn = false;
     const boxes = name && model && (model.userData.zones || []).filter(z => z[0] === name).map(z => z[1]);
     if (boxes && boxes.length) { for (const [x, y, z, sx, sy, sz] of boxes) { const g = new T.BoxGeometry(sx, sy, sz);
-        const m = new T.Mesh(g, zoneFill), e = new T.LineSegments(new T.EdgesGeometry(g), zoneEdge); m.position.set(x, y, z); e.position.set(x, y, z); zoneGroup.add(m, e); }
+        const m = new T.Mesh(g, zoneFill), e = new T.LineSegments(new T.EdgesGeometry(g), zoneEdge); m.position.set(x, y, z); e.position.set(x, y, z); m.renderOrder = e.renderOrder = 10; zoneGroup.add(m, e); }
       zoneOn = true; zonePulse = 0; }
     if (model && zoneGroup.parent !== model) model.add(zoneGroup);
     kick();
@@ -226,7 +246,7 @@ export function createStage(cv, host, opts = {}) {
         + 0.25 * Math.sin(x * 0.9) * Math.cos(z * 0.8) * Math.min(1, ridge); };
     const a = [], P = (i, j) => { const x = (i - N / 2) * S, z = (j - N / 2) * S; return [x, H(x, z), z]; };
     for (let i = 0; i <= N; i++) for (let j = 0; j < N; j++) { a.push(...P(i, j), ...P(i, j + 1)); a.push(...P(j, i), ...P(j + 1, i)); }
-    const g = new T.BufferGeometry(); g.setAttribute("position", new T.Float32BufferAttribute(a, 3)); return new T.LineSegments(g, M.dim);
+    const g = new T.BufferGeometry(); g.setAttribute("position", new T.Float32BufferAttribute(a, 3)); return new T.LineSegments(g, M.floor);
   })();
   scene.fog = new T.Fog(0x000000, 16, 46);
   scene.add(floor);
@@ -239,7 +259,7 @@ export function createStage(cv, host, opts = {}) {
     const ak = archetype(modelName, k || "airliner"); if (ak === arch) return; arch = ak;
     const S = A[ak]; kind = S.f === "h" ? "helicopter" : S.f === "e" ? "turbofan" : "airliner";
     if (model) scene.remove(model);
-    spinners = []; stripe.rotation.set(0, 0, 0);
+    spinners = []; solids.length = 0; stripe.rotation.set(0, 0, 0);
     model = S.f === "h" ? helicopter(S) : S.f === "e" ? engineModel(S) : fixedWing(S);
     const sc = model.userData.scale; model.scale.setScalar(sc); model.position.y = 1.15;
     floor.position.y = kind === "helicopter" ? -0.3 : 0; scene.add(model); model.add(zoneGroup); setZone(null); paintStripe(); kick();
@@ -266,7 +286,7 @@ export function createStage(cv, host, opts = {}) {
     let easing = false;
     if (tAz !== null && !dragging) { az += (tAz - az) * Math.min(1, dt * 4); if (Math.abs(tAz - az) > 0.002) easing = true; }
     if (tEl !== null && !dragging) { el += (tEl - el) * Math.min(1, dt * 4); if (Math.abs(tEl - el) > 0.002) easing = true; else if (view === "3d") tEl = null; }
-    if (zoneOn) { zonePulse += dt; const f = reduce ? 0.6 : 0.45 + 0.35 * Math.sin(zonePulse * 2.4); zoneFill.opacity = 0.10 * f + 0.04; zoneEdge.opacity = 0.55 + 0.4 * f; }
+    if (zoneOn) { zonePulse += dt; const f = reduce ? 0.6 : 0.45 + 0.35 * Math.sin(zonePulse * 2.4); zoneFill.opacity = 0.10 * f + 0.04; zoneEdge.opacity = (solid ? 0.3 : 0.55) + (solid ? 0.25 : 0.4) * f; }
     if (!reduce) for (const sp of spinners) sp.o.rotation[sp.axis] += dt * sp.speed;
     broken += (brokenTarget - broken) * Math.min(1, dt * 6);
     halfB.position.set(broken * 0.16, broken * 0.05, 0); halfB.rotation.x = broken * 0.22;
@@ -286,6 +306,8 @@ export function createStage(cv, host, opts = {}) {
   api.setState = s => { state = s; brokenTarget = s === "broken" ? 1 : 0; paintStripe(); kick(); };
   api.scan = () => { if (reduce) return; scanT = 0; kick(); };
   colors(); setKind("airliner", ""); size();
+  api.setRender = mode => { solid = mode !== "wire"; applyRender(); kick(); };
+  api.render = () => (solid ? "solid" : "wire");
   api.setCamera = (o = {}) => { if (o.az != null) az = o.az; if (o.el != null) el = o.el; if (o.zoom != null) zoom = o.zoom; if (o.spin != null) spinSpeed = o.spin; if (o.lookY != null) lookY = o.lookY; kick(); };
   api.dispose = () => { cancelAnimationFrame(raf); raf = 0; visible = false; ro.disconnect(); io.disconnect(); mo.disconnect(); document.removeEventListener("visibilitychange", kick); renderer.dispose(); };
   return api;
