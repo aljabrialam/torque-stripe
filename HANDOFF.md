@@ -2,7 +2,7 @@
 
 > **Read this first if you are picking up this project (human or AI agent).**
 > It is the single source of truth for what we are building, why, what exists, and what to do next.
-> Last updated: 31 Oct 2026, ~11:30 SGT.
+> Last updated: 31 Oct 2026, ~12:15 SGT. **Submissions close 16:15; aim to submit by ~15:30.**
 
 ---
 
@@ -14,8 +14,8 @@
 - **Core rule (non-negotiable):** **every safety decision is deterministic code.** Claude only rewords evidence the engine already selected. A deterministic verifier drops any reworded sentence it can't trace; on failure we show the verbatim source.
 - **Name:** a torque stripe is the paint mark a technician puts on a fastener once it's been verified. It means "checked; if this mark moves, stop." That's what the product does for AD answers.
 - **Tagline:** *The AI reads. The rules decide. The engineer signs.*
-- **Status:** engine runs on the **real dataset** (431 rows, 323 dockets, 1,302 Federal Register pages). Real-data gold set: **42/42 correct, 0/16 unsafe answers** vs baseline **5/42, 16/16 unsafe** (baseline gets exact docket lookup + BM25). API ready. Web UI done (served by the API at /). **Next: Claude rewording on, cache, deploy, pitch.**
-
+- **Status (12:15):** engine runs on the **real dataset** (431 rows, 323 dockets, 1,302 Federal Register pages). Gold set **42/42 correct, 0/16 unsafe, 6/6 withdrawals flagged** vs baseline **5/42, 16/16 unsafe, 0/6** (baseline gets exact docket lookup + BM25). Full web UI done (Ask console with per-model 3D, Fleet, Insights, Evaluation; light/dark; guided tour; mobile). Engine also ported to JS so the site runs **fully static** with no server. Playwright e2e: ALL PASS. Committed locally in git.
+- **Not done:** GitHub push, Vercel deploy, submission form, pitch rehearsal. See §6 and §12.
 ---
 
 ## 1. Challenge #4 requirements (from the official brief)
@@ -108,34 +108,51 @@ flowchart LR
 torque-stripe/
 ├── torquestripe/
 │   ├── nprm.py          # REAL DATA: xlsx ingest, action type, model parsing, scope, docket version chains
-│   ├── nprm_engine.py   # REAL DATA: query parsing, model rules, ranking, status, citations
-│   ├── parse.py / applicability.py / engine.py   # synthetic full-text AD engine (serial ranges); kept for sample mode
-│   ├── index.py         # shared tokenizer + FTS index for sample mode
+│   ├── nprm_engine.py   # REAL DATA: query parsing, model rules, ranking, status, citations, fleet()
+│   ├── parse.py / applicability.py / engine.py / index.py   # synthetic full-text AD engine (sample mode only)
 │   ├── phrase.py        # optional Claude rewording + deterministic verify()
-│   └── api.py           # FastAPI (auto-selects real or sample engine)
-├── data/faa/ad_nprm.xlsx      # real dataset
-├── data/sample/               # 4 SYNTHETIC full-text ADs (serial-range demo)
-├── eval/gold_faa.json + run_eval_faa.py   # real-data evaluation
-├── eval/gold_sample.json + run_eval.py    # synthetic evaluation
-├── README.md, HANDOFF.md, requirements.txt (+ openpyxl)
+│   ├── api.py           # FastAPI: /health /ask /fleet /models /dockets /dockets/{d} /eval, serves static/ at /
+│   └── static/
+│       ├── index.html   # the whole UI (Ask console, Fleet, Insights, Evaluation, theme switch, tour)
+│       ├── stage.js     # three.js r128 wireframe stage: 23 parametric aircraft/engine archetypes, zones, stripe states
+│       ├── insights.js  # Insights view: 3D year x category landscape, makers bars, comment-deadline timeline, coverage
+│       ├── motion.js    # motion.dev (inlined at build)
+│       └── logo.svg favicon.svg icon-*.png apple-touch-icon.png og.png creator.jpg
+├── web/
+│   ├── engine.js        # JS port of the engine (Porter stemmer == SQLite's; exact FTS5 bm25)
+│   ├── shim.js          # in-browser fetch shim answering the same API routes
+│   ├── build.py         # -> web/dist/index.html (static site) + web/dist/artifact.html (Claude artifact)
+│   ├── data.json        # dataset snapshot embedded by build.py
+│   └── dist/            # BUILD OUTPUT: deployable static site
+├── api/index.py + vercel.json   # Vercel Python entry (alternative to static deploy)
+├── data/faa/ad_nprm.xlsx        # real dataset
+├── data/sample/                 # 4 SYNTHETIC full-text ADs (serial-range demo), labelled synthetic
+├── eval/gold_faa.json (42 q) + run_eval_faa.py + known_failures.json (4 honest failures shown in UI)
+├── tests/e2e.py (Playwright) + parity_gen.py / parity.mjs (Python vs JS engine parity)
+└── README.md (non-technical + technical), HANDOFF.md, LICENSE (MIT), requirements.txt
 ```
 
 ### Run
 
 ```bash
 pip install -r requirements.txt
-export ANTHROPIC_API_KEY=sk-ant-...           # optional; server-side only; never commit
+export ANTHROPIC_API_KEY=sk-ant-...           # optional; server-side only; never commit, never in front-end
 export ANTHROPIC_MODEL=claude-sonnet-5-5
-uvicorn torquestripe.api:app --reload          # real data by default
-python3 eval/run_eval_faa.py                   # real-data eval
+uvicorn torquestripe.api:app --port 8000       # real data by default; UI at http://localhost:8000/
+python3 eval/run_eval_faa.py                   # real-data eval (must stay 42/42, 0/16 unsafe)
+python3 web/build.py                           # rebuild static site after ANY change to static/ or engine
+pip install playwright && python3 tests/e2e.py http://localhost:8000   # must print RESULT: ALL PASS
+python3 tests/parity_gen.py && node tests/parity.mjs                   # only if you touch an engine
 ```
 
-Endpoints: `GET /health`, `POST /ask`, `GET /models`, `GET /dockets`, `GET /dockets/{docket}`.
+Endpoints: `GET /health`, `POST /ask`, `POST /fleet`, `GET /models`, `GET /dockets`, `GET /dockets/{docket}`, `GET /eval`.
 
 ```bash
 curl -X POST localhost:8000/ask -H 'content-type: application/json' \
   -d '{"query":"main rotor servo-control torque inspection","model":"AS350B3","use_llm":false}'
 ```
+
+**Two engines, keep them in sync.** Python (`torquestripe/nprm_engine.py`) is the reference; `web/engine.js` is a port used by the static site. If you change a rule in one, change it in the other and run the parity test (expected ~494/495 structured; the remaining diffs are search tie-ordering).
 
 ### Statuses and verdicts
 
@@ -206,52 +223,34 @@ curl -X POST localhost:8000/ask -H 'content-type: application/json' \
 
 ---
 
-## 6. Next steps (priority order)
+## 6. Next steps (priority order, as of 12:15)
 
-| # | Task | Owner | Notes |
-|---|---|---|---|
-| 1 | ~~Web UI~~ done: `torquestripe/static/index.html`, open http://localhost:8000/ | — | Ask + Evaluation tabs |
-| 2 | Answer cache keyed on (query, model) | Backend | Saves credit; faster demo |
-| 3 | Eval tab: live gold-set run; LLM-on run → verifier accept/reject counts | Both | < $1 of credit |
-| 4 | Fleet check: list of models → table of open proposals per model | Backend | Strong real workflow |
-| 5 | Version timeline / diff for multi-version dockets (99 of them) | Frontend | Revision logic showcase |
-| 6 | Optional: fetch full FR text for a handful of demo dockets to show serial-level check | Backend | Only if time; keep labelled |
-| 7 | 3-min pitch + **submit early** | All | §8 |
+| # | Task | Notes |
+|---|---|---|
+| 1 | **Push to GitHub** | Create empty public repo `aljabrialam/torque-stripe`, then `git remote add origin ... && git push -u origin main` (branch may be `master`; check `git branch`). Stray screenshots/logs already removed. |
+| 2 | **Deploy to Vercel (static, recommended)** | See §12. Static = no server, no key, nothing to break during judging. |
+| 3 | Verify live URL on desktop + phone; run `python3 tests/e2e.py <live-url>` | Tour, 10 demo chips, Fleet, Insights, Eval, theme switch |
+| 4 | **Submit by ~15:30** at boardingpass.work/experience (one per table; need table number) | Link + short description (§13) |
+| 5 | Rehearse 3-min pitch (§8) | Use the live URL, not localhost |
+| 6 | Optional: Python deploy with Claude rewording on | Only after 1–4. Key as Vercel env var `ANTHROPIC_API_KEY` only. Set a Console spend limit. |
+| 7 | Optional polish | Answer cache; version diff view |
+
+Done already: web UI, fleet check, version timeline, live eval tab, Insights, 3D console, per-model silhouettes, light/dark, tour, mobile, e2e tests, JS port.
 
 ---
 
-## 7. UI / UX spec (web app)
+## 7. UI / UX (as built)
 
-Apple HIG feel, no emojis, one accent colour; status colours always paired with text; motion.dev (fade + 8 px rise, smooth scroll + single pulse on citation). Monospace for docket/AD numbers and models.
+Minimal, no emojis, Apple-HIG-ish, one accent (#e8763f dark / #d9622b light), IBM Plex Mono for dockets/models/data, motion.dev entrances. Status colours always paired with text.
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│ Torque Stripe   Aircraft model [AS350B3 ▾]          431 notices · 1,302 pp │
-├───────────────────────────────────────┬──────────────────────────────┤
-│  Ask about proposed ADs               │  SOURCE                       │
-│  [ main rotor servo-control torque  ] │  FAA-2026-11814               │
-│  Chips: Open proposals for my model · │  Federal Register Vol 91 No 200│
-│   Withdrawn? · Supersedes AD… · A380  │  Pages 66019-66022 · link     │
-│  ┌─ ANSWERED · all AS350B3 units ───┐ │  Timeline:                    │
-│  │ PROPOSED · not binding           │ │  ● 19 Oct 2026  New AD (NPRM) │
-│  │ Comments due 3 Dec 2026 (open)   │ │                               │
-│  │ Would require: inspection of nut │ │  S1 The FAA proposes...       │
-│  │ tightening torque ...      [S3]  │ │  ▌S3 This proposed AD would.. │
-│  │ ▸ Why this answer (4 checks)     │ │                               │
-│  └──────────────────────────────────┘ │                               │
-└───────────────────────────────────────┴──────────────────────────────┘
-Tabs: Ask | Fleet | Evaluation
-```
-
-Badges: **Proposed · not binding** (blue), **Revised proposal** (blue + "v2 of 3"), **Withdrawn · imposes nothing** (grey), **Supersedes AD 2025-09-07**.
-
-| State | Message | Action |
-|---|---|---|
-| Model listed, "certain" units | "AS350B3 is listed, but this proposal covers *certain* units. The serial/configuration criteria are in the full Federal Register text." | Open FR link |
-| Needs variant | "'A350-900' matches A350-941. Which variant?" | Variant buttons |
-| Several dockets | "Two withdrawn proposals describe this issue." | Pick docket |
-| Not listed | "Your A330-243 is not in this proposal's model list." | Show list |
-| Refused | "A380-841 isn't in any proposal in this dataset." | — |
+- **Top bar:** aircraft model field (autocomplete from `/models`), "Rules engine" pill, **System / Light / Dark** switch (localStorage `ts_theme`), `?` replays the tour.
+- **Sidebar tabs:** Ask · Fleet · Insights · Evaluation.
+- **Ask:** status strip (open proposals sparkline) → ask bar + demo chips → **console**: full-bleed three.js wireframe stage over a wireframe terrain, with overlays *Rule checks* (left; each deterministic check pass/fail) and *Proposal* (right; tiles, comment-deadline dial, version timeline). Below: answer card and cited source sentences.
+- **3D stage (`stage.js`):** the shape is chosen from the **real model designation** by regex rules → 23 archetypes (narrow-body, wide-body, quad, jumbo hump, double-deck, rear-twin T-tail, trijet, bizjet, turboprop, GA high/low/twin, helicopters by blade count/fenestron/twin/tandem, high/low-bypass turbofan, turboshaft, turboprop engine). Rotors/props spin. The answer's topic highlights a zone (engines, gear, rotor, fuel, avionics, tail...). A "torque stripe" mark shows the verdict state: applied (answered), general, n/a, broken (refused/withdrawn), idle. **These are generic silhouettes, not CAD, not to scale, no liveries** — real per-model 3D files are licensed and not fetchable here. Say this if judges ask.
+- **Fleet:** paste models → table of open proposals per model, withdrawn hidden.
+- **Insights:** 3D landscape of proposals by year × category (stacked live/withdrawn; hover tooltip, click to list, zoom, table view), makers bar chart (click to filter), comment-deadline timeline (next 60 days), model-coverage bar.
+- **Evaluation:** live gold-set run vs baseline + the 4 known failures shown honestly.
+- **Brand:** plain-text "Built for Airbus Challenge #4 · Autonomous SG 2026". **No Airbus logo** (not ours to use; must not imply an official Airbus product). Creator credit card uses `creator.jpg`.
 
 ---
 
@@ -283,8 +282,8 @@ Badges: **Proposed · not binding** (blue), **Revised proposal** (blue + "v2 of 
 ## 10. Brainstorm space
 
 **Open questions**
-- Submission deadline and format (repo link? video?).
-- Team size; who owns frontend / backend / pitch?
+- Submission form fields; can a submission be edited after sending? Table number?
+- Deadline is fixed: **16:15**. Judging 16:30–17:30.
 
 **Ideas (only if core is done)**
 - **Fleet check:** enter fleet models → table of open proposals per model, comment deadlines, withdrawn ones hidden.
@@ -302,12 +301,43 @@ Badges: **Proposed · not binding** (blue), **Revised proposal** (blue + "v2 of 
 ## 11. Prompt for another AI agent (copy-paste)
 
 ```
-You are continuing a hackathon project called Torque Stripe (Airbus Challenge #4, Autonomous SG 2026).
-Read HANDOFF.md fully before doing anything (especially section 2 about the real dataset). Then README.md and torquestripe/.
-Hard rule: every safety decision (model applicability, revision/withdrawal status, answer status, refusal) stays deterministic code.
-The LLM may only reword claims the engine already selected; its output must pass phrase.verify() or fall back to verbatim text.
-Never loosen refusal behaviour to make demos look better. Every answer must say proposals (NPRMs) are not binding.
-Run `python3 eval/run_eval_faa.py` before and after changes and report the numbers. Don't edit gold answers to match the engine;
-only correct a gold item after checking the source summary, and record why in its "note".
-Keep the /ask response shape (section 5) stable for the front end. Your next task is the top unfinished item in section 6.
+You are continuing a hackathon project called Torque Stripe (Airbus Challenge #4, Autonomous SG 2026, NUS, 31 Oct 2026).
+Submissions close 16:15 SGT; we want to submit by 15:30. Prioritise shipping over new features.
+Read HANDOFF.md fully first (sections 0, 2, 5, 6, 12). Then README.md.
+Hard rules:
+- Every safety decision (model applicability, revision/withdrawal status, answer status, refusal) stays deterministic code.
+  The LLM may only reword claims the engine already selected; output must pass phrase.verify() or fall back to verbatim text.
+- Never loosen refusals to make demos look better. Every answer must say proposals (NPRMs) are not binding.
+- Never put the Anthropic API key in the repo, chat, or front-end code. Server env var only.
+- No Airbus logo or anything implying an official Airbus product.
+- Two engines exist (Python reference + web/engine.js port). Change both or neither; run parity.
+Before and after any change run: python3 eval/run_eval_faa.py (must stay 42/42, 0/16 unsafe),
+python3 web/build.py, and python3 tests/e2e.py <url> (must print RESULT: ALL PASS).
+Don't edit gold answers to match the engine; only fix a gold item after checking the source, and record why in its "note".
+Your next task is the top unfinished item in section 6 (GitHub push, then the static Vercel deploy in section 12).
 ```
+
+---
+
+## 12. Deploy
+
+**Option A — static (recommended, ~2 min).** `web/dist/` is a complete site: engine, data, gold set and three.js (cdnjs) all run in the browser. No server, no API key.
+
+```bash
+python3 web/build.py                     # regenerate web/dist
+cd web/dist && npx vercel --prod         # or Vercel dashboard: import repo, Root Directory = web/dist, Framework = Other, no build command
+```
+If importing the GitHub repo in the dashboard, set **Root Directory `web/dist`** so the root `vercel.json` (Python) is ignored. Vercel team used before: `aljs-projects`.
+
+**Option B — Python (FastAPI on Vercel, enables Claude rewording).** Root `vercel.json` + `api/index.py` route everything to FastAPI. Add env vars `ANTHROPIC_API_KEY` (secret) and `ANTHROPIC_MODEL=claude-sonnet-5-5`. Cold starts take a few seconds (xlsx parse); warm the URL before judging. Only do this after Option A is live.
+
+**Smoke test after deploy:** open the URL → tour appears → click chip "main rotor servo-control torque inspection" with model AS350B3 → ANSWERED, FAA-2026-11814, helicopter shape → Evaluation tab shows 42/42 → toggle Light/Dark → check on a phone.
+
+---
+
+## 13. Submission text (draft, copy-paste)
+
+**Torque Stripe** — find, understand and verify FAA proposed Airworthiness Directives.
+An engineer types their aircraft model and a question. Rule-based code (not an LLM) finds the proposal, checks the docket's revision/withdrawal history, checks the model against the proposal's model list (exact, series, family, "certain units"), and answers with cited Federal Register sentences, or refuses with a reason. Claude can only reword evidence the rules already selected, and a verifier rejects any rewording that changes numbers, adds negation or drifts from the source.
+On 42 real questions: 42/42 correct and 0/16 unsafe answers, vs a search baseline at 5/42 and 16/16 unsafe. Every withdrawn proposal is flagged (6/6). Answers in under 10 ms over 1,302 pages.
+*The AI reads. The rules decide. The engineer signs.*
