@@ -90,7 +90,7 @@ export default function App() {
         </nav>
         <header className="topbar">
           <span className="tb-item brand" title="Built for Airbus Challenge #4 at Autonomous SG 2026. Not an official Airbus product."><b>Torque Stripe</b><span className="tb-x">×</span><img src="/airbus-logo.svg" alt="Airbus" className="tb-airbus" /></span>
-          <span className="tb-item"><span className="dot ok" />Dataset · {health ? `${health.rows} notices · ${health.dockets} dockets · ${health.federal_register_pages.toLocaleString()} FR pages` : 'loading'}</span>
+          <span className="tb-item ds"><span className="dot ok" />Dataset · {health ? `${health.rows} notices · ${health.dockets} dockets · ${health.federal_register_pages.toLocaleString()} FR pages` : 'loading'}</span>
           <span className="tb-item hide-sm"><span className="dot" />Mode · rules engine{api.kind === 'local' ? ' · in browser' : ' · server'}</span>
           <span className="tb-sp" />
           <span className="tb-item hide-sm"><span className="dot" />Model · <span className="mono">{model || 'none'}</span></span>

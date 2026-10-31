@@ -158,6 +158,12 @@ expect((await text(answer())).includes(d), 'fleet docket did not open in Ask')
     expect(/withdrawn/.test(await mp.locator('#answer').innerText()), 'mobile answer')
     await mp.locator('[data-tab="eval"]').tap(); await mp.waitForSelector('.metric .readout', { timeout: 20000 })
     const w = await mp.evaluate(() => document.documentElement.scrollWidth); expect(w <= 392, `horizontal overflow ${w}px`)
+    const lay = await mp.evaluate(() => {
+      const box = s => { const e = document.querySelector(s); if (!e || !e.offsetParent) return null; const r = e.getBoundingClientRect(); return { l: r.left, r: r.right } }
+      return { brand: box('.tb-item.brand'), airbus: box('.tb-airbus'), ds: box('.tb-item.ds') }
+    })
+    expect(lay.airbus && lay.airbus.r <= lay.brand.r + 1, 'Airbus logo spills out of the brand on mobile')
+    expect(!lay.ds || lay.ds.l >= lay.airbus.r, 'Airbus logo overlaps the dataset text on mobile')
   })
   await m.close()
   await t('no console errors and no failed requests', async () => { expect(!errors.length && !bad.length, [...errors, ...bad].slice(0, 3).join(' | ')) })

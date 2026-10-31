@@ -17,6 +17,11 @@
 .tb-sp { flex: 1; }
 .tb-x { color: var(--sand-3); font-family: var(--f-body); font-size: 14px; margin: 0 2px; }
 .tb-airbus { height: 12px; width: auto; display: block; }
+.tb-item.brand { flex: none; }
+.tb-item { min-width: 0; }
+.tb-item.ds { overflow: hidden; text-overflow: ellipsis; display: block; }
+.tb-item.ds .dot { display: inline-block; margin-right: 8px; vertical-align: 1px; }
+@media (max-width: 560px) { .tb-item.ds { display: none; } .tb-airbus { height: 11px; } }
 .view { min-height: 0; position: relative; }
 
 /* ---------- ask console ---------- */
