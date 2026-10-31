@@ -21,72 +21,124 @@
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js" onerror="this.remove()"></script>
 <script src="/static/motion.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
+/* Layout: hangar console. Sidebar for views, a working area with an inspection stage (3D) beside the question,
+   then the answer beside its source. One accent: safety orange, used only for the torque stripe and primary actions. */
 :root{
-  --bg:#f5f5f7; --surface:#ffffff; --surface-2:#fbfbfd; --line:rgba(0,0,0,.08); --line-2:rgba(0,0,0,.14);
-  --text:#1d1d1f; --text-2:#6e6e73; --text-3:#86868b;
-  --accent:#d4570f; --accent-soft:rgba(212,87,15,.10);
-  --ok:#1f7a3a; --ok-bg:rgba(31,122,58,.10);
-  --info:#0a63c9; --info-bg:rgba(10,99,201,.09);
-  --warn:#9a5b00; --warn-bg:rgba(191,120,0,.12);
-  --mute:#57575c; --mute-bg:rgba(0,0,0,.06);
-  --bad:#b4232c; --bad-bg:rgba(180,35,44,.09);
-  --hl:rgba(212,87,15,.14);
-  --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.04),0 6px 24px rgba(0,0,0,.05);
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --bg:#f3f3f1; --surface:#ffffff; --surface-2:#f8f8f6; --sunken:#ebebe8;
+  --line:rgba(20,20,18,.08); --line-2:rgba(20,20,18,.15);
+  --text:#18181a; --text-2:#5d5d5a; --text-3:#8a8a86;
+  --accent:#d9622b; --accent-soft:rgba(217,98,43,.12); --on-accent:#ffffff;
+  --ok:#2f7a4c; --ok-bg:rgba(47,122,76,.10);
+  --info:#3c6a99; --info-bg:rgba(60,106,153,.10);
+  --warn:#9b6a12; --warn-bg:rgba(155,106,18,.12);
+  --mute:#5d5d5a; --mute-bg:rgba(20,20,18,.06);
+  --bad:#b2433a; --bad-bg:rgba(178,67,58,.10);
+  --hl:rgba(217,98,43,.13);
+  --wire:#3a3a37; --wire-dim:#b9b9b4; --stage:#ecece9;
+  --radius:12px; --shadow:0 1px 0 rgba(20,20,18,.04);
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#000; --surface:#1c1c1e; --surface-2:#232326; --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.16);
-  --text:#f5f5f7; --text-2:#a1a1a6; --text-3:#7c7c80;
-  --accent:#ff8a3d; --accent-soft:rgba(255,138,61,.14);
-  --ok:#4cc46b; --ok-bg:rgba(76,196,107,.13); --info:#5aa9ff; --info-bg:rgba(90,169,255,.13);
-  --warn:#f0b54a; --warn-bg:rgba(240,181,74,.14); --mute:#b0b0b5; --mute-bg:rgba(255,255,255,.08);
-  --bad:#ff6b6b; --bad-bg:rgba(255,107,107,.13); --hl:rgba(255,138,61,.18); --shadow:none;color-scheme:dark}}
+  --bg:#0f1011; --surface:#151618; --surface-2:#1a1b1e; --sunken:#0b0c0d;
+  --line:rgba(235,235,230,.07); --line-2:rgba(235,235,230,.13);
+  --text:#e9e9e6; --text-2:#a2a29d; --text-3:#6f6f6b;
+  --accent:#e8763f; --accent-soft:rgba(232,118,63,.14); --on-accent:#141414;
+  --ok:#78b98c; --ok-bg:rgba(120,185,140,.11); --info:#8fb0d3; --info-bg:rgba(143,176,211,.11);
+  --warn:#d6a85a; --warn-bg:rgba(214,168,90,.12); --mute:#a2a29d; --mute-bg:rgba(235,235,230,.06);
+  --bad:#d97a70; --bad-bg:rgba(217,122,112,.12); --hl:rgba(232,118,63,.16);
+  --wire:#cfcfca; --wire-dim:#3b3c3f; --stage:#121315; --shadow:none; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#000; --surface:#1c1c1e; --surface-2:#232326; --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.16);
-  --text:#f5f5f7; --text-2:#a1a1a6; --text-3:#7c7c80;
-  --accent:#ff8a3d; --accent-soft:rgba(255,138,61,.14);
-  --ok:#4cc46b; --ok-bg:rgba(76,196,107,.13); --info:#5aa9ff; --info-bg:rgba(90,169,255,.13);
-  --warn:#f0b54a; --warn-bg:rgba(240,181,74,.14); --mute:#b0b0b5; --mute-bg:rgba(255,255,255,.08);
-  --bad:#ff6b6b; --bad-bg:rgba(255,107,107,.13); --hl:rgba(255,138,61,.18); --shadow:none;color-scheme:dark}
+  --bg:#0f1011; --surface:#151618; --surface-2:#1a1b1e; --sunken:#0b0c0d;
+  --line:rgba(235,235,230,.07); --line-2:rgba(235,235,230,.13);
+  --text:#e9e9e6; --text-2:#a2a29d; --text-3:#6f6f6b;
+  --accent:#e8763f; --accent-soft:rgba(232,118,63,.14); --on-accent:#141414;
+  --ok:#78b98c; --ok-bg:rgba(120,185,140,.11); --info:#8fb0d3; --info-bg:rgba(143,176,211,.11);
+  --warn:#d6a85a; --warn-bg:rgba(214,168,90,.12); --mute:#a2a29d; --mute-bg:rgba(235,235,230,.06);
+  --bad:#d97a70; --bad-bg:rgba(217,122,112,.12); --hl:rgba(232,118,63,.16);
+  --wire:#cfcfca; --wire-dim:#3b3c3f; --stage:#121315; --shadow:none; color-scheme:dark}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--text);
-  font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 button,input{font:inherit;color:inherit}
-.mono{font-family:var(--mono);font-size:.92em}
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);
-  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
-.bar{max-width:1280px;margin:0 auto;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-.01em}
-.stripe{width:22px;height:22px;border-radius:6px;background:var(--surface);border:1px solid var(--line-2);position:relative;overflow:hidden}
-.stripe:after{content:"";position:absolute;left:-4px;right:-4px;top:9px;height:4px;background:var(--accent);transform:rotate(-28deg)}
-.tabs{display:flex;background:var(--mute-bg);border-radius:9px;padding:2px}
-.tab{border:0;background:none;padding:5px 14px;border-radius:7px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer}
-.tab[aria-selected="true"]{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono);font-size:.9em;font-variant-numeric:tabular-nums}
+a{color:var(--info);text-decoration:none} a:hover{text-decoration:underline}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+/* sidebar */
+.side{position:sticky;top:env(safe-area-inset-top,0px);height:calc(100vh - env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:22px;
+  padding-block:18px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:16px;border-right:1px solid var(--line);background:var(--surface)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px;letter-spacing:-.01em;line-height:1.15}
+.credit{display:block;font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:0;margin-top:2px}
+.tabs{display:flex;flex-direction:column;gap:2px}
+.tab{display:flex;align-items:center;gap:10px;border:0;background:none;padding:8px 10px;border-radius:8px;font-size:14px;font-weight:500;color:var(--text-2);cursor:pointer;text-align:left}
+.tab svg{width:17px;height:17px;flex:none}
+.tab:hover{background:var(--mute-bg);color:var(--text)}
+.tab[aria-selected="true"]{background:var(--sunken);color:var(--text)}
+.tab[aria-selected="true"] svg{color:var(--accent)}
+.side h4{margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+.dl{display:grid;grid-template-columns:1fr auto;gap:6px 10px;font-size:13px;margin:0}
+.dl dt{color:var(--text-2)} .dl dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.side .grow{flex:1}
+.creator{display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none}
+.creator:hover{text-decoration:none}
+.creator img{border-radius:50%;object-fit:cover;flex:none}
+.creator b{display:block;font-size:13px;font-weight:600}
+.creator .stats{display:block;line-height:1.35}
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding-block:12px;padding-left:24px;padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:saturate(160%) blur(18px);-webkit-backdrop-filter:saturate(160%) blur(18px);border-bottom:1px solid var(--line)}
+.crumb{font-size:13px;color:var(--text-2)} .crumb b{color:var(--text);font-weight:600}
 .ctx{margin-left:auto;display:flex;align-items:center;gap:10px}
 .ctx label{font-size:12px;color:var(--text-2)}
-.field{background:var(--surface);border:1px solid var(--line-2);border-radius:9px;padding:6px 10px;min-width:170px;outline:none}
+.field{background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;min-width:180px;outline:none}
 .field:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.engine{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--text-2);border:1px solid var(--line-2);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.engine i{width:6px;height:6px;border-radius:50%;background:var(--ok)}
 .stats{font-size:12px;color:var(--text-3)}
-main{max-width:1280px;margin:0 auto;padding-block:22px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.help{width:28px;height:28px;border-radius:50%;border:1px solid var(--line-2);background:var(--surface);font-weight:600;font-size:13px;cursor:pointer;color:var(--text-2)}
+.help:hover{color:var(--accent);border-color:var(--accent)}
+main{padding-block:22px 60px;padding-left:24px;padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1360px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
-@media (max-width:900px){.grid{grid-template-columns:1fr}.ctx{margin-left:0}}
+.view[hidden]{display:none}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-.ask{padding:16px}
-.ask h1{font-size:22px;letter-spacing:-.02em;margin:0 0 4px;font-weight:600}
-.ask p.sub{margin:0 0 14px;color:var(--text-2);font-size:13.5px}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+.grid > *{min-width:0}
+.row1{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;margin-bottom:18px;align-items:stretch}
+.row1 > *{min-width:0}
+/* stage */
+.stage{position:relative;min-height:330px;overflow:hidden;background:var(--stage)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}
+.stage canvas:active{cursor:grabbing}
+.stage .ov{position:absolute;pointer-events:none;padding:16px 18px}
+.stage .tl{top:0;left:0;right:0;display:flex;justify-content:space-between;gap:12px}
+.stage .bl{bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+.stage .model{font-family:var(--mono);font-size:26px;font-weight:500;letter-spacing:-.01em;margin-top:2px}
+.stage .sum{font-size:13px;color:var(--text-2);max-width:340px}
+.legend{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-2);background:color-mix(in srgb,var(--stage) 80%,transparent);border-radius:8px;padding:4px 8px 4px 4px}
+.legend .sw{width:26px;height:8px;border-radius:2px;background:var(--text-3)}
+.legend .sw.on{background:var(--accent)} .legend .sw.broken{background:linear-gradient(90deg,var(--warn) 0 42%,transparent 42% 58%,var(--warn) 58%)}
+.stage .fallback{position:absolute;inset:0;display:grid;place-items:center;color:var(--text-3);font-size:13px}
+/* ask */
+.ask{padding:18px;display:flex;flex-direction:column}
+.ask h1{font-size:21px;letter-spacing:-.02em;margin:0 0 4px;font-weight:600;text-wrap:balance}
+.ask p.sub{margin:0 0 14px;color:var(--text-2);font-size:13.5px;max-width:62ch}
 .qrow{display:flex;gap:8px}
-.q{flex:1;font-size:16px;padding:11px 14px;border-radius:11px;border:1px solid var(--line-2);background:var(--surface-2);outline:none}
+.q{flex:1;min-width:0;font-size:15.5px;padding:11px 13px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface-2);outline:none}
 .q:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-.go{border:0;background:var(--accent);color:#fff;border-radius:11px;padding:0 18px;font-weight:600;cursor:pointer}
+.go{border:0;background:var(--accent);color:var(--on-accent);border-radius:10px;padding:0 18px;font-weight:600;cursor:pointer}
 .go:active{transform:scale(.98)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.chip{border:1px solid var(--line-2);background:var(--surface);border-radius:999px;padding:4px 11px;font-size:12.5px;color:var(--text-2);cursor:pointer}
+.chip{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:4px 11px;font-size:12.5px;color:var(--text-2);cursor:pointer}
 .chip:hover{color:var(--text);border-color:var(--text-3)}
 .chip .k{color:var(--text-3)}
-#answer{margin-top:16px}
 .ans{padding:18px}
 .pillrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
 .pill{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px}
@@ -94,16 +146,17 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .p-ok{color:var(--ok);background:var(--ok-bg)} .p-info{color:var(--info);background:var(--info-bg)}
 .p-warn{color:var(--warn);background:var(--warn-bg)} .p-mute{color:var(--mute);background:var(--mute-bg)}
 .p-bad{color:var(--bad);background:var(--bad-bg)}
-.tag{font-size:12px;padding:3px 8px;border-radius:7px;background:var(--mute-bg);color:var(--text-2)}
-.headline{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:2px 0 6px}
-.lede{color:var(--text-2);margin:0 0 12px}
+.tag{font-size:12px;padding:3px 8px;border-radius:6px;background:var(--mute-bg);color:var(--text-2)}
+.tag.mono{font-size:11.5px}
+.headline{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:2px 0 6px;text-wrap:balance}
+.lede{color:var(--text-2);margin:0 0 12px;max-width:68ch}
 .kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13.5px;margin:12px 0;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .kv dt{color:var(--text-2)} .kv dd{margin:0}
 .sent{margin:10px 0;padding-left:12px;border-left:2px solid var(--line-2)}
 .sent p{margin:0}
 .cite{display:inline-flex;gap:4px;align-items:center;margin-left:6px;border:1px solid var(--line-2);background:var(--surface-2);
   border-radius:6px;padding:0 6px;font-family:var(--mono);font-size:11px;color:var(--text-2);cursor:pointer;vertical-align:1px}
-.cite:hover{color:var(--accent);border-color:var(--accent)}
+.cite:hover,.cite.cur{color:var(--accent);border-color:var(--accent)}
 .mode{font-size:11.5px;color:var(--text-3);margin-top:8px}
 details.why{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
 details.why summary{cursor:pointer;font-size:13px;color:var(--text-2);list-style:none}
@@ -112,36 +165,35 @@ details.why summary:before{content:"›";display:inline-block;margin-right:6px;t
 details.why[open] summary:before{transform:rotate(90deg)}
 .checks{list-style:none;margin:10px 0 0;padding:0;font-size:13px}
 .checks li{display:flex;gap:8px;padding:4px 0;color:var(--text-2)}
-.checks li b{font-weight:600;color:var(--text);min-width:110px}
+.checks li b{font-weight:600;color:var(--text);min-width:100px}
+.checks li .ic{flex:none;width:16px;height:16px;margin-top:2px;color:var(--ok)}
+.checks li .ic.x{color:var(--warn)}
 .cands{display:grid;gap:8px;margin-top:10px}
-.cand{text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:11px;padding:10px 12px;cursor:pointer}
+.cand{text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 12px;cursor:pointer}
 .cand:hover{border-color:var(--line-2)}
 .cand .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .cand .s{font-size:13px;color:var(--text-2);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .src{position:sticky;top:76px;max-height:calc(100vh - 96px);overflow:auto}
 .src .hd{padding:14px 16px;border-bottom:1px solid var(--line)}
-.src .hd .t{font-size:12px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
-.src .hd h2{margin:4px 0 2px;font-size:17px;font-family:var(--mono)}
+.src .hd .t{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.src .hd h2{margin:4px 0 2px;font-size:17px;font-family:var(--mono);font-weight:500}
 .src .body{padding:12px 16px 18px}
 .empty{color:var(--text-3);font-size:13.5px;padding:28px 16px;text-align:center}
-.tl{list-style:none;margin:0 0 12px;padding:0}
-.tl li{position:relative;padding:0 0 12px 20px;font-size:13px}
-.tl li:before{content:"";position:absolute;left:4px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--text-3)}
-.tl li:after{content:"";position:absolute;left:7.5px;top:16px;bottom:0;width:1px;background:var(--line-2)}
-.tl li:last-child:after{display:none}
-.tl li.cur:before{background:var(--accent)}
-.tl .a{font-weight:600}
-.tl .m{color:var(--text-3)}
+.tl-list{list-style:none;margin:0 0 12px;padding:0}
+.tl-list li{position:relative;padding:0 0 12px 20px;font-size:13px}
+.tl-list li:before{content:"";position:absolute;left:4px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--text-3)}
+.tl-list li:after{content:"";position:absolute;left:7.5px;top:16px;bottom:0;width:1px;background:var(--line-2)}
+.tl-list li:last-child:after{display:none}
+.tl-list li.cur:before{background:var(--accent)}
+.tl-list .a{font-weight:600} .tl-list .m{color:var(--text-3)}
 .vhead{font-size:12px;color:var(--text-3);margin:14px 0 6px;display:flex;justify-content:space-between;gap:8px}
 .ss{padding:6px 8px;border-radius:8px;font-size:13.5px;margin:2px 0;display:flex;gap:10px}
 .ss .n{font-family:var(--mono);font-size:11px;color:var(--text-3);min-width:24px;padding-top:2px}
 .ss.on{background:var(--hl)}
-a{color:var(--info);text-decoration:none} a:hover{text-decoration:underline}
-.view[hidden]{display:none}
 .evalhead{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
 .metric{padding:14px 16px}
 .metric .l{font-size:12px;color:var(--text-2)}
-.metric .v{font-size:26px;font-weight:600;letter-spacing:-.02em}
+.metric .v{font-family:var(--mono);font-size:26px;font-weight:500;letter-spacing:-.02em}
 .metric .b{font-size:12px;color:var(--text-3)}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -150,118 +202,134 @@ th{font-weight:600;color:var(--text-2);font-size:12px}
 .notice{font-size:12.5px;color:var(--text-2);background:var(--mute-bg);border-radius:10px;padding:10px 12px;margin-top:12px}
 .spinner{width:14px;height:14px;border:2px solid var(--line-2);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:-2px}
 @keyframes sp{to{transform:rotate(360deg)}}
-.credit{display:block;font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:0}
-.brand{line-height:1.15}
 .acts{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
-.btn{border:1px solid var(--line-2);background:var(--surface);border-radius:9px;padding:6px 12px;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;color:var(--text)}
+.btn{border:1px solid var(--line-2);background:var(--surface);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;color:var(--text)}
 .btn:hover{border-color:var(--text-3);text-decoration:none}
-.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
-.checks li .ic{flex:none;width:16px;height:16px;margin-top:2px;color:var(--ok)}
-.checks li .ic.x{color:var(--warn)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn:disabled{opacity:.4;cursor:default}
 .listed{font-family:var(--mono);font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.7}
 .fleetin{display:flex;gap:8px;flex-wrap:wrap}
 .fleetin .q{min-width:260px}
 .fgrid{display:grid;gap:14px;margin-top:16px}
 .fcard .fh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
-.fcard .fh h3{margin:0;font-family:var(--mono);font-size:16px}
+.fcard .fh h3{margin:0;font-family:var(--mono);font-size:16px;font-weight:500}
 .fcard td.mono{white-space:nowrap}
 .fcard tr{cursor:pointer} .fcard tr:hover td{background:var(--surface-2)}
 .open{color:var(--ok);font-weight:600}
-.cite.cur{color:var(--accent);border-color:var(--accent)}
-.help{width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2);background:var(--surface);font-weight:600;font-size:13px;cursor:pointer;color:var(--text-2)}
-.help:hover{color:var(--accent);border-color:var(--accent)}
-.foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}
-.creator{display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none}
-.creator:hover{text-decoration:none}
-.creator img{border-radius:50%;object-fit:cover}
-.creator b{display:block;font-size:13.5px;font-weight:600}
-.foot > .stats{max-width:560px}
 #tour{position:fixed;inset:0;z-index:50}
-.tour-spot{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.48);pointer-events:none;transition:all .35s cubic-bezier(.2,.8,.2,1)}
+.tour-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.5);pointer-events:none;transition:all .35s cubic-bezier(.2,.8,.2,1)}
 .tour-pop{position:fixed;width:340px;max-width:calc(100vw - 32px);padding:16px 18px;z-index:51;transition:top .35s,left .35s}
 .tour-pop h3{margin:4px 0 6px;font-size:17px;letter-spacing:-.01em}
 .tour-pop p{margin:0 0 14px;color:var(--text-2);font-size:14px}
 .tour-acts{display:flex;gap:8px;align-items:center}
-.grid > *{min-width:0}
 .kv dd,.ss,.cand .s,.sent p,.lede,.vhead,td{overflow-wrap:anywhere}
-@media (max-width:600px){
-  .kv{grid-template-columns:1fr;gap:2px 0}.kv dt{margin-top:6px}
-  .bar{gap:10px}.ctx{width:100%;flex-wrap:wrap}.ctx .field{flex:1;min-width:0}.stats#stats{width:100%}
-  .fcard table,.card.pad table{display:block;overflow-x:auto}
-  .src{position:static;max-height:none}
-}
 kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--text-2)}
+@media (max-width:1080px){.row1,.grid{grid-template-columns:1fr}.src{position:static;max-height:none}}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px;border-right:0;border-bottom:1px solid var(--line);
+    padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .side .tabs{flex-direction:row;order:3;width:100%}
+  .side .grow,.side .data,.side .creator{display:none}
+  .top{padding-left:max(16px,env(safe-area-inset-left,0px))}
+  main{padding-left:max(16px,env(safe-area-inset-left,0px))}
+  .ctx{margin-left:0;width:100%;flex-wrap:wrap}.ctx .field{flex:1;min-width:0}
+  .stage{min-height:250px}.stage .model{font-size:20px}
+  .kv{grid-template-columns:1fr;gap:2px 0}.kv dt{margin-top:6px}
+  .fcard table,.card.pad table{display:block;overflow-x:auto}
+}
 </style>
 </head>
 <body>
-<header>
-  <div class="bar">
-    <div class="brand"><img src="/static/logo.svg" alt="" width="28" height="28" style="border-radius:7px"><span>Torque Stripe<span class="credit">Built for Airbus Challenge #4 · Autonomous SG 2026</span></span></div>
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" aria-selected="true" data-view="ask">Ask</button>
-      <button class="tab" role="tab" aria-selected="false" data-view="fleet">Fleet</button>
-      <button class="tab" role="tab" aria-selected="false" data-view="eval">Evaluation</button>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><img src="/static/logo.svg" alt="" width="30" height="30" style="border-radius:8px"><span>Torque Stripe<span class="credit">Airbus Challenge #4</span></span></div>
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button class="tab" role="tab" aria-selected="true" data-view="ask"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="5.5"/><path d="M13 13l4 4" stroke-linecap="round"/></svg>Ask</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="fleet"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M10 2.5l1.6 5.1 5.4 1.4-5.4 1.4L10 17.5l-1.6-7.1L3 9l5.4-1.4z"/></svg>Fleet</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="eval"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5h14M5.5 13V9M10 13V5M14.5 13v-2.5"/></svg>Evaluation</button>
+    </nav>
+    <div class="data">
+      <h4>Dataset</h4>
+      <dl class="dl" id="stats"><dt>Notices</dt><dd>431</dd><dt>Dockets</dt><dd>323</dd><dt>FR pages</dt><dd>1,302</dd></dl>
     </div>
-    <div class="ctx">
-      <label for="model">Aircraft / engine model</label>
-      <input id="model" class="field mono" list="models" placeholder="e.g. AS350B3" autocomplete="off">
-      <datalist id="models"></datalist>
-      <span class="stats" id="stats"></span>
-      <button class="help" id="tourbtn" aria-label="Show the guided tour" title="Guided tour">?</button>
-    </div>
-  </div>
-</header>
-
-<main>
-  <section class="view" id="view-ask">
-    <div class="grid">
-      <div>
-        <div class="card ask">
-          <h1>Ask about proposed ADs</h1>
-          <p class="sub">Answers quote the FAA notice word for word, with the docket, Federal Register page and sentence. Model coverage, revisions and withdrawals are checked by rules, not by the AI.</p>
-          <form class="qrow" id="f">
-            <input class="q" id="q" placeholder="e.g. main rotor servo-control torque inspection" autocomplete="off" aria-label="Question">
-            <button class="go" type="submit">Ask</button>
-          </form>
-          <div class="chips" id="chips"></div>
-        </div>
-        <div id="answer"></div>
-      </div>
-      <aside class="card src" id="src"><div class="empty">Tap a citation to see the exact source sentence and the docket's history.</div></aside>
-    </div>
-  </section>
-
-  <section class="view" id="view-fleet" hidden>
-    <div class="card ask">
-      <h1>Fleet check</h1>
-      <p class="sub">Enter the aircraft and engine models you maintain. For each one: every proposal whose model list covers it, its status, and whether the comment period is still open. Matching is by fixed rules (exact model or FAA series), never by the AI.</p>
-      <form class="fleetin" id="ff">
-        <input class="q mono" id="fleetq" value="AS350B3, A330-243, 787-9, PW1524G-3, A380-841" aria-label="Models">
-        <button class="go" type="submit">Check fleet</button>
-      </form>
-    </div>
-    <div class="fgrid" id="fleetout"></div>
-  </section>
-
-  <section class="view" id="view-eval" hidden>
-    <div class="evalhead" id="evalhead"></div>
-    <div class="card pad">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <div><b>Gold-set run</b> <span class="stats">real FAA data · deterministic · no LLM in the decision path</span></div>
-        <button class="chip" id="runeval">Run evaluation now</button>
-      </div>
-      <div id="evaltable" style="margin-top:12px"></div>
-      <div class="notice">The gold questions were written by the team. Two gold answers were corrected after reading the source text: both cases where the system was right and the question writer was wrong. Each correction is recorded in <span class="mono">eval/gold_faa.json</span>. The baseline is plain keyword retrieval that always answers with the top match.</div>
-    </div>
-  </section>
-  <footer class="foot">
+    <div class="grow"></div>
     <a class="creator" href="https://www.linkedin.com/in/aljabri-alam/" target="_blank" rel="noopener">
-      <img src="/static/creator.jpg" alt="Aljabri Alam" width="36" height="36">
-      <span><b>Made by Aljabri Alam</b><span class="stats">Technical Lead & AI Advocate · linkedin.com/in/aljabri-alam</span></span>
+      <img src="/static/creator.jpg" alt="Aljabri Alam" width="34" height="34">
+      <span><b>Aljabri Alam</b><span class="stats">Technical Lead & AI Advocate</span></span>
     </a>
-    <span class="stats">Data: FAA AD NPRM notices supplied for Airbus Challenge #4. Proposals are not binding; always check the Federal Register text before acting.</span>
-  </footer>
-</main>
+  </aside>
+
+  <div class="work">
+    <header class="top">
+      <span class="crumb" id="crumb"><b>Ask</b> · FAA proposed ADs</span>
+      <div class="ctx">
+        <label for="model">Aircraft / engine model</label>
+        <input id="model" class="field mono" list="models" placeholder="e.g. AS350B3" autocomplete="off">
+        <datalist id="models"></datalist>
+        <span class="engine" title="Every decision is made by fixed rules in this page"><i></i>Rules engine</span>
+        <button class="help" id="tourbtn" aria-label="Show the guided tour" title="Guided tour">?</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="view" id="view-ask">
+        <div class="row1">
+          <div class="card stage" id="stage" aria-label="3D inspection view of the selected aircraft or engine">
+            <canvas id="stagecv"></canvas>
+            <div class="ov tl">
+              <div><div class="eyebrow">Inspection view</div><div class="model" id="stmodel">No model set</div>
+                <div class="sum" id="stsum">Set an aircraft or engine model to see which proposals list it.</div></div>
+              <span class="stats" id="sthint">Drag to rotate</span>
+            </div>
+            <div class="ov bl">
+              <div class="legend" id="stleg"><span class="sw" id="stsw"></span><span id="stlegt">Stripe not applied · ask a question</span></div>
+              <span class="stats mono" id="stkind"></span>
+            </div>
+          </div>
+          <div class="card ask">
+            <h1>Ask about proposed ADs</h1>
+            <p class="sub">Answers quote the FAA notice word for word, with the docket, Federal Register page and sentence. Model coverage, revisions and withdrawals are checked by rules, not by the AI.</p>
+            <form class="qrow" id="f">
+              <input class="q" id="q" placeholder="e.g. main rotor servo-control torque inspection" autocomplete="off" aria-label="Question">
+              <button class="go" type="submit">Ask</button>
+            </form>
+            <div class="chips" id="chips"></div>
+          </div>
+        </div>
+        <div class="grid">
+          <div id="answer"></div>
+          <aside class="card src" id="src"><div class="empty">Tap a citation to see the exact source sentence and the docket's history.</div></aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-fleet" hidden>
+        <div class="card ask">
+          <h1>Fleet check</h1>
+          <p class="sub">Enter the aircraft and engine models you maintain. For each one: every proposal whose model list covers it, its status, and whether the comment period is still open. Matching is by fixed rules (exact model or FAA series), never by the AI.</p>
+          <form class="fleetin" id="ff">
+            <input class="q mono" id="fleetq" value="AS350B3, A330-243, 787-9, PW1524G-3, A380-841" aria-label="Models">
+            <button class="go" type="submit">Check fleet</button>
+          </form>
+        </div>
+        <div class="fgrid" id="fleetout"></div>
+      </section>
+
+      <section class="view" id="view-eval" hidden>
+        <div class="evalhead" id="evalhead"></div>
+        <div class="card pad">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div><b>Gold-set run</b> <span class="stats">real FAA data · deterministic · no AI in the decision path</span></div>
+            <button class="chip" id="runeval">Run evaluation now</button>
+          </div>
+          <div id="evaltable" style="margin-top:12px"></div>
+          <div class="notice">The gold questions were written by the team. Three gold answers were corrected after reading the source text: each time the system was right and the question writer was wrong. Each correction is recorded in <span class="mono">eval/gold_faa.json</span>. The baseline is plain keyword retrieval that always answers with the top match.</div>
+        </div>
+      </section>
+      <p class="stats" style="margin-top:30px;max-width:80ch">Data: FAA AD NPRM notices supplied for Airbus Challenge #4 at Autonomous SG 2026. Proposals are not binding; check the Federal Register text before acting.</p>
+    </main>
+  </div>
+</div>
 <div id="tour" hidden>
   <div class="tour-spot" id="tourspot"></div>
   <div class="tour-pop card" id="tourpop" role="dialog" aria-modal="true" aria-labelledby="tourtitle">
@@ -273,6 +341,7 @@ kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line-2);border
   </div>
 </div>
 
+<script src="/static/stage.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -297,21 +366,63 @@ function chips() {
   $("#chips").innerHTML = CHIPS.map(([m, q, label], i) =>
     `<button class="chip" data-i="${i}">${m ? `<span class="k mono">${esc(m)}</span> · ` : ""}${esc(label || q)}</button>`).join("");
   $("#chips").onclick = e => { const b = e.target.closest(".chip"); if (!b) return;
-    const [m, q] = CHIPS[+b.dataset.i]; $("#model").value = m; $("#q").value = q; ask(); };
+    const [m, q] = CHIPS[+b.dataset.i]; $("#model").value = m; $("#q").value = q; stageModel(); ask(); };
 }
 
 async function init() {
   chips();
   try {
     const h = await (await fetch("/health")).json();
-    if (h.mode === "faa_nprm") $("#stats").textContent = `${h.rows} notices · ${h.dockets} dockets · ${h.federal_register_pages.toLocaleString()} pages`;
+    if (h.mode === "faa_nprm") $("#stats").innerHTML = `<dt>Notices</dt><dd>${h.rows}</dd><dt>Dockets</dt><dd>${h.dockets}</dd><dt>FR pages</dt><dd>${h.federal_register_pages.toLocaleString()}</dd>`;
     const ms = await (await fetch("/models")).json();
     $("#models").innerHTML = ms.map(m => `<option value="${esc(m)}">`).join("");
-  } catch (e) { $("#stats").textContent = "API not reachable"; }
+  } catch (e) { $("#stats").innerHTML = "<dt>Server</dt><dd>offline</dd>"; }
 }
 
 $("#f").onsubmit = e => { e.preventDefault(); ask(); };
-let mt; $("#model").addEventListener("input", () => { clearTimeout(mt); mt = setTimeout(() => { if ($("#q").value.trim()) ask(); }, 450); });
+let mt; $("#model").addEventListener("input", () => { clearTimeout(mt); mt = setTimeout(() => { stageModel(); if ($("#q").value.trim()) ask(); }, 450); });
+
+// ---------- 3D stage hooks (display only; the verdict comes from the rules) ----------
+function kindFor(m) {
+  const u = (m || "").toUpperCase().replace(/\s+/g, "");
+  if (window.TS_DATA && u) {           // majority product type of the proposals that list this model
+    const n = { airliner: 0, helicopter: 0, turbofan: 0 };
+    for (const d of window.TS_DATA) for (const v of d.v) if (v.m.some(x => x.replace(/\*$/, "") === u)) {
+      if (/engine/i.test(v.pt || "")) n.turbofan++; else if (/rotor/i.test(v.pst || "")) n.helicopter++; else n.airliner++; }
+    const best = Object.entries(n).sort((a, b) => b[1] - a[1])[0];
+    if (best[1]) return best[0];
+  }
+  if (/^(CFM|PW\d|GE\d|GENX|CF\d|TRENT|RB211|ARRIUS|PT6|LEAP|V25|TAY|AE\d|HTF)/.test(u)) return "turbofan";
+  if (/^(AS3|AS5|EC1|H1|BK|MBB|S-7|S-9|R22|R44|R66|AW1|AB1|20[46]|407|412|429|SA-3|SA3)/.test(u)) return "helicopter";
+  return "airliner";
+}
+const KIND_LABEL = { airliner: "Fixed-wing aircraft", helicopter: "Rotorcraft", turbofan: "Engine" };
+async function stageModel() {
+  const m = $("#model").value.trim();
+  if (!window.Stage) return;
+  const k = kindFor(m); Stage.setKind(k);
+  $("#stkind").textContent = m ? KIND_LABEL[k] : "";
+  if (!m) { $("#stmodel").textContent = "No model set"; $("#stsum").textContent = "Set an aircraft or engine model to see which proposals list it."; return; }
+  $("#stmodel").textContent = m.toUpperCase();
+  try {
+    const [f] = await (await fetch("/fleet", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ models: [m] }) })).json();
+    $("#stsum").textContent = !f.known ? "No proposal in this dataset lists this model."
+      : f.dockets.length ? `${f.dockets.length} proposal${f.dockets.length > 1 ? "s list" : " lists"} this model · ${f.open_comments} open for comment` + (f.counts.WITHDRAWN ? ` · ${f.counts.WITHDRAWN} withdrawn` : "")
+      : "Listed only as part of a family. Give the exact variant.";
+  } catch (e) { $("#stsum").textContent = ""; }
+}
+function stageVerdict(r) {
+  if (!window.Stage) return;
+  const v = r.applicability?.verdict, f = r.fields || {};
+  let st = "general", txt = "Proposal found · your units not confirmed";
+  if (r.status === "REFUSED" || r.status === "NEEDS_INPUT") { st = "broken"; txt = r.status === "REFUSED" ? "Stripe broken · refused, nothing in the data supports an answer" : "Stripe broken · needs more input before checking"; }
+  else if (r.status === "NOT_APPLICABLE") { st = "na"; txt = "No stripe · this proposal doesn't list the model"; }
+  else if (f.regulatory_status === "WITHDRAWN") { st = "applied"; txt = "Stripe intact · verified withdrawn, imposes nothing"; }
+  else if (v === "MODEL_LISTED_ALL_UNITS" || (r.candidates?.length && r.status === "ANSWERED")) { st = "applied"; txt = "Stripe intact · rules confirm the model is listed"; }
+  Stage.setState(st);
+  $("#stsw").className = "sw" + (st === "applied" || st === "general" ? " on" : st === "broken" ? " broken" : "");
+  $("#stlegt").textContent = txt;
+}
 document.addEventListener("keydown", e => {
   if (e.key === "/" && document.activeElement.tagName !== "INPUT") { e.preventDefault(); $("#q").focus(); }
   if ((e.key === "[" || e.key === "]") && document.activeElement.tagName !== "INPUT") {
@@ -324,12 +435,14 @@ document.addEventListener("keydown", e => {
 async function ask() {
   const query = $("#q").value.trim(); if (!query) return;
   const model = $("#model").value.trim() || null;
+  window.Stage && Stage.scan();
   $("#answer").innerHTML = `<div class="card ans"><span class="spinner"></span> <span class="stats">Checking rules…</span></div>`;
   try {
     const res = await fetch("/ask", { method: "POST", headers: { "content-type": "application/json" },
       body: JSON.stringify({ query, model, use_llm: true }) });
     last = await res.json();
     render(last);
+    stageVerdict(last);
     window.va && va("event", { name: "Ask", data: { status: last.status, verdict: last.applicability?.verdict || "none" } });
   } catch (e) {
     $("#answer").innerHTML = `<div class="card ans"><div class="headline">Couldn't reach the server</div><p class="lede">${esc(e.message)}</p></div>`;
@@ -418,7 +531,7 @@ function render(r) {
   $("#answer").innerHTML = h;
   anim($("#answer .ans"), { opacity: [0, 1], transform: ["translateY(8px)", "translateY(0)"] }, { duration: .28, easing: "ease-out" });
   $("#answer").querySelectorAll(".cite").forEach(b => b.onclick = () => openSource(b.dataset.d, +b.dataset.row, +b.dataset.s));
-  $("#answer").querySelectorAll("[data-variant]").forEach(b => b.onclick = () => { $("#model").value = b.dataset.variant; ask(); });
+  $("#answer").querySelectorAll("[data-variant]").forEach(b => b.onclick = () => { $("#model").value = b.dataset.variant; stageModel(); ask(); });
   $("#answer").querySelectorAll(".cand").forEach(b => b.onclick = () => { $("#q").value = `Status of ${b.dataset.d}`; ask(); });
   const first = r.claims?.[0]?.cite;
   if (first) openSource(first.docket, first.sheet_row, first.sentence, true);
@@ -439,7 +552,7 @@ async function openSource(docket, row, sidx, quiet) {
   $("#src").innerHTML = `<div class="hd"><div class="t">Source</div><h2>${esc(d.docket)}</h2>
       <div class="stats">${esc(v.make)} · ${esc(v.subject)}</div></div>
     <div class="body">
-      <ul class="tl">${d.versions.map(x => `<li class="${x.sheet_row === v.sheet_row ? "cur" : ""}">
+      <ul class="tl-list">${d.versions.map(x => `<li class="${x.sheet_row === v.sheet_row ? "cur" : ""}">
         <div class="a">${esc(ACT[x.action] || x.action)}</div>
         <div class="m">${esc(x.publish_date)} · ${esc(x.pages)}${x.link ? ` · <a href="${esc(x.link)}" target="_blank" rel="noopener">Federal Register</a>` : ""}</div></li>`).join("")}</ul>
       <div class="vhead"><span>${esc(v.fr_citation)}</span><span class="mono">row ${v.sheet_row}</span></div>
@@ -454,6 +567,7 @@ async function openSource(docket, row, sidx, quiet) {
 document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t));
   document.querySelectorAll(".view").forEach(v => v.hidden = v.id !== `view-${t.dataset.view}`);
+  $("#crumb").innerHTML = `<b>${t.textContent.trim()}</b> · FAA proposed ADs`;
   if (t.dataset.view === "eval" && !$("#evalhead").innerHTML) runEval();
 });
 $("#runeval").onclick = runEval;

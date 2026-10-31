@@ -10,7 +10,7 @@ data = [{"g": g, "wb": d.withdrawn_by.docket if d.withdrawn_by else None,
          "v": [{"d": v.docket, "a": v.action, "pub": str(v.publish_date) if v.publish_date else None,
                 "due": str(v.comments_due) if v.comments_due else None, "fr": v.fr_citation, "pg": v.pages, "pc": v.page_count,
                 "ln": v.link, "row": v.row, "sub": v.subject, "mk": v.make, "m": v.models, "mf": v.models_from, "sc": v.scope,
-                "s": v.sentences, "ads": v.mentioned_ads, "adn": v.ad_number} for v in d.versions]} for g, d in D.items()]
+                "s": v.sentences, "ads": v.mentioned_ads, "adn": v.ad_number, "pt": v.product_type, "pst": v.product_subtype} for v in d.versions]} for g, d in D.items()]
 (ROOT / "web/data.json").write_text(json.dumps(data, separators=(",", ":")))
 
 S = ROOT / "torquestripe/static"
@@ -18,6 +18,7 @@ html = (S / "index.html").read_text()
 b64 = lambda p, mime: f"data:{mime};base64," + base64.b64encode(p.read_bytes()).decode()
 safe = lambda s: s.replace("</", "<\\/")
 html = html.replace('<script src="/static/motion.js"></script>', "<script>" + (S / "motion.js").read_text() + "</script>")
+html = html.replace('<script src="/static/stage.js"></script>', "<script>" + (S / "stage.js").read_text() + "</script>")
 html = html.replace('src="/static/logo.svg"', f'src="{b64(S / "logo.svg", "image/svg+xml")}"')
 html = html.replace('src="/static/creator.jpg"', f'src="{b64(S / "creator.jpg", "image/jpeg")}"')
 html = html.replace('href="/static/favicon.svg"', f'href="{b64(S / "favicon.svg", "image/svg+xml")}"')
