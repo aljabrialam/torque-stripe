@@ -33,17 +33,22 @@ ff.stdin.end(); await new Promise(r => ff.on('close', r))
 }
 await b.close()
 
-// ambient score: detuned drone in D, slow tremolo, soft pink-noise air, long echo tail
+// score: original uplifting aviation track (scripts/music.py, numpy) sized to the film; falls back to an ambient drone
 const L = length.toFixed(2), music = `${outDir}${film}-score.wav`
+let composed = false
+try { execFileSync(`${root}../.venv/bin/python`, [`${root}scripts/music.py`, L, music], { stdio: 'inherit' }); composed = true } catch { console.warn('music.py failed, using drone') }
+if (!composed) {
 const tones = [73.42, 110, 146.83, 220.5, 293.66].map(f => `sine=f=${f}:d=${L}`)
 execFileSync('ffmpeg', ['-v', 'error', '-y', ...tones.flatMap(s => ['-f', 'lavfi', '-i', s]), '-f', 'lavfi', '-i', `anoisesrc=c=pink:a=0.06:d=${L}`, '-filter_complex',
   `[0]volume=0.55[a0];[1]volume=0.35,tremolo=f=0.11:d=0.6[a1];[2]volume=0.28,tremolo=f=0.17:d=0.5[a2];[3]volume=0.12,tremolo=f=0.23:d=0.7[a3];[4]volume=0.06,tremolo=f=0.13:d=0.9[a4];[5]lowpass=f=900,volume=0.5[n];` +
   `[a0][a1][a2][a3][a4][n]amix=inputs=6:normalize=0,lowpass=f=2400,aecho=0.8:0.7:900|1700:0.35|0.22,volume=0.5,afade=t=in:d=2.5,afade=t=out:st=${Math.max(0, length - 3).toFixed(2)}:d=3[m]`,
   '-map', '[m]', '-ar', '44100', '-ac', '2', music])
+}
 
 const final = `${outDir}torque-stripe-${film}.mp4`, narration = film === 'demo' ? `${root}film/audio/narration.wav` : `${root}film/audio/${film}-narration.wav`
 const audioArgs = film !== 'teaser' && existsSync(narration)
-  ? ['-i', music, '-i', narration, '-filter_complex', '[1]volume=0.22[m];[2]aformat=channel_layouts=stereo,volume=1.6[v];[m][v]amix=inputs=2:normalize=0:duration=first[a]', '-map', '0:v', '-map', '[a]']
-  : ['-i', music, '-map', '0:v', '-map', '1:a']
+  // music sits under the voice and ducks further while it speaks (sidechain compression)
+  ? ['-i', music, '-i', narration, '-filter_complex', '[1]volume=0.24[m];[2]aformat=channel_layouts=stereo,volume=1.6,asplit=2[v1][v2];[m][v1]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=350[duck];[duck][v2]amix=inputs=2:normalize=0:duration=first[a]', '-map', '0:v', '-map', '[a]']
+  : ['-i', music, '-filter_complex', '[1]volume=0.85[a]', '-map', '0:v', '-map', '[a]']
 execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', silent, ...audioArgs, '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', final])
 console.log('wrote', final, `in ${((Date.now() - t0) / 1000).toFixed(0)} s`)
