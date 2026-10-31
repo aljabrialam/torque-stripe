@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Torque Stripe">
+  <rect width="64" height="64" rx="15" fill="#1d1d1f"/>
+  <polygon points="32,11 50,21.5 50,42.5 32,53 14,42.5 14,21.5" fill="#3a3a3e" stroke="#5c5c62" stroke-width="1.5"/>
+  <circle cx="32" cy="32" r="9" fill="#26262a" stroke="#5c5c62" stroke-width="1.5"/>
+  <path d="M6 44 L58 20" stroke="#ff7a2f" stroke-width="6" stroke-linecap="round"/>
+</svg>

@@ -15,7 +15,8 @@
 - **Name:** a torque stripe is the paint mark a technician puts on a fastener once it's been verified. It means "checked; if this mark moves, stop." That's what the product does for AD answers.
 - **Tagline:** *The AI reads. The rules decide. The engineer signs.*
 - **Status (12:15):** engine runs on the **real dataset** (431 rows, 323 dockets, 1,302 Federal Register pages). Gold set **42/42 correct, 0/16 unsafe, 6/6 withdrawals flagged** vs baseline **5/42, 16/16 unsafe, 0/6** (baseline gets exact docket lookup + BM25). Full web UI done (Ask console with per-model 3D, Fleet, Insights, Evaluation; light/dark; guided tour; mobile). Engine also ported to JS so the site runs **fully static** with no server. Playwright e2e: ALL PASS. Committed locally in git.
-- **Not done:** GitHub push, Vercel deploy, submission form, pitch rehearsal. See §6 and §12.
+- **Update 12:50:** Pushed to https://github.com/aljabrialam/torque-stripe. Front end rebuilt as a **React app** (`app/`, Vite + React + TS + Tailwind, sepia glassmorphism) live at **https://torque-stripe.vercel.app**; it runs the same JS engine on the real data behind a `TorqueApi` adapter (`VITE_API_URL` switches to the real backend). Classic UI fallback: https://torque-stripe-classic.vercel.app. Smoke test: `cd app && node scripts/shots.mjs <url>` → RESULT: ALL PASS (42/42 and 0/16 checked live). Deploy React: `cd app && npm run build && mkdir -p dist/.vercel && cp ../web/dist/.vercel/project.json dist/.vercel/ && cd dist && vercel --prod --yes`.
+- **Not done:** submission form, pitch rehearsal, demo videos. See §6 and §12.
 ---
 
 ## 1. Challenge #4 requirements (from the official brief)

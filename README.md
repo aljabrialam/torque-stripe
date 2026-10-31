@@ -72,7 +72,21 @@ python3 eval/run_eval_faa.py              # gold-set evaluation (deterministic)
 python3 tests/e2e.py http://localhost:8000  # Playwright end-to-end UI test
 ```
 
-### Serverless single-file build
+### Web app (React)
+`app/` is the main front end: Vite + React + TypeScript + Tailwind, three.js stage, sepia glass theme. Live at https://torque-stripe.vercel.app.
+```bash
+cd app && npm install && npm run dev        # http://localhost:5173
+npm run build                               # -> app/dist (static)
+node scripts/shots.mjs http://localhost:5173  # Playwright smoke + screenshots; must print RESULT: ALL PASS
+```
+Data access goes through one interface, `TorqueApi` (`app/src/lib/types.ts`):
+- **Default:** `localApi.ts` runs the real rule engine (`web/engine.js`) over the real dataset in the browser. No server.
+- **Real backend:** set `VITE_API_URL=https://your-api` at build time and `api.ts` calls the same routes as `torquestripe/api.py` (`/health /models /ask /fleet /dockets /eval`).
+- `app/src/lib/demo.ts` holds demo-only fixtures (sample operator fleet, tail numbers, demo questions). They are labelled "sample" in the UI and never feed answers.
+
+The previous single-file UI is kept as a fallback at https://torque-stripe-classic.vercel.app.
+
+### Serverless single-file build (classic UI)
 `python3 web/build.py` produces `web/dist/index.html`: one self-contained page with the UI, the rule engine (`web/engine.js`, a JavaScript port of the Python engine) and the data. No server needed. Parity with the Python engine is checked by `python3 tests/parity_gen.py && node tests/parity.mjs`: 494/495 structured questions identical; the only differences are the order of exactly tied search scores. Claude rewording is off in this mode.
 
 ### Deploy
@@ -85,7 +99,8 @@ Vercel, no build step. `api/index.py` serves the FastAPI app (UI, API, live eval
 | `torquestripe/nprm_engine.py` | Query parsing, model rules, ranking, contradiction and not-in-data refusals, citations, fleet check |
 | `torquestripe/phrase.py` | Optional Claude rewording + deterministic verifier (exact numbers, no added negation, 70% word overlap) |
 | `torquestripe/api.py` | FastAPI: `/ask`, `/fleet`, `/dockets/{d}`, `/models`, `/eval`, UI at `/` |
-| `torquestripe/static/` | UI (vanilla HTML/CSS/JS, motion.dev bundled locally), logo, icons, social image |
+| `app/` | React front end (views in `src/views`, API adapters in `src/lib`, three.js stage in `src/three/stage.js`) |
+| `torquestripe/static/` | Classic UI (vanilla HTML/CSS/JS, motion.dev bundled locally), logo, icons, social image |
 | `eval/` | Gold set, known failures, evaluation runner |
 | `tests/e2e.py` | Playwright UI test: every demo path, tour, fleet, evaluation, mobile width, console errors |
 | `torquestripe/engine.py`, `parse.py`, `applicability.py`, `data/sample/` | Earlier engine for full-text ADs with serial ranges, run on four **synthetic** sample ADs |
