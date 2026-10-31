@@ -13,12 +13,18 @@ A torque stripe is the paint mark a technician puts across a fastener once it ha
 
 <p align="center"><a href="https://torque-stripe.vercel.app"><img src="docs/cover/torque-stripe-cover.jpg" alt="Torque Stripe: cited answers about FAA proposed ADs, or a clear refusal. Rule-checked status, exact model filtering, quoted evidence, refusals, signed PDF report and rendered 3D inspection." width="100%"></a></p>
 
+<p align="center">
+  <a href="https://youtu.be/rkj4_BeG5zw"><img src="https://img.youtube.com/vi/rkj4_BeG5zw/maxresdefault.jpg" alt="Watch the Torque Stripe demo on YouTube" width="720"></a><br>
+  <b><a href="https://youtu.be/rkj4_BeG5zw">▶ Watch the demo (3.5 min)</a></b> · every Airbus brief requirement, shown live
+</p>
+
 ---
 
 ## Summary
 
 | | |
 |---|---|
+| **Demo video** | [youtu.be/rkj4_BeG5zw](https://youtu.be/rkj4_BeG5zw) |
 | **Live app** | [torque-stripe.vercel.app](https://torque-stripe.vercel.app) |
 | **Built for** | Airbus Challenge #4, Autonomous SG 2026 (NUS, 31 Oct 2026): *"How might AI help people find, understand, and verify regulated technical information?"* |
 | **Who it's for** | A B1 licensed aircraft maintenance engineer, or the CAMO planner tracking which proposed ADs touch their fleet |
@@ -280,6 +286,8 @@ python3 tests/parity_gen.py && node tests/parity.mjs   # Python vs JS engine par
 The backend contract is `TorqueApi` in [`app/src/lib/types.ts`](app/src/lib/types.ts): `GET /health /models /dockets /eval`, `POST /ask /fleet`. `app/src/lib/demo.ts` holds demo-only fixtures (sample operator fleet and tail numbers). They are labelled "sample" in the UI and never feed answers.
 
 ### Demo videos
+
+Published demo: [youtu.be/rkj4_BeG5zw](https://youtu.be/rkj4_BeG5zw). To rebuild the videos:
 
 ```bash
 cd app
