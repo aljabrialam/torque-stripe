@@ -48,7 +48,7 @@ execFileSync('ffmpeg', ['-v', 'error', '-y', ...tones.flatMap(s => ['-f', 'lavfi
 const final = `${outDir}torque-stripe-${film}.mp4`, narration = film === 'demo' ? `${root}film/audio/narration.wav` : `${root}film/audio/${film}-narration.wav`
 const audioArgs = film !== 'teaser' && existsSync(narration)
   // music sits under the voice and ducks further while it speaks (sidechain compression)
-  ? ['-i', music, '-i', narration, '-filter_complex', '[1]volume=0.24[m];[2]aformat=channel_layouts=stereo,volume=1.6,asplit=2[v1][v2];[m][v1]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=350[duck];[duck][v2]amix=inputs=2:normalize=0:duration=first[a]', '-map', '0:v', '-map', '[a]']
+  ? ['-i', music, '-i', narration, '-filter_complex', `[1]volume=0.24[m];[2]aformat=channel_layouts=stereo,volume=1.6,apad=whole_dur=${L},asplit=2[v1][v2];[m][v1]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=350[duck];[duck][v2]amix=inputs=2:normalize=0:duration=first[a]`, '-map', '0:v', '-map', '[a]']
   : ['-i', music, '-filter_complex', '[1]volume=0.85[a]', '-map', '0:v', '-map', '[a]']
 execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', silent, ...audioArgs, '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', final])
 console.log('wrote', final, `in ${((Date.now() - t0) / 1000).toFixed(0)} s`)
