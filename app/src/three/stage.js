@@ -230,7 +230,7 @@ export function createStage(cv, host, opts = {}) {
   function setZone(name) {
     zoneGroup.clear(); zoneOn = false;
     const boxes = name && model && (model.userData.zones || []).filter(z => z[0] === name).map(z => z[1]);
-    if (boxes && boxes.length) { for (const [x, y, z, sx, sy, sz] of boxes) { const g = new T.BoxGeometry(sx, sy, sz);
+    if (boxes && boxes.length) { for (const [x, y, z, sx, sy, sz] of boxes) { const g = sy < 0.2 ? new T.CylinderGeometry(sx / 2, sx / 2, Math.max(sy, 0.06), 64, 1, true) : new T.BoxGeometry(sx, sy, sz);
         const m = new T.Mesh(g, zoneFill), e = new T.LineSegments(new T.EdgesGeometry(g), zoneEdge); m.position.set(x, y, z); e.position.set(x, y, z); m.renderOrder = e.renderOrder = 10; zoneGroup.add(m, e); }
       zoneOn = true; zonePulse = 0; }
     if (model && zoneGroup.parent !== model) model.add(zoneGroup);

@@ -5,8 +5,12 @@ const base = process.argv[2] || 'http://localhost:5173', out = new URL('../film/
 mkdirSync(out, { recursive: true })
 const b = await chromium.launch({ args: ['--use-angle=metal', '--enable-gpu'] })
 const p = await b.newPage({ viewport: { width: 1600, height: 900 }, deviceScaleFactor: 2 })
-const shot = (name, loc) => (loc ? loc.screenshot({ path: `${out}${name}.jpg`, quality: 90, type: 'jpeg' })
-  : p.screenshot({ path: `${out}${name}.jpg`, quality: 90, type: 'jpeg' }))
+// Panel plates are shot with the background stage hidden so the 3D doesn't show through the glass twice in the film.
+const stageVis = v => p.evaluate(v => { document.querySelector('.stage-host').style.visibility = v }, v)
+const shot = async (name, loc) => {
+  if (loc) { await stageVis('hidden'); await p.waitForTimeout(60); await loc.screenshot({ path: `${out}${name}.jpg`, quality: 90, type: 'jpeg' }); await stageVis('visible') }
+  else await p.screenshot({ path: `${out}${name}.jpg`, quality: 90, type: 'jpeg' })
+}
 const top = () => p.locator('#ask').evaluate(e => e.scrollTo(0, 0))
 async function ask(model, q) {
   await top(); await p.fill('.ab-model input', model); await p.fill('.ab-q input', q)

@@ -176,7 +176,7 @@ function Demo({ t, lines }: { t: number; lines: Line[] }) {
   const total = lines[lines.length - 1].start + lines[lines.length - 1].dur + 1.5
   const scrim = Math.min(1, ['title', 'hook', 'problem', 'approach', 'arch', 'results', 'close'].reduce((m, id) => m + so(id), 0) + (t > (S('close')?.b ?? 1e9) ? 1 : 0))
   return <>
-    <div className="scrim" style={{ opacity: scrim * .62 }} />
+    <div className="scrim" style={{ opacity: scrim * .78 }} />
     {/* title */}
     <Layer o={so('title')}>
       <div className="title-block">
