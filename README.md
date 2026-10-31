@@ -18,6 +18,13 @@ A torque stripe is the paint mark a technician puts across a fastener once it ha
   <b><a href="https://youtu.be/rkj4_BeG5zw">▶ Watch the demo (3.5 min)</a></b> · every Airbus brief requirement, shown live
 </p>
 
+<table align="center">
+  <tr>
+    <td align="center"><a href="https://youtu.be/rkj4_BeG5zw"><img src="docs/qr/qr-demo-video.png" width="170" alt="QR code: Torque Stripe demo video on YouTube"></a><br><b>Demo video</b><br><sub>youtu.be/rkj4_BeG5zw</sub></td>
+    <td align="center"><a href="https://torque-stripe.vercel.app"><img src="docs/qr/qr-live-app.png" width="170" alt="QR code: Torque Stripe live app"></a><br><b>Live app</b><br><sub>torque-stripe.vercel.app</sub></td>
+  </tr>
+</table>
+
 ---
 
 ## Summary
