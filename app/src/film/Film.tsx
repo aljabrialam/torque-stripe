@@ -2,13 +2,17 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { Stage, type StageApi } from '../components/Stage'
 import { Layer, Plate, Typed, ease, mix, out, prog, vis } from './kit'
-import script from './demo-script.json'
+import demoScript from './demo-script.json'
+import briefScript from './brief-script.json'
+import { mascotSvg } from '../components/mascot.js'
 
-type Line = (typeof script)[number] & { start: number; dur: number }
+type ScriptLine = { shot: string; section: string; caption: string; say?: string; k?: number; demo?: string; title?: string; layout?: string; prefix?: string; src?: string }
+type Line = ScriptLine & { start: number; dur: number }
 interface Cam { kind: string; model: string; state: string; zone: string | null; az: number; el: number; zoom: number }
 
 const params = new URLSearchParams(location.search)
-const FILM = params.get('film') === 'demo' ? 'demo' : 'teaser'
+const FILM = (['demo', 'brief'] as const).find(f => f === params.get('film')) ?? 'teaser'
+const script: ScriptLine[] = FILM === 'brief' ? briefScript : demoScript
 export const TEASER_LEN = 30
 
 declare global { interface Window { __seek(t: number): Promise<void>; __ready: boolean; __length: number } }
@@ -18,13 +22,13 @@ const estimate = (): Line[] => { let s = 0; return script.map(l => { const dur =
 
 export function Film() {
   const [t, setT] = useState(Number(params.get('t') || 0))
-  const [lines, setLines] = useState<Line[] | null>(FILM === 'demo' ? null : [])
+  const [lines, setLines] = useState<Line[] | null>(FILM === 'teaser' ? [] : null)
   const stage = useRef<StageApi | null>(null)
   const length = FILM === 'teaser' ? TEASER_LEN : lines?.length ? lines[lines.length - 1].start + lines[lines.length - 1].dur + 1.5 : 0
 
   useEffect(() => {
-    if (FILM !== 'demo') return
-    fetch('/film/audio/demo-timeline.json').then(r => r.ok ? r.json() : estimate()).catch(estimate).then(setLines)
+    if (FILM === 'teaser') return
+    fetch(`/film/audio/${FILM}-timeline.json`).then(r => r.ok ? r.json() : estimate()).catch(estimate).then(setLines)
   }, [])
 
   const camAt = (x: number): Cam => FILM === 'teaser' ? teaserCam(x) : demoCam(x, lines || [])
@@ -139,7 +143,7 @@ function Kicker({ t, a, b, text }: { t: number; a: number; b: number; text: stri
 }
 
 /* ============================== DEMO (narrated, captioned) ============================== */
-function platesFor(l: (typeof script)[number]): string[] {
+function platesFor(l: ScriptLine): string[] {
   const L = l as { layout?: string; prefix?: string; src?: string }
   if (L.src) return [L.src]
   if (!L.prefix) return ['eval-metrics', 'eval-fails', 'idle-console', 'askbar']
@@ -177,7 +181,7 @@ function Demo({ t, lines }: { t: number; lines: Line[] }) {
   const S = (id: string) => shots[id]
   const so = (id: string) => S(id) ? vis(t, S(id).a, S(id).b + .25, .45, .45) : 0
   const total = lines[lines.length - 1].start + lines[lines.length - 1].dur + 1.5
-  const scrim = Math.min(1, ['title', 'hook', 'problem', 'approach', 'arch', 'results', 'close'].reduce((m, id) => m + so(id), 0) + (t > (S('close')?.b ?? 1e9) ? 1 : 0))
+  const scrim = Math.min(1, ['title', 'hook', 'problem', 'approach', 'arch', 'results', 'close', 'brief', 'ingest', 'checklist'].reduce((m, id) => m + so(id), 0) + (t > (S('close')?.b ?? 1e9) ? 1 : 0))
   return <>
     <div className="scrim" style={{ opacity: scrim * .78 }} />
     {/* title */}
@@ -190,6 +194,39 @@ function Demo({ t, lines }: { t: number; lines: Line[] }) {
         <p className="disc">Hackathon prototype built for Airbus Challenge #4. Not an official Airbus or FAA product.</p>
       </div>
     </Layer>
+    {/* brief: the challenge's own words */}
+    {S('brief') && <Layer o={so('brief')}>
+      <div className="brief-card glass">
+        <div className="kicker">Airbus Challenge #4 · what the brief asks for</div>
+        <p className="brief-q">“A traceable and context-aware search engine that ingests multi-page technical documents, parses exact applicability rules, answers natural language queries with citations. If the information is ambiguous, it should confidently refuse to answer.”</p>
+        <div className="brief-tags">{['Specific references', 'Zero hallucination', 'Configuration filtering', 'Revision logic', 'Clear uncertainty', 'Sub 3-second latency'].map((x, i) => <span key={x} style={{ opacity: out(prog(t, S('brief').a + 0.6 + i * 0.35, S('brief').a + 1 + i * 0.35)) }}>{x}</span>)}</div>
+      </div>
+    </Layer>}
+    {/* ingest: corpus numbers */}
+    {S('ingest') && <Layer o={so('ingest')}>
+      <div className="stat-row" style={{ top: 300, gap: 90 }}>
+        {[['431', 'FAA notices'], ['323', 'dockets'], ['1,302', 'Federal Register pages'], ['2,169', 'citable sentences']].map(([n, l], i) => {
+          const o = out(prog(t, S('ingest').a + 0.3 + i * 0.5, S('ingest').a + 0.9 + i * 0.5))
+          return <div key={l} style={{ opacity: o, transform: `translateY(${mix(16, 0, o)}px)` }}><div className="readout" style={{ fontSize: 132 }}>{n}</div><div className="sub">{l}</div></div>
+        })}
+      </div>
+      <div className="risk" style={{ color: 'var(--sand-2)', fontSize: 34, top: 640 }}>Parsed into dockets, version chains, model lists and applicability scope, then indexed.</div>
+    </Layer>}
+    {/* checklist: every brief item, ticked */}
+    {S('checklist') && <Layer o={so('checklist')}>
+      <div className="check-wrap">
+        <div className="check-torq" dangerouslySetInnerHTML={{ __html: mascotSvg('check', { size: 300 }) }} />
+        <div className="check-list glass">
+          <div className="kicker" style={{ marginBottom: 10 }}>The brief, checked</div>
+          {[['Ingests 1,000+ pages, natural-language queries', 'real FAA data, 1,302 pages'], ['Specific references', 'docket, FR pages, sentence'], ['Zero hallucination', 'verbatim + verifier, 0/16 unsafe'],
+            ['Configuration filtering', 'models and serial ranges as rules'], ['Revision logic', 'versions, latest, withdrawn'], ['Clear communication of uncertainty', 'ambiguous, outside data, contradicts'],
+            ['Sub 3-second latency', 'under 10 ms worst case'], ['Avoids LLM guessing', 'rules decide, Claude only rewords'], ['Avoids unformatted data', 'structured JSON on every answer']].map(([a, d], i) => {
+            const o = out(prog(t, S('checklist').a + 0.2 + i * 0.28, S('checklist').a + 0.5 + i * 0.28))
+            return <div key={a} className="check-row" style={{ opacity: o, transform: `translateX(${mix(-14, 0, o)}px)` }}><span className="tick">✓</span><b>{a}</b><span>{d}</span></div>
+          })}
+        </div>
+      </div>
+    </Layer>}
     {/* hook: typed question */}
     {S('hook') && <Layer o={so('hook')}>
       <div className="fake-ask glass strong">

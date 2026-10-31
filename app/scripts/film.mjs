@@ -41,8 +41,8 @@ execFileSync('ffmpeg', ['-v', 'error', '-y', ...tones.flatMap(s => ['-f', 'lavfi
   `[a0][a1][a2][a3][a4][n]amix=inputs=6:normalize=0,lowpass=f=2400,aecho=0.8:0.7:900|1700:0.35|0.22,volume=0.5,afade=t=in:d=2.5,afade=t=out:st=${Math.max(0, length - 3).toFixed(2)}:d=3[m]`,
   '-map', '[m]', '-ar', '44100', '-ac', '2', music])
 
-const final = `${outDir}torque-stripe-${film}.mp4`, narration = `${root}film/audio/narration.wav`
-const audioArgs = film === 'demo' && existsSync(narration)
+const final = `${outDir}torque-stripe-${film}.mp4`, narration = film === 'demo' ? `${root}film/audio/narration.wav` : `${root}film/audio/${film}-narration.wav`
+const audioArgs = film !== 'teaser' && existsSync(narration)
   ? ['-i', music, '-i', narration, '-filter_complex', '[1]volume=0.22[m];[2]aformat=channel_layouts=stereo,volume=1.6[v];[m][v]amix=inputs=2:normalize=0:duration=first[a]', '-map', '0:v', '-map', '[a]']
   : ['-i', music, '-map', '0:v', '-map', '1:a']
 execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', silent, ...audioArgs, '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', final])

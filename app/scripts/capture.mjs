@@ -39,6 +39,7 @@ await ask('', 'Is FAA-2013-0541 still active?'); await answerShots('withdrawn')
 await ask('', 'Does FAA-2026-1335 apply to my 787?'); await answerShots('variant')
 await ask('787-9', 'Does FAA-2026-1335 apply to my 787-9?'); await answerShots('unconfirmed')
 await ask('A380-841', 'What is the torque for the A380-841 landing gear?'); await answerShots('refused')
+await ask('AS350B3', 'Why was FAA-2026-11814 withdrawn?'); await answerShots('contra')
 for (const v of ['fleet', 'insights', 'eval']) {
   await p.click(`[data-tab="${v}"]`); await p.waitForTimeout(v === 'eval' ? 3000 : 1500); await shot(`${v}-page`)
 }

@@ -287,7 +287,14 @@ node scripts/capture.mjs            # capture real app states as plates
 node scripts/film.mjs teaser 30     # 30 s cinematic teaser -> film/out/torque-stripe-teaser.mp4
 node scripts/narrate.mjs            # narration + timeline (macOS say)
 node scripts/film.mjs demo 24       # ~3 min captioned demo -> film/out/torque-stripe-demo.mp4
+
+# Brief walkthrough: one scene per Airbus brief requirement, edge-tts voice (pip install edge-tts)
+node scripts/brief-plates.mjs       # proof plates: structured /ask JSON, serial-range rules (synthetic sample ADs)
+node scripts/narrate.mjs brief      # en-PH-RosaNeural at -8%
+node scripts/film.mjs brief 24      # ~3.8 min -> film/out/torque-stripe-brief.mp4
 ```
+
+The brief walkthrough covers, in order: ingestion of 1,302 pages, avoiding LLM guessing, natural-language queries, specific references, structured output, configuration filtering (models on real data, serial ranges on labelled synthetic ADs), revision logic, the three kinds of uncertainty (ambiguous, outside the data, contradicts the source), zero hallucination with measured results, sub-3-second latency, the signed report, and a closing checklist of every brief item.
 
 ### Cover image
 
