@@ -365,9 +365,4 @@ flowchart LR
 [LinkedIn](https://www.linkedin.com/in/aljabri-alam/) · [GitHub](https://github.com/aljabrialam)
 <br clear="left">
 
-## Further reading
-
-- Handoff and decision record: [`HANDOFF.md`](HANDOFF.md)
-- Gold set and known failures: [`eval/`](eval/)
-
 MIT licence. Hackathon prototype; not an Airbus or FAA product.
