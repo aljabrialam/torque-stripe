@@ -570,9 +570,10 @@ const KIND_LABEL = { airliner: "Fixed-wing aircraft", helicopter: "Rotorcraft", 
 async function stageModel() {
   const m = $("#model").value.trim();
   if (!window.Stage) return;
-  const k = kindFor(m); Stage.setKind(k);
+  const k = kindFor(m); Stage.setKind(k, m);
+  const arc = Stage.archetype ? Stage.archetype(m, k) : null;
   if (!m) { $("#stkind2").textContent = ""; $("#stmodel").textContent = "No model set"; $("#stsum").textContent = "Set an aircraft or engine model to see which proposals list it."; return; }
-  $("#stmodel").textContent = m.toUpperCase(); $("#stkind2").textContent = " · " + KIND_LABEL[k];
+  $("#stmodel").textContent = m.toUpperCase(); $("#stkind2").textContent = " · " + (arc ? arc.label : KIND_LABEL[k]);
   try {
     const [f] = await (await fetch("/fleet", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ models: [m] }) })).json();
     $("#stsum").textContent = !f.known ? "No proposal in this dataset lists this model."
@@ -643,7 +644,8 @@ function zoneFor(r) {
   if (!text || r.status === "REFUSED") return null;
   for (const [z, label, rx] of ZONE_RULES) { const m = rx.exec(text); if (m) {
     const kind = window.Stage?.kind?.() || "airliner", fb = ZONE_FALLBACK[kind] || {};
-    const zz = z in fb ? fb[z] : z; if (!zz) continue;
+    const has = n => !window.Stage?.hasZone || Stage.hasZone(n);
+    const zz = has(z) ? z : (fb[z] && has(fb[z]) ? fb[z] : null); if (!zz) continue;
     return { zone: zz, label, word: m[0].trim() }; } }
   return null;
 }
