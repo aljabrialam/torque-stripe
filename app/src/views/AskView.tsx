@@ -7,6 +7,9 @@ import { IconChecks, IconCube, IconDoc, IconLink, IconQuote } from '../component
 import { Radar } from '../components/Radar'
 import { exportReport } from '../lib/report'
 import { mascotSvg } from '../components/mascot.js'
+import { ModelPicker } from '../components/ModelPicker'
+
+const FEATURED = [...new Set(DEMO_QUESTIONS.map(d => d.model).filter(Boolean)), 'A330-243', 'A350-941', 'A320-214']
 
 interface Props {
   model: string; setModel(m: string): void; query: string; setQuery(q: string): void
@@ -25,11 +28,10 @@ export function AskView(p: Props) {
     <main className="view ask scroll" id="ask">
       <section className="console">
         <form className="askbar glass strong" onSubmit={e => { e.preventDefault(); p.ask() }} data-tour="ask">
-          <label className="ab-model">
+          <div className="ab-model">
             <span className="label">Aircraft or engine model</span>
-            <input className="mono" value={p.model} onChange={e => p.setModel(e.target.value.toUpperCase())} list="models" placeholder="e.g. AS350B3" spellCheck={false} aria-label="Aircraft or engine model" />
-            <datalist id="models">{p.models.map(m => <option key={m} value={m} />)}</datalist>
-          </label>
+            <ModelPicker value={p.model} onChange={p.setModel} models={p.models} featured={FEATURED} />
+          </div>
           <label className="ab-q">
             <span className="label">Question</span>
             <input value={p.query} onChange={e => p.setQuery(e.target.value)} placeholder="Ask about a proposed AD, a docket or a model" aria-label="Question" />

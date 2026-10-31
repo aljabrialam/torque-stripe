@@ -29,7 +29,7 @@
 .console { position: relative; height: calc(100vh - 52px); min-height: 640px; pointer-events: none; }
 .console > * { pointer-events: auto; }
 .askbar { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); width: min(880px, calc(100% - 48px)); display: grid; grid-template-columns: 170px 1fr auto; gap: 0; align-items: center; padding: 6px 6px 6px 0; border-radius: 20px; z-index: 5; }
-.askbar label { display: grid; padding: 4px 16px; }
+.askbar label, .askbar .ab-model { display: grid; padding: 4px 16px; }
 .askbar .label { font-size: 11px; }
 .askbar input { background: none; border: 0; outline: none; padding: 1px 0 3px; font-size: 16px; min-width: 0; }
 .askbar input::placeholder { color: var(--sand-3); }
@@ -248,3 +248,18 @@
 .tour-body { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: start; }
 .tour-torq { margin: -6px 0 0 -8px; filter: drop-shadow(0 8px 14px rgba(0, 32, 91, .18)); }
 .empty-torq { float: left; margin: -6px 14px 0 -10px; }
+
+/* model combobox */
+.askbar:focus-within { z-index: 30; }
+.mp { position: relative; }
+.mp-row { display: flex; align-items: center; gap: 2px; }
+.mp-row input { flex: 1; width: 100%; }
+.mp-clear, .mp-chev { flex: none; width: 24px; height: 24px; border: 0; border-radius: 7px; background: none; color: var(--sand-3); display: grid; place-items: center; font-size: 16px; line-height: 1; padding: 0; }
+.mp-clear:hover, .mp-chev:hover { color: var(--sand); background: rgba(0, 32, 91, .06); }
+.mp-list { position: absolute; z-index: 40; left: -16px; top: calc(100% + 10px); width: 280px; max-height: 360px; overflow-y: auto; margin: 0; padding: 6px; list-style: none; border-radius: 16px; scrollbar-width: thin; background: #fff !important; backdrop-filter: none !important; box-shadow: 0 24px 60px -20px rgba(0, 32, 91, .45), 0 0 0 1px rgba(0, 32, 91, .08); }
+.mp-group { position: sticky; top: -6px; z-index: 1; padding: 8px 10px 4px; background: #fff !important; font-family: var(--f-cond); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--sand-3); background: rgba(255, 255, 255, .92); }
+.mp-opt { display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 10px; font-size: 13.5px; color: var(--sand); cursor: pointer; }
+.mp-opt.hi { background: rgba(0, 133, 202, .12); }
+.mp-opt.sel { font-weight: 600; color: var(--navy); }
+.mp-tick { color: var(--sky); font-family: var(--f-body); }
+.mp-empty { padding: 10px 12px; font-size: 13px; color: var(--sand-2); line-height: 1.4; }

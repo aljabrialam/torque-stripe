@@ -69,6 +69,17 @@ async function suite(name, B) {
     else await chip(label)
     const a = await text(answer()); expect(rx.test(a), a.slice(0, 160))
   })
+  await t('model dropdown: reopening after a pick lists every model; typing filters; keyboard works', async () => {
+    await top(); const inp = p.locator('.ab-model input'), opts = p.locator('.mp-opt')
+    await inp.click(); const all = await opts.count(); expect(all > 700, `only ${all} models listed`)
+    await p.locator('.mp-opt', { hasText: /^A330-243/ }).first().click(); expect(await inp.inputValue() === 'A330-243', 'pick failed')
+    await inp.click(); expect(await opts.count() === all, 'reopened list is filtered by the current value')
+    expect((await p.locator('.mp-opt.hi').innerText()).startsWith('A330-243'), 'current model not highlighted')
+    await p.locator('.mp-opt', { hasText: /^787-9/ }).first().click(); expect(await inp.inputValue() === '787-9', 'second pick failed')
+    await inp.fill('A35'); const f = await opts.count(); expect(f > 0 && f < 20, `filter gave ${f}`)
+    await p.keyboard.press('Enter'); expect((await inp.inputValue()).startsWith('A350'), 'Enter did not pick')
+    await inp.click(); await p.keyboard.press('Escape'); expect(!(await p.locator('.mp-list').count()), 'Esc did not close')
+  })
   await t('configuration filtering: AS350B3 on FAA-2026-11800 is not applicable', async () => {
     await askTyped('AS350B3', 'What does FAA-2026-11800 require?')
     const a = await text(answer()); expect(/Not applicable/.test(a) && /AS350B3 is not covered by FAA-2026-11800/.test(a), a.slice(0, 160))
